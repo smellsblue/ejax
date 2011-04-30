@@ -199,3 +199,8 @@ Ejax.fn.keyDown = function(event) {
         result();
     }
 };
+
+Ejax.fn.ringBell = function() {
+    // TODO: This function should ring the bell if possible, and then
+    // cancel some actions like creating a keyboard macro.
+};

@@ -71,12 +71,12 @@ Buffer.fn.getCursorY = function() {
 
 Buffer.fn.setCursor = function(value) {
     if (value < 0) {
-        // TODO: Ring the bell
+        this.ejax.ringBell();
         return;
     }
 
     if (value > this.content.length) {
-        // TODO: Ring the bell
+        this.ejax.ringBell();
         return;
     }
 
