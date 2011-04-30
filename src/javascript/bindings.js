@@ -11,7 +11,7 @@ Bindings.fn.bind = function(codes, fn) {
 
     for (var index = 0; index < codes.length; index++) {
         var code = codes[index];
-        tokens = parseBinding(code);
+        var tokens = parseBinding(code);
         var tree = this.tree;
 
         for (var i = 0; i < tokens.length - 1; i++) {
@@ -82,8 +82,8 @@ Ejax.fn.processBinding = function(code) {
         return result;
     }
 
-    if (tokens.length == 1 && !tokens[0].control && !tokens[0].meta && tokens[0].key.isPrintable()) {
-        var key = tokens[0].key;
+    if (tokens.length == 1 && tokens[0].isPrintable()) {
+        var key = tokens[0].getPrintKey();
 
         if (modeBindings.type) {
             return new function() { modeBindings.type(key); };
@@ -137,6 +137,7 @@ function parseBinding(code) {
 
         for (var property in Token.specialKeys) {
             if (key(Token.specialKeys[property])) {
+                token.setSpecialKey(property);
                 tokens.push(token);
                 token = new Token();
                 found = true;
@@ -177,6 +178,7 @@ Ejax.fn.bind = function(code, fn) {
 
 function Token() {
     this.key = null;
+    this.specialKey = null;
     this.control = false;
     this.meta = false;
 };
@@ -228,9 +230,54 @@ Token.specialKeys = {
     NUM_DIVIDE: "NUM-/"
 };
 
+Token.specialKeysToChar = {
+    SPACE: " ",
+    TAB: "\t",
+    ENTER: "\n",
+    NUM_0: "0",
+    NUM_1: "1",
+    NUM_2: "2",
+    NUM_3: "3",
+    NUM_4: "4",
+    NUM_5: "5",
+    NUM_6: "6",
+    NUM_7: "7",
+    NUM_8: "8",
+    NUM_9: "9",
+    NUM_MINUS: "-",
+    NUM_PLUS: "+",
+    NUM_DOT: ".",
+    NUM_TIMES: "*",
+    NUM_DIVIDE: "/"
+};
+
 Token.invalidKeys = [" ", "\t", "\n", "\r"]
 
 Token.fn = Token.prototype;
+
+Token.fn.isPrintable = function() {
+    if (this.control || this.meta) {
+        return false;
+    }
+
+    if (this.specialKey) {
+        if (Token.specialKeysToChar[this.specialKey]) {
+            return true;
+        }
+
+        return false;
+    }
+
+    return true;
+};
+
+Token.fn.getPrintKey = function() {
+    if (this.specialKey) {
+        return Token.specialKeysToChar[this.specialKey] || "";
+    }
+
+    return this.key;
+};
 
 Token.fn.setKey = function(c) {
     this.key = c;
@@ -252,6 +299,15 @@ Token.fn.setMeta = function() {
     }
 
     this.meta = true;
+    return this;
+};
+
+Token.fn.setSpecialKey = function(value) {
+    if (this.specialKey) {
+        throw new Error("Cannot have a token with 2 special key values!");
+    }
+
+    this.specialKey = value;
     return this;
 };
 

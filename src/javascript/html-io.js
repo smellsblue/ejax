@@ -46,6 +46,12 @@ var HtmlEjax;
         $(".pixel", this.$element).html(" ");
     };
 
+    var escapables = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;"
+    };
+
     HtmlEjax.fn.redrawBuffer = function(buffer) {
         var x = 0;
         var y = 0;
@@ -60,6 +66,10 @@ var HtmlEjax;
                 y++;
                 x = 0;
             } else {
+                if (escapables[c]) {
+                    c = escapables[c];
+                }
+
                 this.screen[x][y].html(c);
                 x++;
             }

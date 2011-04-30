@@ -38,24 +38,18 @@ Buffer.fn.startingIndex = function() {
 };
 
 Buffer.fn.getCursorX = function() {
-    var count = 0;
-    var index = this.cursor;
-
-    if (this.content.charAt(index) == "\n") {
-        count++;
-        index--;
+    if (this.cursor == 0) {
+        return 0;
     }
 
-    for (; index > 0; index--) {
-        if (this.content.charAt(index) == "\n") {
-            count--;
-            break;
-        }
+    var endIndex = this.cursor;
+    var startIndex = endIndex - 1;
 
-        count++;
+    while (startIndex >= 0 && this.content.charAt(startIndex) != "\n") {
+        startIndex--;
     }
 
-    return count;
+    return endIndex - startIndex - 1;
 };
 
 Buffer.fn.getCursorY = function() {
@@ -75,14 +69,27 @@ Buffer.fn.getCursorY = function() {
     return count;
 };
 
-Buffer.fn.moveForward = function() {
-    if (this.cursor >= this.content.length) {
+Buffer.fn.setCursor = function(value) {
+    if (value < 0) {
         // TODO: Ring the bell
         return;
     }
 
-    this.cursor++;
+    if (value > this.content.length) {
+        // TODO: Ring the bell
+        return;
+    }
+
+    this.cursor = value;
     this.ejax.io.setCursor(this.getCursorX(), this.getCursorY());
+};
+
+Ejax.fn.setCursor = function(value) {
+    this.currentBuffer.setCursor(value);
+};
+
+Buffer.fn.moveForward = function() {
+    this.setCursor(this.cursor + 1);
 };
 
 Ejax.fn.moveForward = function() {
@@ -90,21 +97,34 @@ Ejax.fn.moveForward = function() {
 };
 
 Buffer.fn.moveBackward = function() {
-    if (this.cursor <= 0) {
-        // TODO: Ring the bell
-        return;
-    }
-
-    this.cursor--;
-    this.ejax.io.setCursor(this.getCursorX(), this.getCursorY());
+    this.setCursor(this.cursor - 1);
 };
 
 Ejax.fn.moveBackward = function() {
     this.currentBuffer.moveBackward();
 };
 
+Buffer.fn.nextLine = function() {
+    // TODO
+};
+
+Ejax.fn.nextLine = function() {
+    this.currentBuffer.nextLine();
+};
+
+Buffer.fn.previousLine = function() {
+    // TODO
+};
+
+Ejax.fn.previousLine = function() {
+    this.currentBuffer.previousLine();
+};
+
 Buffer.fn.insert = function(str) {
-    // TODO: implement;
+    var before = this.content.substring(0, this.cursor);
+    var after = this.content.substring(this.cursor, this.content.length);
+    this.setBufferContent(before + str + after);
+    this.setCursor(this.cursor + str.length);
 };
 
 Ejax.fn.insert = function(str) {
