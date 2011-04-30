@@ -131,7 +131,6 @@ var HtmlEjax;
             throw new Error("Cursor out of range: " + x + ", " + y);
         }
 
-        console.log("SETTING CURSOR", x, y);
         $(".cursor", this.$element).removeClass("cursor").css({ color: "black", backgroundColor: "white" });
         this.screen[x][y].addClass("cursor").css({ color: "white", backgroundColor: "black" });
     };

@@ -4,26 +4,33 @@ function Bindings() {
 
 Bindings.fn = Bindings.prototype;
 
-Bindings.fn.bind = function(code, fn) {
-    tokens = parseBinding(code);
-    var tree = this.tree;
-
-    for (var i = 0; i < tokens.length - 1; i++) {
-        var token = tokens[i];
-        var next = tree[token.toString()];
-
-        if (!next) {
-            tree[token.toString()] = {};
-            next = tree[token.toString()];
-        } else if (next.isFunction()) {
-            tree[token.toString()] = {};
-            next = tree[token.toString()];
-        }
-
-        tree = next;
+Bindings.fn.bind = function(codes, fn) {
+    if (codes.isString()) {
+        codes = [codes];
     }
 
-    tree[tokens[tokens.length - 1].toString()] = fn;
+    for (var index = 0; index < codes.length; index++) {
+        var code = codes[index];
+        tokens = parseBinding(code);
+        var tree = this.tree;
+
+        for (var i = 0; i < tokens.length - 1; i++) {
+            var token = tokens[i];
+            var next = tree[token.toString()];
+
+            if (!next) {
+                tree[token.toString()] = {};
+                next = tree[token.toString()];
+            } else if (next.isFunction()) {
+                tree[token.toString()] = {};
+                next = tree[token.toString()];
+            }
+
+            tree = next;
+        }
+
+        tree[tokens[tokens.length - 1].toString()] = fn;
+    }
 };
 
 /**

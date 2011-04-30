@@ -28,3 +28,7 @@ String.prototype.isPrintable = function() {
 Object.prototype.isFunction = function() {
     return typeof(this) == "function";
 };
+
+Object.prototype.isString = function() {
+    return typeof(this) == "string";
+};
