@@ -1,0 +1,156 @@
+<project name="ejax" default="dist" basedir=".">
+  <!-- Properties -->
+  <property name="bin" location="bin"/>
+  <property name="lib" location="lib"/>
+  <property name="base.build" location="build"/>
+  <property name="base.build.jar" location="${base.build}/jar"/>
+  <property name="base.src" location="src"/>
+  <property name="java.src" location="${base.src}/java"/>
+  <property name="java.test.src" location="${base.src}/test"/>
+  <property name="java.build.jar" location="${base.build.jar}"/>
+  <property name="java.test.build" location="${base.build}/test"/>
+  <property name="java.dist" location="dist"/>
+  <property name="java.jar.name" value="ejax.jar"/>
+  <property name="java.jar" location="${bin}/${java.jar.name}"/>
+  <property name="javascript.src" location="${base.src}/javascript"/>
+  <property name="javascript.test.src" location="${base.src}/test/javascript"/>
+  <property name="javascript.dest" value="${base.build}/html"/>
+  <property name="javascript.combined" value="${javascript.dest}/ejax-complete.js"/>
+  <property name="javascript.minified" value="${javascript.dest}/ejax-complete-min.js"/>
+  <property name="testng.jar" location="${lib}/testng-5.11-jdk15.jar"/>
+  <property name="testng.report.dir" location="${base.build}/report"/>
+  <property name="yuicompressor.jar" value="${lib}/yuicompressor-2.4.6.jar"/>
+  <property name="workingdir" location="${base.build}/tmp"/>
+  <property name="core.js.files" value="monkeypatches.js,ejax.js,buffers.js,bindings.js,modes.js,global.js"/>
+
+  <!-- Macros -->
+  <macrodef name="yuicompress">
+    <attribute name="src" />
+    <attribute name="dest" />
+    <attribute name="args" />
+
+    <sequential>
+      <echo level="info">Running yuicompressor on @{src}</echo>
+      <java jar="${yuicompressor.jar}" fork="true">
+        <arg line="@{args} -o" />
+        <arg file="@{dest}" />
+        <arg file="@{src}" />
+      </java>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="concatsource">
+    <attribute name="destfile" />
+    <attribute name="sourcedir" />
+    <attribute name="sourcefiles" />
+    <attribute name="workingdir" default="${workingdir}" />
+
+    <element name="filters" optional="true" description="Additonal filters to apply to individual files"/>
+
+    <sequential>
+      <echo level="info">Concatenating</echo>
+      <echo level="info">    Source Files : @{sourcefiles}</echo>
+      <echo level="info">    In Source Dir : @{sourcedir}</echo>
+      <echo level="info">    To : @{destfile}</echo>
+
+      <delete dir="@{workingdir}" quiet="true"/>
+      <mkdir dir="@{workingdir}"/>
+      <copy todir="@{workingdir}">
+        <filelist dir="@{sourcedir}" files="@{sourcefiles}" />
+        <filterchain>
+          <filters />
+          <fixcrlf fixlast="true" eof="remove"/>
+        </filterchain>
+      </copy>
+
+      <concat destfile="@{destfile}" fixlastline="true" >
+        <filelist dir="@{workingdir}" files="@{sourcefiles}" />
+      </concat>
+
+      <delete dir="@{workingdir}" quiet="true"/>
+    </sequential>
+  </macrodef>
+
+  <!-- Paths and filesets -->
+  <path id="java.classpath">
+    <fileset dir="${lib}">
+      <include name="commons-io-1.4.jar"/>
+      <include name="commons-vfs-1.0.jar"/>
+    </fileset>
+    <pathelement location="${javascript.src}"/>
+  </path>
+
+  <path id="java.test.classpath">
+    <path refid="java.classpath"/>
+    <pathelement location="${testng.jar}"/>
+    <pathelement location="${java.test.build}"/>
+    <pathelement location="${javascript.test.src}"/>
+  </path>
+
+  <fileset id="testng.tests" dir="${java.test.build}">
+    <include name="**/*Test.class"/>
+  </fileset>
+
+  <!-- Compilation related targets -->
+  <target name="init" description="Initialize build environment.">
+    <mkdir dir="${base.build}"/>
+    <mkdir dir="${java.build.jar}"/>
+    <mkdir dir="${java.dist}"/>
+  </target>
+
+  <target name="compile" depends="init" description="Compile the Java source.">
+    <javac srcdir="${java.src}" destdir="${java.build.jar}" classpathref="java.classpath" debug="true"/>
+
+    <!-- Non java resources for the jar. -->
+    <copy todir="${java.build.jar}">
+      <fileset dir="${java.src}" excludes="**/*.java"/>
+    </copy>
+    <copy todir="${java.build.jar}">
+      <fileset dir="${javascript.src}" includes="**/*"/>
+    </copy>
+  </target>
+
+  <target name="dist" depends="compile" description="Generate the distribution.">
+    <jar jarfile="${java.jar}" basedir="${base.build.jar}"/>
+    <concatsource destfile="${javascript.combined}" sourcedir="${javascript.src}" sourcefiles="jquery-1.5.2.js,${core.js.files},html-io.js"/>
+    <yuicompress src="${javascript.combined}" dest="${javascript.minified}" args=""/>
+
+    <copy todir="${javascript.dest}">
+      <fileset dir="${javascript.src}" includes="**/*.html"/>
+      <fileset dir="${javascript.src}" includes="**/*.js"/>
+    </copy>
+  </target>
+
+  <target name="clean" description="Clean up.">
+    <delete dir="${base.build}"/>
+    <delete dir="${java.dist}"/>
+    <delete file="${java.jar}"/>
+  </target>
+
+  <target name="clean-all" depends="clean" description="Clean up everything."/>
+
+  <!-- Test related targets -->
+  <target name="test-init" description="Initialize test environment.">
+    <mkdir dir="${base.build}"/>
+    <mkdir dir="${java.test.build}"/>
+    <mkdir dir="${testng.report.dir}"/>
+  </target>
+
+  <target name="test-compile" depends="dist, test-init" description="Compile the Java test source.">
+    <javac srcdir="${java.test.src}" destdir="${java.test.build}" classpathref="java.test.classpath" debug="true"/>
+  </target>
+
+  <target name="test" depends="test-compile" description="Run the suite of tests.">
+    <!-- Until we need TestNG tests...
+    <taskdef resource="testngtasks" classpath="${testng.jar}"/>
+    <testng classpathref="java.test.classpath" outputDir="${testng.report.dir}" classfilesetref="testng.tests" haltOnfailure="true"/>
+    -->
+
+    <taskdef name="runit" classname="org.ejax.test.RUnitTask" classpathref="java.test.classpath"/>
+    <runit classpathref="java.test.classpath">
+      <fileset dir="${javascript.test.src}">
+        <include name="*Test.js"/>
+      </fileset>
+    </runit>
+  </target>
+</project>

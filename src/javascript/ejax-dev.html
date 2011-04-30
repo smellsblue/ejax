@@ -1,0 +1,23 @@
+<html>
+  <head>
+    <title>Ejax</title>
+    <script type="text/javascript" src="jquery-1.5.2.js"></script>
+    <script type="text/javascript" src="monkeypatches.js"></script>
+    <script type="text/javascript" src="ejax.js"></script>
+    <script type="text/javascript" src="buffers.js"></script>
+    <script type="text/javascript" src="bindings.js"></script>
+    <script type="text/javascript" src="modes.js"></script>
+    <script type="text/javascript" src="global.js"></script>
+    <script type="text/javascript" src="html-io.js"></script>
+    <script type="text/javascript">
+      $(function() {
+        $(".ejax").ejax();
+        ejax.setBufferContent("This is the content.\n\n\nThis is all the content.\n\nThis is testing all the content.\nThis is testing a really really super duper humungoid ungodly wham bam thank you ma'am ridonculously long line.\nAnd now short one.\n");
+      });
+    </script>
+  </head>
+
+  <body>
+    <div class="ejax"></div>
+  </body>
+</html>

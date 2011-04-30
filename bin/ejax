@@ -1,0 +1,2 @@
+#!/bin/sh
+java -classpath ejax.jar:../lib/commons-io-1.4.jar org.ejax.javascript.Execute ejax.js ejax
