@@ -9,11 +9,15 @@ function Buffer(ejax) {
 Buffer.fn = Buffer.prototype;
 
 Buffer.fn.charAt = function(index) {
-    if (index < 0 || index >= this.content.length) {
+    if (index < 0 || index >= this.length()) {
         return null;
     }
 
     return this.content.charAt(index);
+};
+
+Buffer.fn.length = function() {
+    return this.content.length;
 };
 
 Buffer.fn.indexAfterNext = function(c, index) {
@@ -45,7 +49,7 @@ Buffer.fn.getCursorX = function() {
     var endIndex = this.cursor;
     var startIndex = endIndex - 1;
 
-    while (startIndex >= 0 && this.content.charAt(startIndex) != "\n") {
+    while (startIndex >= 0 && this.charAt(startIndex) != "\n") {
         startIndex--;
     }
 
@@ -56,12 +60,12 @@ Buffer.fn.getCursorY = function() {
     var count = 0;
     var index = this.cursor;
 
-    if (this.content.charAt(index) == "\n") {
+    if (this.charAt(index) == "\n") {
         index--;
     }
 
     for (; index >= 0; index--) {
-        if (this.content.charAt(index) == "\n") {
+        if (this.charAt(index) == "\n") {
             count++;
         }
     }
@@ -75,7 +79,7 @@ Buffer.fn.setCursor = function(value) {
         return;
     }
 
-    if (value > this.content.length) {
+    if (value > this.length()) {
         this.ejax.ringBell();
         return;
     }
@@ -105,7 +109,28 @@ Ejax.fn.moveBackward = function() {
 };
 
 Buffer.fn.nextLine = function() {
-    // TODO
+    var x = this.getCursorX();
+    var index = this.cursor;
+
+    if (this.charAt(index) != "\n") {
+        while (index < this.length()) {
+            index++;
+
+            if (this.charAt(index) == "\n") {
+                break;
+            }
+        }
+    }
+
+    for (var i = 0; index < this.length() && i <= x; i++) {
+        index++;
+
+        if (this.charAt(index) == "\n") {
+            break;
+        }
+    }
+
+    this.setCursor(index);
 };
 
 Ejax.fn.nextLine = function() {
@@ -113,7 +138,35 @@ Ejax.fn.nextLine = function() {
 };
 
 Buffer.fn.previousLine = function() {
-    // TODO
+    if (this.cursor == 0) {
+        return;
+    }
+
+    var x = this.getCursorX();
+    var index = this.cursor - 1;
+    var newlineCount = 0;
+
+    while (index > 0) {
+        if (this.charAt(index) == "\n") {
+            newlineCount++;
+
+            if (newlineCount == 2) {
+                break;
+            }
+        }
+
+        index--;
+    }
+
+    for (var i = 0; index < this.length() && i <= x; i++) {
+        index++;
+
+        if (this.charAt(index) == "\n") {
+            break;
+        }
+    }
+
+    this.setCursor(index);
 };
 
 Ejax.fn.previousLine = function() {
@@ -122,7 +175,7 @@ Ejax.fn.previousLine = function() {
 
 Buffer.fn.insert = function(str) {
     var before = this.content.substring(0, this.cursor);
-    var after = this.content.substring(this.cursor, this.content.length);
+    var after = this.content.substring(this.cursor, this.length());
     this.setBufferContent(before + str + after);
     this.setCursor(this.cursor + str.length);
 };
