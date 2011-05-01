@@ -15,6 +15,7 @@
   <property name="javascript.src" location="${base.src}/javascript"/>
   <property name="javascript.test.src" location="${base.src}/test/javascript"/>
   <property name="javascript.dest" value="${base.build}/html"/>
+  <property name="javascript.core.combined" value="${javascript.dest}/ejax-core-complete.js"/>
   <property name="javascript.combined" value="${javascript.dest}/ejax-complete.js"/>
   <property name="javascript.minified" value="${javascript.dest}/ejax-complete-min.js"/>
   <property name="yuicompressor.jar" value="${lib}/yuicompressor-2.4.6.jar"/>
@@ -79,6 +80,7 @@
     <pathelement location="${java.test.build}"/>
     <pathelement location="${javascript.test.src}"/>
     <pathelement location="${java.jar}"/>
+    <pathelement location="${javascript.core.combined}"/>
   </path>
 
   <!-- Compilation related targets -->
@@ -102,6 +104,7 @@
 
   <target name="dist" depends="compile" description="Generate the distribution.">
     <jar jarfile="${java.jar}" basedir="${base.build.jar}"/>
+    <concatsource destfile="${javascript.core.combined}" sourcedir="${javascript.src}" sourcefiles="${core.js.files}"/>
     <concatsource destfile="${javascript.combined}" sourcedir="${javascript.src}" sourcefiles="jquery-1.5.2.js,${core.js.files},html-io.js"/>
     <yuicompress src="${javascript.combined}" dest="${javascript.minified}" args=""/>
 

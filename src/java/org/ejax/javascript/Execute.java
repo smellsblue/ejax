@@ -2,6 +2,7 @@ package org.ejax.javascript;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -53,7 +54,41 @@ public class Execute {
             }
 
             URL url = Thread.currentThread().getContextClassLoader().getResource(filename);
-            return new File(url.toURI());
+
+            if (url != null) {
+                file = new File(url.toURI());
+
+                if (file.exists() && file.isFile()) {
+                    return file;
+                }
+            }
+
+            String[] paths = System.getProperty("java.class.path").split(System.getProperty("path.separator"));
+            String filenameWithSeparator = filename;
+
+            if (!filenameWithSeparator.startsWith(File.separator)) {
+                filenameWithSeparator = File.separator + filenameWithSeparator;
+            }
+
+            for (String path : paths) {
+                File pathFile = new File(path);
+
+                if (!pathFile.exists()) {
+                    continue;
+                }
+
+                if (pathFile.isFile() && pathFile.getCanonicalPath().endsWith(filenameWithSeparator)) {
+                    return pathFile;
+                } else if (pathFile.isDirectory()) {
+                    file = new File(pathFile, filename);
+
+                    if (file.exists() && file.isFile()) {
+                        return file;
+                    }
+                }
+            }
+
+            throw new FileNotFoundException("Cannot find file '" + filename + "'");
         } catch (Exception e) {
             throw new RuntimeException("Failure to load file '" + filename + "'.", e);
         }
