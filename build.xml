@@ -17,8 +17,6 @@
   <property name="javascript.dest" value="${base.build}/html"/>
   <property name="javascript.combined" value="${javascript.dest}/ejax-complete.js"/>
   <property name="javascript.minified" value="${javascript.dest}/ejax-complete-min.js"/>
-  <property name="testng.jar" location="${lib}/testng-5.11-jdk15.jar"/>
-  <property name="testng.report.dir" location="${base.build}/report"/>
   <property name="yuicompressor.jar" value="${lib}/yuicompressor-2.4.6.jar"/>
   <property name="workingdir" location="${base.build}/tmp"/>
   <property name="core.js.files" value="monkeypatches.js,ejax.js,buffers.js,bindings.js,modes.js,global.js"/>
@@ -73,23 +71,15 @@
 
   <!-- Paths and filesets -->
   <path id="java.classpath">
-    <fileset dir="${lib}">
-      <include name="commons-io-1.4.jar"/>
-      <include name="commons-vfs-1.0.jar"/>
-    </fileset>
     <pathelement location="${javascript.src}"/>
   </path>
 
   <path id="java.test.classpath">
     <path refid="java.classpath"/>
-    <pathelement location="${testng.jar}"/>
     <pathelement location="${java.test.build}"/>
     <pathelement location="${javascript.test.src}"/>
+    <pathelement location="${java.jar}"/>
   </path>
-
-  <fileset id="testng.tests" dir="${java.test.build}">
-    <include name="**/*Test.class"/>
-  </fileset>
 
   <!-- Compilation related targets -->
   <target name="init" description="Initialize build environment.">
@@ -133,7 +123,6 @@
   <target name="test-init" description="Initialize test environment.">
     <mkdir dir="${base.build}"/>
     <mkdir dir="${java.test.build}"/>
-    <mkdir dir="${testng.report.dir}"/>
   </target>
 
   <target name="test-compile" depends="dist, test-init" description="Compile the Java test source.">
@@ -141,12 +130,7 @@
   </target>
 
   <target name="test" depends="test-compile" description="Run the suite of tests.">
-    <!-- Until we need TestNG tests...
-    <taskdef resource="testngtasks" classpath="${testng.jar}"/>
-    <testng classpathref="java.test.classpath" outputDir="${testng.report.dir}" classfilesetref="testng.tests" haltOnfailure="true"/>
-    -->
-
-    <taskdef name="runit" classname="org.ejax.test.RUnitTask" classpathref="java.test.classpath"/>
+    <taskdef name="runit" classname="org.ejax.javascript.test.RUnitTask" classpathref="java.test.classpath"/>
     <runit classpathref="java.test.classpath">
       <fileset dir="${javascript.test.src}">
         <include name="*Test.js"/>
