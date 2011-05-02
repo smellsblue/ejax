@@ -23,6 +23,7 @@ public class RUnitTask extends Task {
     private Path classpath;
     private List<FileSet> files;
     private CommandlineJava javaCommand;
+    private String testsToRun = "";
 
     public void addFileset(FileSet fileSet) {
         getFiles().add(fileSet);
@@ -34,6 +35,7 @@ public class RUnitTask extends Task {
         cmd.setClassname(org.ejax.javascript.Execute.class.getName());
         cmd.createArgument().setValue("runit.js");
         cmd.createArgument().setValue("runit");
+        cmd.createArgument().setValue("#" + testsToRun);
         List<String> argv = new ArrayList<String>();
 
         for (FileSet fileSet : getFiles()) {
@@ -120,6 +122,12 @@ public class RUnitTask extends Task {
         fileSet.setRefid(reference);
         fileSet.setProject(getProject());
         getFiles().add(fileSet);
+    }
+
+    public void setTestsToRun(String value) {
+        if (value != null) {
+            testsToRun = value;
+        }
     }
 
     protected Path getClasspath() {

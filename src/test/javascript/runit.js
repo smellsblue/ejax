@@ -85,8 +85,59 @@ runit.TestResultSet = runit.TestResultSet || function() {
     }
 };
 
+runit.TestFilter = runit.TestFilter || function(filter) {
+    this.originalFilter = filter;
+    this.enabled = false;
+    this.filters = {};
+    var splitFilter = filter.split(",");
+
+    for (var i = 0; i < splitFilter.length; i++) {
+        if (!splitFilter[i].match(/^\s*$/) ) {
+            this.enabled = true;
+            var filterValue = new String(splitFilter[i]).split(".", 2);
+            this.filters[filterValue[0]] = this.filters[filterValue[0]] || { length: 0, tests: {} };
+
+            if (filterValue.length == 2) {
+                this.filters[filterValue[0]].length++;
+                this.filters[filterValue[0]].tests[filterValue[1]] = true;
+            }
+        }
+    }
+};
+
+runit.TestFilter.prototype.filterScripts = function(scripts) {
+    if (!this.enabled) {
+        return scripts;
+    }
+
+    var newScripts = [];
+
+    for (var i = 0; i < scripts.length; i++) {
+        var file = new java.io.File(scripts[i]);
+        var name = new String(file.getName()).replace(/\.js$/, "");
+
+        if (this.filters[name]) {
+            newScripts.push(scripts[i])
+        }
+    }
+
+    return newScripts;
+};
+
+runit.TestFilter.prototype.filterTest = function(name) {
+    var file = new java.io.File(this.currentScript);
+    var scriptName = new String(file.getName()).replace(/\.js$/, "");
+
+    if (this.filters[scriptName].length == 0) {
+        return true;
+    }
+
+    return this.filters[scriptName].tests[name];
+};
+
 runit.main = runit.main || function(argv) {
     var scripts = [];
+    var testsToRunFilter = "";
 
     for (var i = 0; i < argv.length; i++) {
         var arg = argv[i];
@@ -102,17 +153,22 @@ runit.main = runit.main || function(argv) {
                     scripts.push(script);
                 }
             }
+        } else if (arg.match(/^#.+/)) {
+            testsToRunFilter = arg.substring(1, arg.length());
         } else {
             scripts.push(arg);
         }
     }
 
+    testsToRunFilter = new runit.TestFilter(testsToRunFilter);
     var testCount = 0;
     var failureCount = 0;
     println("Running JavaScript tests.");
+    scripts = testsToRunFilter.filterScripts(scripts);
 
     for (var i = 0; i < scripts.length; i++) {
         var script = scripts[i];
+        testsToRunFilter.currentScript = script;
         println("");
         println("Running tests for '" + script + "'");
         println("");
@@ -121,7 +177,7 @@ runit.main = runit.main || function(argv) {
             var engine = org.ejax.javascript.Execute.newEngine();
             engine.eval("load(\"runit.js\")");
             engine.eval(new java.io.FileReader(org.ejax.javascript.Execute.file(script)));
-            engine.invokeMethod(engine.eval("runit"), "run", [{verbose: runit.verbose}]);
+            engine.invokeMethod(engine.eval("runit"), "run", [{verbose: runit.verbose, filter: testsToRunFilter}]);
             var lastCount = engine.eval("runit.lastRun.testCount;");
             var lastFailureCount = engine.eval("runit.lastRun.failureCount;");
             testCount += lastCount.intValue();
@@ -160,8 +216,10 @@ runit.run = runit.run || function(options) {
 
     for (var property in runit.context) {
         if (typeof(runit.context[property]) == "function" && property.match(/^test.+/)) {
-            runit.verbosePrint("Found test '" + property + "'\n");
-            tests.push({name: property, fn: runit.context[property]});
+            if (!options.filter || options.filter.filterTest(property)) {
+                runit.verbosePrint("Found test '" + property + "'\n");
+                tests.push({name: property, fn: runit.context[property]});
+            }
         }
     }
 

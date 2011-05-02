@@ -134,7 +134,7 @@
 
   <target name="test" depends="test-compile" description="Run the suite of tests.">
     <taskdef name="runit" classname="org.ejax.javascript.test.RUnitTask" classpathref="java.test.classpath"/>
-    <runit classpathref="java.test.classpath">
+    <runit classpathref="java.test.classpath" testsToRun="${tests.toRun}">
       <fileset dir="${javascript.test.src}">
         <include name="*Test.js"/>
       </fileset>
