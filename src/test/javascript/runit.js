@@ -125,6 +125,10 @@ runit.TestFilter.prototype.filterScripts = function(scripts) {
 };
 
 runit.TestFilter.prototype.filterTest = function(name) {
+    if (!this.enabled) {
+        return true;
+    }
+
     var file = new java.io.File(this.currentScript);
     var scriptName = new String(file.getName()).replace(/\.js$/, "");
 
@@ -153,7 +157,7 @@ runit.main = runit.main || function(argv) {
                     scripts.push(script);
                 }
             }
-        } else if (arg.match(/^#.+/)) {
+        } else if (arg.match(/^#/)) {
             testsToRunFilter = arg.substring(1, arg.length());
         } else {
             scripts.push(arg);
