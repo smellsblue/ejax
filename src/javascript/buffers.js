@@ -158,6 +158,15 @@ Buffer.fn.previousLine = function() {
         index--;
     }
 
+    if (newlineCount == 0) {
+        this.setCursor(0);
+        return;
+    }
+
+    if (index == 0) {
+        x--;
+    }
+
     for (var i = 0; index < this.length() && i <= x; i++) {
         index++;
 
