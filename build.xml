@@ -102,7 +102,11 @@
     <concatsource destfile="${javascript.terminal.combined}" sourcedir="${javascript.src}" sourcefiles="${core.js.files},terminal-io.js"/>
     <yuicompress src="${javascript.html.combined}" dest="${javascript.html.minified}" args=""/>
     <copy todir="${java.build.jar}" file="${javascript.terminal.combined}"/>
-    <jar jarfile="${java.jar}" basedir="${base.build.jar}"/>
+    <jar jarfile="${java.jar}" basedir="${base.build.jar}">
+      <manifest>
+        <attribute name="Main-Class" value="org.ejax.Main"/>
+      </manifest>
+    </jar>
 
     <copy todir="${javascript.dest}">
       <fileset dir="${javascript.src}" includes="**/*.html"/>
