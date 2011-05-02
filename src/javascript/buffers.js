@@ -197,8 +197,8 @@ Ejax.fn.isBufferVisible = function(buffer) {
 
 Buffer.fn.redraw = function() {
     if (this.isVisible()) {
-        this.screen.ejax.io.clear();
-        this.screen.ejax.io.redrawBuffer(this);
+        this.screen.clear();
+        this.screen.redrawBuffer(this);
     }
 };
 

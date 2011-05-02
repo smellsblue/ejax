@@ -42,50 +42,18 @@ var HtmlEjax;
 
     HtmlEjax.fn = HtmlEjax.prototype;
 
-    HtmlEjax.fn.clear = function() {
-        $(".pixel", this.$element).html(" ");
-    };
-
     var escapables = {
         "&": "&amp;",
         "<": "&lt;",
         ">": "&gt;"
     };
 
-    HtmlEjax.fn.redrawBuffer = function(buffer) {
-        var x = 0;
-        var y = 0;
-        var i = buffer.startingIndex();
-
-        while (true) {
-            var c = buffer.charAt(i);
-
-            if (c == null) {
-                break;
-            } else if (c == "\n") {
-                y++;
-                x = 0;
-            } else {
-                if (escapables[c]) {
-                    c = escapables[c];
-                }
-
-                this.screen[x][y].html(c);
-                x++;
-            }
-
-            if (x >= this.columns) {
-                x = 0;
-                y++;
-                i = buffer.indexAfterNext("\n", i + 1);
-            } else {
-                i++;
-            }
-
-            if (y >= this.rows) {
-                break;
-            }
+    HtmlEjax.fn.setPixel = function(c, x, y) {
+        if (escapables[c]) {
+            c = escapables[c];
         }
+
+        this.screen[x][y].html(c);
     };
 
     HtmlEjax.fn.registerKeyDown = function(fn) {

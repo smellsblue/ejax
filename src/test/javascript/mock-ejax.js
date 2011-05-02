@@ -24,10 +24,7 @@ function MockEjax(options) {
 
 MockEjax.fn = MockEjax.prototype;
 
-MockEjax.fn.clear = function() {
-};
-
-MockEjax.fn.redrawBuffer = function(buffer) {
+MockEjax.fn.setPixel = function(c, x, y) {
 };
 
 MockEjax.fn.registerKeyDown = function(fn) {

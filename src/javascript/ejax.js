@@ -1,10 +1,8 @@
 var ejax = null;
 
 function Ejax(rows, columns, io) {
-    this.rows = rows;
-    this.columns = columns;
     this.io = io;
-    this.screen = new Screen(this);
+    this.screen = new Screen(this, rows, columns);
     var self = this;
     io.registerKeyDown(function(event) {
         self.keyDown(event);
