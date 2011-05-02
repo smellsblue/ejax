@@ -68,7 +68,7 @@ Bindings.fn.process = function(tokens) {
  * complete binding.
  */
 Ejax.fn.processBinding = function(code) {
-    var modeBindings = this.currentBuffer.mode.bindings;
+    var modeBindings = this.screen.currentBuffer.mode.bindings;
     var tokens = this.parseBinding(code);
     var result = modeBindings.process(tokens);
 

@@ -1,5 +1,5 @@
-function Buffer(ejax) {
-    this.ejax = ejax;
+function Buffer(screen) {
+    this.screen = screen;
     this.content = "";
     this.startingLine = 0;
     this.cursor = 0;
@@ -75,21 +75,21 @@ Buffer.fn.getCursorY = function() {
 
 Buffer.fn.setCursor = function(value) {
     if (value < 0) {
-        this.ejax.ringBell();
+        this.screen.ejax.ringBell();
         return;
     }
 
     if (value > this.length()) {
-        this.ejax.ringBell();
+        this.screen.ejax.ringBell();
         return;
     }
 
     this.cursor = value;
-    this.ejax.io.setCursor(this.getCursorX(), this.getCursorY());
+    this.screen.ejax.io.setCursor(this.getCursorX(), this.getCursorY());
 };
 
 Ejax.fn.setCursor = function(value) {
-    this.currentBuffer.setCursor(value);
+    this.screen.currentBuffer.setCursor(value);
 };
 
 Buffer.fn.moveForward = function() {
@@ -97,7 +97,7 @@ Buffer.fn.moveForward = function() {
 };
 
 Ejax.fn.moveForward = function() {
-    this.currentBuffer.moveForward();
+    this.screen.currentBuffer.moveForward();
 };
 
 Buffer.fn.moveBackward = function() {
@@ -105,7 +105,7 @@ Buffer.fn.moveBackward = function() {
 };
 
 Ejax.fn.moveBackward = function() {
-    this.currentBuffer.moveBackward();
+    this.screen.currentBuffer.moveBackward();
 };
 
 Buffer.fn.nextLine = function() {
@@ -134,7 +134,7 @@ Buffer.fn.nextLine = function() {
 };
 
 Ejax.fn.nextLine = function() {
-    this.currentBuffer.nextLine();
+    this.screen.currentBuffer.nextLine();
 };
 
 Buffer.fn.previousLine = function() {
@@ -173,7 +173,7 @@ Buffer.fn.previousLine = function() {
 };
 
 Ejax.fn.previousLine = function() {
-    this.currentBuffer.previousLine();
+    this.screen.currentBuffer.previousLine();
 };
 
 Buffer.fn.insert = function(str) {
@@ -184,21 +184,21 @@ Buffer.fn.insert = function(str) {
 };
 
 Ejax.fn.insert = function(str) {
-    this.currentBuffer.insert(str);
+    this.screen.currentBuffer.insert(str);
 };
 
 Buffer.fn.isVisible = function() {
-    return this.ejax.isBufferVisible(this);
+    return this.screen.ejax.isBufferVisible(this);
 };
 
 Ejax.fn.isBufferVisible = function(buffer) {
-    return this.currentBuffer == buffer;
+    return this.screen.currentBuffer == buffer;
 };
 
 Buffer.fn.redraw = function() {
     if (this.isVisible()) {
-        this.ejax.io.clear();
-        this.ejax.io.redrawBuffer(this);
+        this.screen.ejax.io.clear();
+        this.screen.ejax.io.redrawBuffer(this);
     }
 };
 
@@ -208,5 +208,5 @@ Buffer.fn.setBufferContent = function(content) {
 };
 
 Ejax.fn.setBufferContent = function(content) {
-    this.currentBuffer.setBufferContent(content);
+    this.screen.currentBuffer.setBufferContent(content);
 };

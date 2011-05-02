@@ -4,9 +4,7 @@ function Ejax(rows, columns, io) {
     this.rows = rows;
     this.columns = columns;
     this.io = io;
-    this.currentBuffer = new Buffer(this);
-    io.clear();
-    io.setCursor(this.currentBuffer.getCursorX(), this.currentBuffer.getCursorY());
+    this.screen = new Screen(this);
     var self = this;
     io.registerKeyDown(function(event) {
         self.keyDown(event);
