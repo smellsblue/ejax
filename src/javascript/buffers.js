@@ -138,15 +138,11 @@ Ejax.fn.nextLine = function() {
 };
 
 Buffer.fn.previousLine = function() {
-    if (this.cursor == 0) {
-        return;
-    }
-
     var x = this.getCursorX();
     var index = this.cursor - 1;
     var newlineCount = 0;
 
-    while (index > 0) {
+    while (index >= 0) {
         if (this.charAt(index) == "\n") {
             newlineCount++;
 
@@ -163,11 +159,9 @@ Buffer.fn.previousLine = function() {
         return;
     }
 
-    if (index == 0) {
-        x--;
-    }
+    index++;
 
-    for (var i = 0; index < this.length() && i <= x; i++) {
+    for (var i = 0; index < this.length() && i < x; i++) {
         index++;
 
         if (this.charAt(index) == "\n") {
