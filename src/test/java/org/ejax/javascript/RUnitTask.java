@@ -1,4 +1,4 @@
-package org.ejax.javascript.test;
+package org.ejax.javascript;
 
 import java.io.BufferedWriter;
 import java.io.File;

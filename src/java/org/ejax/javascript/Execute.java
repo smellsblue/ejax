@@ -15,7 +15,6 @@ import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
-// TODO: This code is deprecated and needs to be rewritten...
 public class Execute {
     private String jsFile;
     private String execObj;

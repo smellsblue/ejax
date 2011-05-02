@@ -38,7 +38,7 @@ var HtmlEjax;
 
             toggle = !toggle;
         }, 500);
-    }
+    };
 
     HtmlEjax.fn = HtmlEjax.prototype;
 
