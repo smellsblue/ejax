@@ -131,3 +131,14 @@ function testPreviousLineWithNewlinesAfterFirstLine() {
     mockEjax.ejax.previousLine();
     assertEquals("Buffer position after fifth previous line", 0, mockEjax.ejax.currentBuffer.cursor);
 }
+
+function testEmptyLineThenTwoLinesWithText() {
+    mockEjax.ejax.setBufferContent("abc\n\nxyz\n123");
+    mockEjax.ejax.setCursor(11);
+    mockEjax.ejax.previousLine();
+    assertEquals("Buffer position after first previous line", 7, mockEjax.ejax.currentBuffer.cursor);
+    mockEjax.ejax.previousLine();
+    assertEquals("Buffer position after secon previous line", 4, mockEjax.ejax.currentBuffer.cursor);
+    mockEjax.ejax.previousLine();
+    assertEquals("Buffer position after third previous line", 0, mockEjax.ejax.currentBuffer.cursor);
+}

@@ -162,11 +162,11 @@ Buffer.fn.previousLine = function() {
     index++;
 
     for (var i = 0; index < this.length() && i < x; i++) {
-        index++;
-
         if (this.charAt(index) == "\n") {
             break;
         }
+
+        index++;
     }
 
     this.setCursor(index);
