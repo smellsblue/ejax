@@ -179,16 +179,20 @@ public class Execute {
     public static String fileContents(String filename) {
         try {
             BufferedReader reader = new BufferedReader(fileReader(filename));
-            String line = reader.readLine();
-            StringBuilder result = new StringBuilder();
+            try {
+                String line = reader.readLine();
+                StringBuilder result = new StringBuilder();
 
-            while (line != null) {
-                result.append(line);
-                result.append("\n");
-                line = reader.readLine();
+                while (line != null) {
+                    result.append(line);
+                    result.append("\n");
+                    line = reader.readLine();
+                }
+
+                return result.toString();
+            } finally {
+                reader.close();
             }
-
-            return result.toString();
         } catch (Exception e) {
             throw new RuntimeException("Failure to read file contents of '" + filename + "'.", e);
         }
@@ -197,15 +201,20 @@ public class Execute {
     public static List<String> fileLines(File file) {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
-            String line = reader.readLine();
-            List<String> result = new LinkedList<String>();
 
-            while (line != null) {
-                result.add(line);
-                line = reader.readLine();
+            try {
+                String line = reader.readLine();
+                List<String> result = new LinkedList<String>();
+
+                while (line != null) {
+                    result.add(line);
+                    line = reader.readLine();
+                }
+
+                return result;
+            } finally {
+                reader.close();
             }
-
-            return result;
         } catch (Exception e) {
             throw new RuntimeException("Failure to read file lines of '" + file.getPath() + "'.", e);
         }

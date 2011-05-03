@@ -12,6 +12,14 @@
   <property name="java.dist" location="dist"/>
   <property name="java.jar.name" value="ejax.jar"/>
   <property name="java.jar" location="${bin}/${java.jar.name}"/>
+  <property name="java.include" location="/usr/lib/jvm/java-6-openjdk/include"/>
+  <property name="native.build" location="${base.build}/native"/>
+  <property name="native.src" location="${base.src}/native"/>
+  <property name="native.classes" value="org.ejax.Curses"/>
+  <property name="native.src.header" location="${native.src}/ejaxnative.h"/>
+  <property name="native.src.files" location="${native.src}/ejaxnative.c"/>
+  <property name="native.build.object" location="${native.build}/ejaxnative.o"/>
+  <property name="native.build.shared.object" location="${native.build}/libejaxnative.so"/>
   <property name="javascript.src" location="${base.src}/javascript"/>
   <property name="javascript.test.src" location="${base.src}/test/javascript"/>
   <property name="javascript.dest" value="${base.build}/html"/>
@@ -90,28 +98,50 @@
     <mkdir dir="${base.build}"/>
     <mkdir dir="${java.build.jar}"/>
     <mkdir dir="${java.dist}"/>
+    <mkdir dir="${native.build}"/>
   </target>
 
   <target name="compile" depends="init" description="Compile the Java source.">
     <javac srcdir="${java.src}" destdir="${java.build.jar}" classpathref="java.classpath" debug="true"/>
+    <javah class="${native.classes}" outputFile="${native.src.header}" classpath="${java.build.jar}"/>
+    <echo message="Compiling to object files..."/>
+    <exec executable="gcc" failonerror="true">
+      <arg line="-fpic -I${java.include} -c ${native.src.files} -o ${native.build.object}"/>
+    </exec>
+    <echo message="Compiling to shared object files..."/>
+    <exec executable="gcc" failonerror="true">
+      <arg line="-shared -o ${native.build.shared.object} ${native.build.object} -lcurses"/>
+    </exec>
   </target>
 
-  <target name="dist" depends="compile" description="Generate the distribution.">
+  <target name="concat-js" description="Concat the combined javascript files.">
     <concatsource destfile="${javascript.core.combined}" sourcedir="${javascript.src}" sourcefiles="${core.js.files}"/>
     <concatsource destfile="${javascript.html.combined}" sourcedir="${javascript.src}" sourcefiles="jquery-1.5.2.js,${core.js.files},html-io.js"/>
     <concatsource destfile="${javascript.terminal.combined}" sourcedir="${javascript.src}" sourcefiles="${core.js.files},terminal-io.js"/>
+  </target>
+
+  <target name="compress-js" depends="concat-js" description="Compress the javascript files.">
     <yuicompress src="${javascript.html.combined}" dest="${javascript.html.minified}" args=""/>
+  </target>
+
+  <target name="prepare-html" depends="compress-js" description="Prepare the test html files.">
+    <copy todir="${javascript.dest}">
+      <fileset dir="${javascript.src}" includes="**/*.html"/>
+      <fileset dir="${javascript.src}" includes="**/*.js"/>
+    </copy>
+  </target>
+
+  <target name="jar" depends="compile,concat-js" description="Prepare and create the jar.">
     <copy todir="${java.build.jar}" file="${javascript.terminal.combined}"/>
+    <copy todir="${java.build.jar}" file="${native.build.shared.object}"/>
     <jar jarfile="${java.jar}" basedir="${base.build.jar}">
       <manifest>
         <attribute name="Main-Class" value="org.ejax.Main"/>
       </manifest>
     </jar>
+  </target>
 
-    <copy todir="${javascript.dest}">
-      <fileset dir="${javascript.src}" includes="**/*.html"/>
-      <fileset dir="${javascript.src}" includes="**/*.js"/>
-    </copy>
+  <target name="dist" depends="jar,prepare-html" description="Generate the distribution.">
   </target>
 
   <target name="clean" description="Clean up.">
