@@ -121,10 +121,10 @@ JNIEXPORT jint JNICALL Java_org_ejax_Curses_move
 
 /*
  * Class:     org_ejax_Curses
- * Method:    write
+ * Method:    mvaddch
  * Signature: (III)I
  */
-JNIEXPORT jint JNICALL Java_org_ejax_Curses_write
+JNIEXPORT jint JNICALL Java_org_ejax_Curses_mvaddch
   (JNIEnv *, jclass, jint, jint, jint);
 
 /*

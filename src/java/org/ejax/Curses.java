@@ -80,7 +80,15 @@ public class Curses {
     public native static int clear();
     public native static int refresh();
     public native static int move(int x, int y);
-    public native static int write(int x, int y, int c);
+    private native static int mvaddch(int x, int y, int c);
+
+    public static void write(int x, int y, String str) {
+        int columns = columns();
+
+        for (int i = 0; i < str.length() && i < columns; i++) {
+            mvaddch(x, y, str.charAt(i));
+        }
+    }
 
     // Keyboard input
     public native static int read();

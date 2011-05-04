@@ -210,3 +210,7 @@ Buffer.fn.setBufferContent = function(content) {
 Ejax.fn.setBufferContent = function(content) {
     this.screen.currentBuffer.setBufferContent(content);
 };
+
+Ejax.fn.getBufferContent = function() {
+    return this.screen.currentBuffer.content;
+};
