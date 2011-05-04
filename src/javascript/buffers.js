@@ -187,6 +187,37 @@ Ejax.fn.insert = function(str) {
     this.screen.currentBuffer.insert(str);
 };
 
+Buffer.fn.deleteForward = function() {
+    if (this.cursor >= this.content.length) {
+        this.screen.ejax.ringBell();
+        return;
+    }
+
+    var before = this.content.substring(0, this.cursor);
+    var after = this.content.substring(this.cursor + 1, this.length());
+    this.setBufferContent(before + after);
+};
+
+Ejax.fn.deleteForward = function() {
+    this.screen.currentBuffer.deleteForward();
+};
+
+Buffer.fn.deleteBackward = function() {
+    if (this.cursor <= 0) {
+        this.screen.ejax.ringBell();
+        return;
+    }
+
+    var before = this.content.substring(0, this.cursor - 1);
+    var after = this.content.substring(this.cursor, this.length());
+    this.setBufferContent(before + after);
+    this.moveBackward();
+};
+
+Ejax.fn.deleteBackward = function() {
+    this.screen.currentBuffer.deleteBackward();
+};
+
 Buffer.fn.isVisible = function() {
     return this.screen.ejax.isBufferVisible(this);
 };

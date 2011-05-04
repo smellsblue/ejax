@@ -158,7 +158,7 @@
     <mkdir dir="${java.test.build}"/>
   </target>
 
-  <target name="test-compile" depends="dist, test-init" description="Compile the Java test source.">
+  <target name="test-compile" depends="jar, test-init" description="Compile the Java test source.">
     <javac srcdir="${java.test.src}" destdir="${java.test.build}" classpathref="java.test.classpath" debug="true"/>
   </target>
 

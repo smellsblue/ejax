@@ -28,6 +28,7 @@ MockEjax.fn.setPixel = function(c, x, y) {
 };
 
 MockEjax.fn.registerKeyDown = function(fn) {
+    this.onKeyDown = fn;
 };
 
 MockEjax.fn.setCursor = function(x, y) {

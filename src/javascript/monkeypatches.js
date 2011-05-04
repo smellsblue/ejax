@@ -7,5 +7,10 @@ Object.prototype.isFunction = function() {
 };
 
 Object.prototype.isString = function() {
-    return typeof(this) == "string";
+    return false;
+};
+
+String.prototype.isString = function() {
+    // For some reason typeof(this) doesn't work for strings...
+    return true;
 };

@@ -142,3 +142,25 @@ function testEmptyLineThenTwoLinesWithText() {
     mockEjax.ejax.previousLine();
     assertEquals("Buffer position after third previous line", 0, mockEjax.ejax.screen.currentBuffer.cursor);
 }
+
+function testDeleteForward() {
+    mockEjax.ejax.setBufferContent("abc");
+    mockEjax.ejax.setCursor(2);
+    mockEjax.ejax.deleteForward();
+    assertEquals("Buffer position after first delete", 2, mockEjax.ejax.screen.currentBuffer.cursor);
+    assertEquals("Buffer content after first delete", "ab", mockEjax.ejax.getBufferContent());
+    mockEjax.ejax.deleteForward();
+    assertEquals("Buffer position after second delete", 2, mockEjax.ejax.screen.currentBuffer.cursor);
+    assertEquals("Buffer content after first delete", "ab", mockEjax.ejax.getBufferContent());
+}
+
+function testDeleteBackward() {
+    mockEjax.ejax.setBufferContent("abc");
+    mockEjax.ejax.setCursor(1);
+    mockEjax.ejax.deleteBackward();
+    assertEquals("Buffer position after first delete", 0, mockEjax.ejax.screen.currentBuffer.cursor);
+    assertEquals("Buffer content after first delete", "bc", mockEjax.ejax.getBufferContent());
+    mockEjax.ejax.deleteBackward();
+    assertEquals("Buffer position after second delete", 0, mockEjax.ejax.screen.currentBuffer.cursor);
+    assertEquals("Buffer content after first delete", "bc", mockEjax.ejax.getBufferContent());
+}
