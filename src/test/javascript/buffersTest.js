@@ -164,3 +164,66 @@ function testDeleteBackward() {
     assertEquals("Buffer position after second delete", 0, mockEjax.ejax.screen.currentBuffer.cursor);
     assertEquals("Buffer content after first delete", "bc", mockEjax.ejax.getBufferContent());
 }
+
+function testGotoStartOfLineWithPreviousLines() {
+    mockEjax.ejax.setBufferContent("abc\nxyz");
+    mockEjax.ejax.setCursor(5);
+    mockEjax.ejax.lineStart();
+    assertEquals("Buffer position after first lineStart", 4, mockEjax.ejax.screen.currentBuffer.cursor);
+    mockEjax.ejax.lineStart();
+    assertEquals("Buffer position after second lineStart", 4, mockEjax.ejax.screen.currentBuffer.cursor);
+}
+
+function testGotoStartOfLineWithNoPreviousLines() {
+    mockEjax.ejax.setBufferContent("abc\nxyz");
+    mockEjax.ejax.setCursor(1);
+    mockEjax.ejax.lineStart();
+    assertEquals("Buffer position after first lineStart", 0, mockEjax.ejax.screen.currentBuffer.cursor);
+    mockEjax.ejax.lineStart();
+    assertEquals("Buffer position after second lineStart", 0, mockEjax.ejax.screen.currentBuffer.cursor);
+}
+
+function testGotoStartOfLineWithNewlines() {
+    mockEjax.ejax.setBufferContent("\n\n\n");
+    mockEjax.ejax.setCursor(1);
+    mockEjax.ejax.lineStart();
+    assertEquals("Buffer position after first lineStart", 1, mockEjax.ejax.screen.currentBuffer.cursor);
+    mockEjax.ejax.lineStart();
+    assertEquals("Buffer position after second lineStart", 1, mockEjax.ejax.screen.currentBuffer.cursor);
+}
+
+function testGotoStartOfLineWithNewlines() {
+    mockEjax.ejax.setBufferContent("\n\n\n");
+    mockEjax.ejax.setCursor(1);
+    mockEjax.ejax.lineStart();
+    assertEquals("Buffer position after first lineStart", 1, mockEjax.ejax.screen.currentBuffer.cursor);
+    mockEjax.ejax.lineStart();
+    assertEquals("Buffer position after second lineStart", 1, mockEjax.ejax.screen.currentBuffer.cursor);
+}
+
+function testGotoEndOfLineWithMoreLines() {
+    mockEjax.ejax.setBufferContent("abc\nxyz");
+    mockEjax.ejax.setCursor(1);
+    mockEjax.ejax.lineEnd();
+    assertEquals("Buffer position after first lineEnd", 3, mockEjax.ejax.screen.currentBuffer.cursor);
+    mockEjax.ejax.lineEnd();
+    assertEquals("Buffer position after second lineEnd", 3, mockEjax.ejax.screen.currentBuffer.cursor);
+}
+
+function testGotoEndOfLineWithNoMoreLines() {
+    mockEjax.ejax.setBufferContent("abc\nxyz");
+    mockEjax.ejax.setCursor(5);
+    mockEjax.ejax.lineEnd();
+    assertEquals("Buffer position after first lineEnd", 7, mockEjax.ejax.screen.currentBuffer.cursor);
+    mockEjax.ejax.lineEnd();
+    assertEquals("Buffer position after second lineEnd", 7, mockEjax.ejax.screen.currentBuffer.cursor);
+}
+
+function testGotoEndOfLineWithNewlines() {
+    mockEjax.ejax.setBufferContent("\n\n\n");
+    mockEjax.ejax.setCursor(1);
+    mockEjax.ejax.lineEnd();
+    assertEquals("Buffer position after first lineStart", 1, mockEjax.ejax.screen.currentBuffer.cursor);
+    mockEjax.ejax.lineEnd();
+    assertEquals("Buffer position after second lineStart", 1, mockEjax.ejax.screen.currentBuffer.cursor);
+}

@@ -218,6 +218,34 @@ Ejax.fn.deleteBackward = function() {
     this.screen.currentBuffer.deleteBackward();
 };
 
+Buffer.fn.lineStart = function() {
+    var index = this.cursor;
+
+    while (index > 0 && this.charAt(index - 1) != "\n") {
+        index--;
+    }
+
+    this.setCursor(index);
+};
+
+Ejax.fn.lineStart = function() {
+    this.screen.currentBuffer.lineStart();
+};
+
+Buffer.fn.lineEnd = function() {
+    var index = this.cursor;
+
+    while (index < this.content.length && this.charAt(index) != "\n") {
+        index++;
+    }
+
+    this.setCursor(index);
+};
+
+Ejax.fn.lineEnd = function() {
+    this.screen.currentBuffer.lineEnd();
+};
+
 Buffer.fn.isVisible = function() {
     return this.screen.ejax.isBufferVisible(this);
 };

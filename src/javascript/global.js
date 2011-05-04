@@ -6,6 +6,8 @@ defaultBindings.bind(["C-f", "RIGHT"], function() { ejax.moveForward(); });
 defaultBindings.bind(["C-b", "LEFT"], function() { ejax.moveBackward(); });
 defaultBindings.bind(["C-n", "DOWN"], function() { ejax.nextLine(); });
 defaultBindings.bind(["C-p", "UP"], function() { ejax.previousLine(); });
+defaultBindings.bind(["C-a", "HOME"], function() { ejax.lineStart(); });
+defaultBindings.bind(["C-e", "END"], function() { ejax.lineEnd(); });
 defaultBindings.bind("BSP", function() { ejax.deleteBackward(); });
 defaultBindings.bind("DEL", function() { ejax.deleteForward(); });
 defaultBindings.type = function(key) { ejax.insert(key); };
