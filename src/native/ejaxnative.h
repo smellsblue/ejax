@@ -10,17 +10,17 @@ extern "C" {
 /*
  * Class:     org_ejax_Curses
  * Method:    install
- * Signature: ()I
+ * Signature: ()V
  */
-JNIEXPORT jint JNICALL Java_org_ejax_Curses_install
+JNIEXPORT void JNICALL Java_org_ejax_Curses_install
   (JNIEnv *, jclass);
 
 /*
  * Class:     org_ejax_Curses
  * Method:    uninstall
- * Signature: ()I
+ * Signature: ()V
  */
-JNIEXPORT jint JNICALL Java_org_ejax_Curses_uninstall
+JNIEXPORT void JNICALL Java_org_ejax_Curses_uninstall
   (JNIEnv *, jclass);
 
 /*
@@ -97,6 +97,14 @@ JNIEXPORT jint JNICALL Java_org_ejax_Curses_keypad
 
 /*
  * Class:     org_ejax_Curses
+ * Method:    timeout
+ * Signature: (I)V
+ */
+JNIEXPORT void JNICALL Java_org_ejax_Curses_timeout
+  (JNIEnv *, jclass, jint);
+
+/*
+ * Class:     org_ejax_Curses
  * Method:    beep
  * Signature: ()I
  */
@@ -142,6 +150,14 @@ JNIEXPORT jint JNICALL Java_org_ejax_Curses_mvaddch
  */
 JNIEXPORT jint JNICALL Java_org_ejax_Curses_read
   (JNIEnv *, jclass);
+
+/*
+ * Class:     org_ejax_Curses
+ * Method:    unread
+ * Signature: (I)I
+ */
+JNIEXPORT jint JNICALL Java_org_ejax_Curses_unread
+  (JNIEnv *, jclass, jint);
 
 /*
  * Class:     org_ejax_Curses

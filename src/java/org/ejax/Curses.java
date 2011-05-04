@@ -62,8 +62,8 @@ public class Curses {
     }
 
     // Startup and shutdown hooks
-    private native static int install();
-    private native static int uninstall();
+    private native static void install();
+    private native static void uninstall();
 
     // Various terminal options
     public native static int nl();
@@ -75,6 +75,7 @@ public class Curses {
     public native static int echo();
     public native static int noecho();
     public native static int keypad(boolean value);
+    public native static void timeout(int value);
 
     // Printing to the screen actions
     public native static int beep();
@@ -93,6 +94,19 @@ public class Curses {
 
     // Keyboard input
     public native static int read();
+    public native static int unread(int c);
+
+    public static boolean available() {
+        timeout(0);
+        int value = read();
+        timeout(-1);
+
+        if (value >= 0) {
+            unread(value);
+        }
+
+        return value >= 0;
+    }
 
     // Screen dimensions
     public native static int rows();

@@ -1,14 +1,12 @@
 #include "ejaxnative.h"
 #include <curses.h>
 
-JNIEXPORT jint JNICALL Java_org_ejax_Curses_install(JNIEnv *env, jclass clazz) {
+JNIEXPORT void JNICALL Java_org_ejax_Curses_install(JNIEnv *env, jclass clazz) {
   initscr();
-  return 0;
 }
 
-JNIEXPORT jint JNICALL Java_org_ejax_Curses_uninstall(JNIEnv *env, jclass clazz) {
+JNIEXPORT void JNICALL Java_org_ejax_Curses_uninstall(JNIEnv *env, jclass clazz) {
   endwin();
-  return 0;
 }
 
 JNIEXPORT jint JNICALL Java_org_ejax_Curses_nl(JNIEnv *env, jclass clazz) {
@@ -47,6 +45,10 @@ JNIEXPORT jint JNICALL Java_org_ejax_Curses_keypad(JNIEnv *env, jclass clazz, jb
   return keypad(stdscr, value);
 }
 
+JNIEXPORT void JNICALL Java_org_ejax_Curses_timeout(JNIEnv *env, jclass clazz, jint value) {
+  timeout(value);
+}
+
 JNIEXPORT jint JNICALL Java_org_ejax_Curses_beep(JNIEnv *env, jclass clazz) {
   return beep();
 }
@@ -69,6 +71,10 @@ JNIEXPORT jint JNICALL Java_org_ejax_Curses_mvaddch(JNIEnv *env, jclass clazz, j
 
 JNIEXPORT jint JNICALL Java_org_ejax_Curses_read(JNIEnv *env, jclass clazz) {
   return getch();
+}
+
+JNIEXPORT jint JNICALL Java_org_ejax_Curses_unread(JNIEnv *env, jclass clazz, jint c) {
+  return ungetch(c);
 }
 
 JNIEXPORT jint JNICALL Java_org_ejax_Curses_rows(JNIEnv *env, jclass clazz) {
