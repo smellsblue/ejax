@@ -1,10 +1,10 @@
 var ejax = null;
 
 function Ejax(rows, columns, io) {
-    this.io = io;
+    this.io = new IO(io);
     this.screen = new Screen(this, rows, columns);
     var self = this;
-    io.registerKeyDown(function(event) {
+    this.io.registerKeyDown(function(event) {
         self.keyDown(event);
     });
     ejax = this;
@@ -199,4 +199,5 @@ Ejax.fn.keyDown = function(event) {
 Ejax.fn.ringBell = function() {
     // TODO: This function should ring the bell if possible, and then
     // cancel some actions like creating a keyboard macro.
+    this.io.beep();
 };

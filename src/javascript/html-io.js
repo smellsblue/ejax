@@ -113,6 +113,10 @@ var HtmlEjax;
         this.screen[x][y].addClass("cursor").css({ color: "white", backgroundColor: "black" });
     };
 
+    HtmlEjax.fn.beep = function() {
+        // TODO
+    };
+
     $.fn.ejax = function() {
         if (ejax) {
             return this;

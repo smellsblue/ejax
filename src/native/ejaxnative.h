@@ -97,6 +97,14 @@ JNIEXPORT jint JNICALL Java_org_ejax_Curses_keypad
 
 /*
  * Class:     org_ejax_Curses
+ * Method:    beep
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_org_ejax_Curses_beep
+  (JNIEnv *, jclass);
+
+/*
+ * Class:     org_ejax_Curses
  * Method:    clear
  * Signature: ()I
  */

@@ -114,6 +114,10 @@ TerminalEjax.fn.setCursor = function(x, y) {
     curses.move(x, y);
 };
 
+TerminalEjax.fn.beep = function() {
+    curses.beep();
+};
+
 TerminalEjax.main = function(args) {
     curses.keypad(true);
     curses.nonl();

@@ -77,6 +77,7 @@ public class Curses {
     public native static int keypad(boolean value);
 
     // Printing to the screen actions
+    public native static int beep();
     public native static int clear();
     public native static int refresh();
     public native static int move(int x, int y);

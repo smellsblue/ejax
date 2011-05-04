@@ -47,6 +47,10 @@ JNIEXPORT jint JNICALL Java_org_ejax_Curses_keypad(JNIEnv *env, jclass clazz, jb
   return keypad(stdscr, value);
 }
 
+JNIEXPORT jint JNICALL Java_org_ejax_Curses_beep(JNIEnv *env, jclass clazz) {
+  return beep();
+}
+
 JNIEXPORT jint JNICALL Java_org_ejax_Curses_clear(JNIEnv *env, jclass clazz) {
   return clear();
 }
