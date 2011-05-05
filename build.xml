@@ -27,6 +27,7 @@
   <property name="javascript.html.combined" value="${javascript.dest}/ejax-complete.js"/>
   <property name="javascript.html.minified" value="${javascript.dest}/ejax-complete-min.js"/>
   <property name="javascript.terminal.combined" value="${javascript.dest}/ejax-terminal-complete.js"/>
+  <property name="javascript.browser.combined" value="${javascript.dest}/ejax-browser-complete.js"/>
   <property name="yuicompressor.jar" value="${lib}/yuicompressor-2.4.6.jar"/>
   <property name="workingdir" location="${base.build}/tmp"/>
   <property name="core.js.files" value="monkeypatches.js,ejax.js,io.js,screen.js,buffers.js,bindings.js,modes.js,global.js"/>
@@ -118,22 +119,21 @@
     <concatsource destfile="${javascript.core.combined}" sourcedir="${javascript.src}" sourcefiles="${core.js.files}"/>
     <concatsource destfile="${javascript.html.combined}" sourcedir="${javascript.src}" sourcefiles="jquery-1.5.2.js,${core.js.files},html-io.js"/>
     <concatsource destfile="${javascript.terminal.combined}" sourcedir="${javascript.src}" sourcefiles="${core.js.files},terminal-io.js"/>
+    <concatsource destfile="${javascript.browser.combined}" sourcedir="${javascript.src}" sourcefiles="monkeypatches.js,server.js,browser-main.js"/>
   </target>
 
   <target name="compress-js" depends="concat-js" description="Compress the javascript files.">
     <yuicompress src="${javascript.html.combined}" dest="${javascript.html.minified}" args=""/>
   </target>
 
-  <target name="prepare-html" depends="compress-js" description="Prepare the test html files.">
-    <copy todir="${javascript.dest}">
-      <fileset dir="${javascript.src}" includes="**/*.html"/>
-      <fileset dir="${javascript.src}" includes="**/*.js"/>
-    </copy>
-  </target>
-
-  <target name="jar" depends="compile,concat-js" description="Prepare and create the jar.">
+  <target name="jar" depends="compile,concat-js,compress-js" description="Prepare and create the jar.">
     <copy todir="${java.build.jar}" file="${javascript.terminal.combined}"/>
+    <copy todir="${java.build.jar}" file="${javascript.browser.combined}"/>
+    <copy todir="${java.build.jar}" file="${javascript.html.minified}"/>
     <copy todir="${java.build.jar}" file="${native.build.shared.object}"/>
+    <copy todir="${java.build.jar}">
+      <fileset dir="${javascript.src}" includes="**/*.html"/>
+    </copy>
     <jar jarfile="${java.jar}" basedir="${base.build.jar}">
       <manifest>
         <attribute name="Main-Class" value="org.ejax.Main"/>
@@ -141,7 +141,7 @@
     </jar>
   </target>
 
-  <target name="dist" depends="jar,prepare-html" description="Generate the distribution.">
+  <target name="dist" depends="jar" description="Generate the distribution.">
   </target>
 
   <target name="clean" description="Clean up.">
