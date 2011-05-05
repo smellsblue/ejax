@@ -6,16 +6,30 @@ function Server(options) {
     this.port = options.port || 7010;
     this.routes = options.routes || new Routes();
     this.verbose = options.verbose;
-    var possible = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    this.log("Generating secret...");
-    var random = java.security.SecureRandom.getInstance("SHA1PRNG");
-    this.secret = "";
 
-    for (var i = 0; i < 32; i++) {
-        this.secret += possible.charAt(random.nextInt(possible.length));
+    if (options.secret) {
+        // I think there are some hidden encoding here because this
+        // secret doesn't match like the generated one does....
+        var s = "";
+        this.secret = new String(options.secret);
+
+        for (var i = 0; i < this.secret.length; i++) {
+            s += this.secret.charAt(i);
+        }
+
+        this.secret = s;
+    } else {
+        var possible = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        this.log("Generating secret...");
+        var random = java.security.SecureRandom.getInstance("SHA1PRNG");
+        this.secret = "";
+
+        for (var i = 0; i < 32; i++) {
+            this.secret += possible.charAt(random.nextInt(possible.length));
+        }
     }
 
-    this.log(this.secret);
+    this.log("The secret is: " + this.secret);
     this.server = new java.net.ServerSocket(this.port);
     this.executor = java.util.concurrent.Executors.newCachedThreadPool();
 }

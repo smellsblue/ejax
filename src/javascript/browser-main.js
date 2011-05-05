@@ -23,6 +23,9 @@ BrowserEjax.main = function(args) {
         } else if (arg == "-p" || arg == "--port") {
             i++;
             options.port = parseInt(args[i], 10);
+        } else if (arg == "-s" || arg == "--secret") {
+            i++;
+            options.secret = args[i];
         }
     }
 
