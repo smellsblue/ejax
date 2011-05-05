@@ -180,6 +180,7 @@ Params.fn = Params.prototype;
 
 Params.fn.parse = function(str) {
     var args = str.split("&");
+    var decode = function(x) { return new String(java.net.URLDecoder.decode(x, "UTF-8")); };
 
     for (var i = 0; i < args.length; i++) {
         var arg = args[i];
@@ -191,9 +192,9 @@ Params.fn.parse = function(str) {
         var index = arg.indexOf("=");
 
         if (index < 0) {
-            this[arg] = null;
+            this[decode(arg)] = null;
         } else {
-            this[arg.substring(0, index)] = arg.substring(index + 1, arg.length);
+            this[decode(arg.substring(0, index))] = decode(arg.substring(index + 1, arg.length));
         }
     }
 };
