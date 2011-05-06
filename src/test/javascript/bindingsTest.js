@@ -29,3 +29,15 @@ function testBackspaceBinding() {
     assertEquals("Buffer position after second delete", 0, mockEjax.ejax.screen.currentBuffer.cursor);
     assertEquals("Buffer content after first delete", "bc", mockEjax.ejax.getBufferContent());
 }
+
+function testFindFile() {
+    var nameLoaded;
+    mockEjax.fileContents = function(name) {
+        nameLoaded = name;
+        return "abc\n123";
+    };
+    mockEjax.onKeyDown({ keyCode: 88, ctrl: true, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 70, ctrl: true, alt: false, shift: false });
+    assertEquals("Name of file loaded", "test.html", nameLoaded);
+    assertEquals("Buffer content after finding file", "abc\n123", mockEjax.ejax.getBufferContent());
+}

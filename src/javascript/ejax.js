@@ -3,6 +3,7 @@ var ejax = null;
 function Ejax(rows, columns, io) {
     this.io = new IO(io);
     this.screen = new Screen(this, rows, columns);
+    this.keyCache = null;
     var self = this;
     this.io.registerKeyDown(function(event) {
         self.keyDown(event);
@@ -189,10 +190,19 @@ Ejax.fn.keyDown = function(event) {
         return;
     }
 
-    var result = this.processBinding(code);
+    if (this.keyCache == null) {
+        this.keyCache = "";
+    }
+
+    this.keyCache += code;
+
+    var result = this.processBinding(this.keyCache);
 
     if (result && result.isFunction()) {
+        this.keyCache = null;
         result();
+    } else if (!result) {
+        this.keyCache = null;
     }
 };
 

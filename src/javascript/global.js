@@ -8,8 +8,9 @@ defaultBindings.bind(["C-n", "DOWN"], function() { ejax.nextLine(); });
 defaultBindings.bind(["C-p", "UP"], function() { ejax.previousLine(); });
 defaultBindings.bind(["C-a", "HOME"], function() { ejax.lineStart(); });
 defaultBindings.bind(["C-e", "END"], function() { ejax.lineEnd(); });
+defaultBindings.bind(["C-d", "DEL"], function() { ejax.deleteForward(); });
 defaultBindings.bind("BSP", function() { ejax.deleteBackward(); });
-defaultBindings.bind("DEL", function() { ejax.deleteForward(); });
+defaultBindings.bind("C-xC-f", function() { ejax.findFile(ejax.readParameter("Find file: ", ejax.getWorkingDirectory())); });
 defaultBindings.type = function(key) { ejax.insert(key); };
 
 var fundamentalMode = new Mode("fundamental");

@@ -273,3 +273,17 @@ Ejax.fn.setBufferContent = function(content) {
 Ejax.fn.getBufferContent = function() {
     return this.screen.currentBuffer.content;
 };
+
+Ejax.fn.findFile = function(filename) {
+    this.setBufferContent(this.io.fileContents(filename));
+};
+
+Ejax.fn.getWorkingDirectory = function() {
+    // TODO
+    return "";
+};
+
+Ejax.fn.readParameter = function(prompt, content) {
+    // TODO
+    return "test.html";
+};

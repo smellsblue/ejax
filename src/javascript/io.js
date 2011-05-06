@@ -27,3 +27,9 @@ IO.fn.beep = function() {
         return this.io.beep();
     }
 };
+
+IO.fn.fileContents = function(filename) {
+    if (this.io.fileContents) {
+        return this.io.fileContents(filename);
+    }
+};
