@@ -283,6 +283,18 @@ Ejax.fn.findFile = function(filename) {
     this.screen.addBuffer(buffer);
 };
 
+Buffer.fn.saveBuffer = function() {
+    if (!this.file) {
+        throw new Error("Saving a non-file buffer is not yet supported!");
+    }
+
+    this.file.save(this.content);
+};
+
+Ejax.fn.saveBuffer = function() {
+    this.screen.currentBuffer.saveBuffer();
+};
+
 Ejax.fn.getWorkingDirectory = function() {
     // TODO
     return "";

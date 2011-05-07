@@ -11,6 +11,7 @@ defaultBindings.bind(["C-e", "END"], function() { ejax.lineEnd(); });
 defaultBindings.bind(["C-d", "DEL"], function() { ejax.deleteForward(); });
 defaultBindings.bind("BSP", function() { ejax.deleteBackward(); });
 defaultBindings.bind("C-xC-f", function() { ejax.findFile(ejax.readParameter("Find file: ", ejax.getWorkingDirectory())); });
+defaultBindings.bind("C-xC-s", function() { ejax.saveBuffer(); });
 defaultBindings.type = function(key) { ejax.insert(key); };
 
 var fundamentalMode = new Mode("fundamental");

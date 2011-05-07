@@ -55,3 +55,14 @@ File.fn.contents = function() {
         reader.close();
     }
 };
+
+File.fn.save = function(contents) {
+    var writer = new java.io.FileWriter(this.getJFile());
+
+    try {
+        writer.write(contents, 0, contents.length);
+        writer.flush();
+    } finally {
+        writer.close();
+    }
+};

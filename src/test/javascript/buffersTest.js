@@ -22,6 +22,20 @@ function testLoadFileThenBufferName() {
     assertEquals("Buffer name after loading file", "testFile.txt", mockEjax.ejax.screen.currentBuffer.name);
 }
 
+function testSaveFile() {
+    var file = java.io.File.createTempFile("buffersTestFile", ".txt");
+    file.deleteOnExit();
+
+    mockEjax.file = function(filename) {
+        return new File(file.getAbsolutePath());
+    };
+
+    mockEjax.ejax.findFile(file.getAbsolutePath());
+    mockEjax.ejax.setBufferContent("This is the contents of a test file.\n");
+    mockEjax.ejax.saveBuffer();
+    assertEquals("File content after saving", "This is the contents of a test file.\n", new File(file.getAbsolutePath()).contents());
+}
+
 function testInitialCursor() {
     assertEquals("Initial buffer position", 0, mockEjax.ejax.screen.currentBuffer.cursor);
 }
