@@ -139,6 +139,62 @@ runit.TestFilter.prototype.filterTest = function(name) {
     return this.filters[scriptName].tests[name];
 };
 
+runit.file = runit.file || function(filename) {
+    var file = new java.io.File(filename);
+
+    if (file.exists() && file.isFile()) {
+        return file;
+    }
+
+    // Cannot load a file from the jar, so skip that possibility
+
+    var paths = java.lang.System.getProperty("java.class.path").split(java.lang.System.getProperty("path.separator"));
+    var filenameWithSeparator = filename;
+
+    if (!filenameWithSeparator.startsWith(java.io.File.separator)) {
+        filenameWithSeparator = java.io.File.separator + filenameWithSeparator;
+    }
+
+    for (var i = 0; i < paths.length; i++) {
+        var path = paths[i];
+        var pathFile = new java.io.File(path);
+
+        if (!pathFile.exists()) {
+            continue;
+        }
+
+        if (pathFile.isFile() && pathFile.getCanonicalPath().endsWith(filenameWithSeparator)) {
+            return pathFile;
+        } else if (pathFile.isDirectory()) {
+            file = new java.io.File(pathFile, filename);
+
+            if (file.exists() && file.isFile()) {
+                return file;
+            }
+        }
+    }
+
+    throw new Error("Cannot find file '" + filename + "'");
+};
+
+runit.fileLines = runit.fileLines || function(file) {
+    var reader = new java.io.BufferedReader(new java.io.FileReader(file));
+
+    try {
+        var line = reader.readLine();
+        var result = new java.util.LinkedList();
+
+        while (line != null) {
+            result.add(line);
+            line = reader.readLine();
+        }
+
+        return result;
+    } finally {
+        reader.close();
+    }
+};
+
 runit.main = runit.main || function(argv) {
     var scripts = [];
     var testsToRunFilter = "";
@@ -148,7 +204,7 @@ runit.main = runit.main || function(argv) {
 
         if (arg.match(/^@.+/)) {
             arg = arg.substring(1, arg.length());
-            var contents = org.ejax.javascript.Execute.fileLines(org.ejax.javascript.Execute.file(arg));
+            var contents = runit.fileLines(runit.file(arg));
 
             for (var j = 0; j < contents.size(); j++) {
                 var script = contents.get(j);
@@ -180,7 +236,7 @@ runit.main = runit.main || function(argv) {
         try {
             var engine = org.ejax.javascript.Execute.newEngine();
             engine.eval("load(\"runit.js\")");
-            engine.eval(new java.io.FileReader(org.ejax.javascript.Execute.file(script)));
+            engine.eval(new java.io.FileReader(runit.file(script)));
             engine.invokeMethod(engine.eval("runit"), "run", [{verbose: runit.verbose, filter: testsToRunFilter}]);
             var lastCount = engine.eval("runit.lastRun.testCount;");
             var lastFailureCount = engine.eval("runit.lastRun.failureCount;");
