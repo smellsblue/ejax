@@ -28,8 +28,8 @@ IO.fn.beep = function() {
     }
 };
 
-IO.fn.fileContents = function(filename) {
-    if (this.io.fileContents) {
-        return this.io.fileContents(filename);
+IO.fn.file = function(filename) {
+    if (this.io.file) {
+        return this.io.file(filename);
     }
 };

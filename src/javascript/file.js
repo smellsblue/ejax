@@ -13,6 +13,10 @@ File.fn.getJFile = function() {
     return this.jFile;
 };
 
+File.fn.name = function() {
+    return this.getJFile().getName();
+};
+
 File.fn.exists = function() {
     return this.getJFile().exists();
 };
@@ -46,7 +50,7 @@ File.fn.contents = function() {
             line = reader.readLine();
         }
 
-        return result.toString();
+        return new String(result.toString());
     } finally {
         reader.close();
     }

@@ -1,5 +1,7 @@
-function Buffer(screen) {
+function Buffer(screen, options) {
     this.screen = screen;
+    this.name = options.name;
+    this.file = options.file;
     this.content = "";
     this.startingLine = 0;
     this.cursor = 0;
@@ -275,7 +277,10 @@ Ejax.fn.getBufferContent = function() {
 };
 
 Ejax.fn.findFile = function(filename) {
-    this.setBufferContent(this.io.fileContents(filename));
+    var file = this.io.file(filename);
+    var buffer = new Buffer(this.screen, { name: file.name(), file: file });
+    buffer.setBufferContent(file.contents());
+    this.screen.addBuffer(buffer);
 };
 
 Ejax.fn.getWorkingDirectory = function() {

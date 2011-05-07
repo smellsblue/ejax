@@ -32,9 +32,9 @@ function testBackspaceBinding() {
 
 function testFindFile() {
     var nameLoaded;
-    mockEjax.fileContents = function(name) {
+    mockEjax.file = function(name) {
         nameLoaded = name;
-        return "abc\n123";
+        return { contents: function() { return "abc\n123"; }, name: function() { return "test.html"; } };
     };
     mockEjax.onKeyDown({ keyCode: 88, ctrl: true, alt: false, shift: false });
     mockEjax.onKeyDown({ keyCode: 70, ctrl: true, alt: false, shift: false });

@@ -2,7 +2,9 @@ function Screen(ejax, rows, columns) {
     this.ejax = ejax;
     this.rows = rows;
     this.columns = columns;
-    this.currentBuffer = new Buffer(this);
+    this.currentBuffer = new Buffer(this, { name: "*scratch*" });
+    this.buffers = {};
+    this.buffers[this.currentBuffer.name] = this.currentBuffer;
     this.clear();
     this.ejax.io.setCursor(this.currentBuffer.getCursorX(), this.currentBuffer.getCursorY());
 }
@@ -47,4 +49,18 @@ Screen.fn.redrawBuffer = function(buffer) {
             break;
         }
     }
+};
+
+Screen.fn.changeBuffer = function(name) {
+    if (!this.buffers[name]) {
+        return;
+    }
+
+    this.currentBuffer = this.buffers[name];
+    this.redrawBuffer(this.currentBuffer);
+};
+
+Screen.fn.addBuffer = function(buffer) {
+    this.buffers[buffer.name] = buffer;
+    this.changeBuffer(buffer.name);
 };

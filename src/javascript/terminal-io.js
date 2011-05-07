@@ -148,6 +148,10 @@ TerminalEjax.fn.beep = function() {
     curses.beep();
 };
 
+TerminalEjax.fn.file = function(filename) {
+    return new File(filename);
+};
+
 TerminalEjax.fn.processInput = function(mappedKey) {
     if (this.keyDownFn) {
         this.keyDownFn({

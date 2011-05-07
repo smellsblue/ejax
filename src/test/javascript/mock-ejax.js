@@ -33,3 +33,6 @@ MockEjax.fn.registerKeyDown = function(fn) {
 
 MockEjax.fn.setCursor = function(x, y) {
 };
+
+MockEjax.fn.file = function(filename) {
+};

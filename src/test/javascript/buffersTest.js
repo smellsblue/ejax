@@ -1,11 +1,25 @@
 load("mock-ejax.js");
 load("ejax-core-complete.js");
+load("file.js");
 
 var mockEjax;
 
 function setUp() {
     ejax = null;
     mockEjax = new MockEjax();
+}
+
+function testInitialBufferName() {
+    assertEquals("Initial buffer name", "*scratch*", mockEjax.ejax.screen.currentBuffer.name);
+}
+
+function testLoadFileThenBufferName() {
+    mockEjax.file = function(filename) {
+        return new File(filename);
+    };
+
+    mockEjax.ejax.findFile("src/test/javascript/testFile.txt");
+    assertEquals("Buffer name after loading file", "testFile.txt", mockEjax.ejax.screen.currentBuffer.name);
 }
 
 function testInitialCursor() {
