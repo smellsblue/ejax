@@ -191,10 +191,10 @@ Ejax.fn.keyDown = function(event) {
     }
 
     if (this.keyCache == null) {
-        this.keyCache = "";
+        this.keyCache = code;
+    } else {
+        this.keyCache += code;
     }
-
-    this.keyCache += code;
 
     var result = this.processBinding(this.keyCache);
 

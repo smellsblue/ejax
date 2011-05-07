@@ -6,7 +6,7 @@ function Screen(ejax, rows, columns) {
     this.buffers = {};
     this.buffers[this.currentBuffer.name] = this.currentBuffer;
     this.clear();
-    this.ejax.io.setCursor(this.currentBuffer.getCursorX(), this.currentBuffer.getCursorY());
+    this.resetCursor();
 }
 
 Screen.fn = Screen.prototype;
@@ -51,13 +51,19 @@ Screen.fn.redrawBuffer = function(buffer) {
     }
 };
 
+Screen.fn.resetCursor = function() {
+    this.ejax.io.setCursor(this.currentBuffer.getCursorX(), this.currentBuffer.getCursorY());
+};
+
 Screen.fn.changeBuffer = function(name) {
     if (!this.buffers[name]) {
         return;
     }
 
     this.currentBuffer = this.buffers[name];
+    this.clear();
     this.redrawBuffer(this.currentBuffer);
+    this.resetCursor();
 };
 
 Screen.fn.addBuffer = function(buffer) {

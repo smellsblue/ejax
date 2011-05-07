@@ -41,3 +41,11 @@ function testFindFile() {
     assertEquals("Name of file loaded", "test.html", nameLoaded);
     assertEquals("Buffer content after finding file", "abc\n123", mockEjax.ejax.getBufferContent());
 }
+
+function testEnterThenUp() {
+    mockEjax.ejax.setBufferContent("abc");
+    mockEjax.onKeyDown({ keyCode: 13, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 38, ctrl: false, alt: false, shift: false });
+    assertEquals("Buffer position after enter and up", 0, mockEjax.ejax.screen.currentBuffer.cursor);
+    assertEquals("Buffer content after enter and up", "\nabc", mockEjax.ejax.getBufferContent());
+}

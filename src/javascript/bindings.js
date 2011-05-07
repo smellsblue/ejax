@@ -86,11 +86,11 @@ Ejax.fn.processBinding = function(code) {
         var key = tokens[0].getPrintKey();
 
         if (modeBindings.type) {
-            return new function() { modeBindings.type(key); };
+            return function() { modeBindings.type(key); };
         }
 
         if (defaultBindings.type) {
-            return new function() { defaultBindings.type(key); };
+            return function() { defaultBindings.type(key); };
         }
     }
 
