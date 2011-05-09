@@ -164,6 +164,28 @@ TerminalEjax.fn.processInput = function(mappedKey) {
 };
 
 TerminalEjax.main = function(args) {
+    for (var i = 0; i < args.length; i++) {
+        var arg = args[i];
+
+        if (arg == "-l" || arg == "--log") {
+            var log = new java.io.File("ejax.log");
+            log = new java.io.FileWriter(log, true);
+            log = new java.io.PrintWriter(log);
+
+            java.lang.Runtime.getRuntime().addShutdownHook(new java.lang.Thread(function() {
+                log.flush();
+                log.close();
+            }));
+
+            setLogger(new Logger({
+                println: function(msg) {
+                    log.println(msg);
+                    log.flush();
+                }
+            }, { enabled: true }));
+        }
+    }
+
     curses.keypad(true);
     curses.nonl();
     curses.cbreak();

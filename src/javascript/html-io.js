@@ -122,6 +122,12 @@ var HtmlEjax;
             return this;
         }
 
+        setLogger(new Logger({
+            println: function(msg) {
+                console.log(msg);
+            }
+        }));
+
         this[0].ejax = new HtmlEjax(this[0]);
         return this;
     };

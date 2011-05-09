@@ -1,3 +1,4 @@
+load("file.js");
 load("mock-ejax.js");
 load("ejax-core-complete.js");
 
@@ -48,4 +49,19 @@ function testEnterThenUp() {
     mockEjax.onKeyDown({ keyCode: 38, ctrl: false, alt: false, shift: false });
     assertEquals("Buffer position after enter and up", 0, mockEjax.ejax.screen.currentBuffer.cursor);
     assertEquals("Buffer content after enter and up", "\nabc", mockEjax.ejax.getBufferContent());
+}
+
+function testSaveFileBindings() {
+    var file = java.io.File.createTempFile("buffersTestFile", ".txt");
+    file.deleteOnExit();
+
+    mockEjax.file = function(filename) {
+        return new File(file.getAbsolutePath());
+    };
+
+    mockEjax.ejax.findFile(file.getAbsolutePath());
+    mockEjax.ejax.setBufferContent("This is the contents of a test file.\n");
+    mockEjax.onKeyDown({ keyCode: 88, ctrl: true, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 83, ctrl: true, alt: false, shift: false });
+    assertEquals("File content after saving", "This is the contents of a test file.\n", new File(file.getAbsolutePath()).contents());
 }

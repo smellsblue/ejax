@@ -199,10 +199,14 @@ Ejax.fn.keyDown = function(event) {
     var result = this.processBinding(this.keyCache);
 
     if (result && result.isFunction()) {
+        logger.debug("Found function for key combo '" + this.keyCache + "'");
         this.keyCache = null;
         result();
     } else if (!result) {
+        logger.debug("No match for key combo '" + this.keyCache + "'");
         this.keyCache = null;
+    } else {
+        logger.debug("Partial match for key combo '" + this.keyCache + "'");
     }
 };
 
