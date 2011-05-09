@@ -215,3 +215,7 @@ Ejax.fn.ringBell = function() {
     // cancel some actions like creating a keyboard macro.
     this.io.beep();
 };
+
+Ejax.fn.exit = function() {
+    this.io.exit();
+};

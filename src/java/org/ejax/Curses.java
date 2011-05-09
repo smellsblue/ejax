@@ -72,6 +72,8 @@ public class Curses {
     public native static int nocbreak();
     public native static int raw();
     public native static int noraw();
+    public native static void qiflush();
+    public native static void noqiflush();
     public native static int echo();
     public native static int noecho();
     public native static int keypad(boolean value);

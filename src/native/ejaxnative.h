@@ -73,6 +73,22 @@ JNIEXPORT jint JNICALL Java_org_ejax_Curses_noraw
 
 /*
  * Class:     org_ejax_Curses
+ * Method:    qiflush
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_org_ejax_Curses_qiflush
+  (JNIEnv *, jclass);
+
+/*
+ * Class:     org_ejax_Curses
+ * Method:    noqiflush
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_org_ejax_Curses_noqiflush
+  (JNIEnv *, jclass);
+
+/*
+ * Class:     org_ejax_Curses
  * Method:    echo
  * Signature: ()I
  */

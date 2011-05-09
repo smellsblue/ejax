@@ -33,6 +33,14 @@ JNIEXPORT jint JNICALL Java_org_ejax_Curses_noraw(JNIEnv *env, jclass clazz) {
   return noraw();
 }
 
+JNIEXPORT void JNICALL Java_org_ejax_Curses_qiflush(JNIEnv *env, jclass clazz) {
+  return qiflush();
+}
+
+JNIEXPORT void JNICALL Java_org_ejax_Curses_noqiflush(JNIEnv *env, jclass clazz) {
+  return noqiflush();
+}
+
 JNIEXPORT jint JNICALL Java_org_ejax_Curses_echo(JNIEnv *env, jclass clazz) {
   return echo();
 }

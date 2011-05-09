@@ -33,3 +33,9 @@ IO.fn.file = function(filename) {
         return this.io.file(filename);
     }
 };
+
+IO.fn.exit = function() {
+    if (this.io.exit) {
+        return this.io.exit();
+    }
+};

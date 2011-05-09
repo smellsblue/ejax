@@ -125,6 +125,7 @@ function TerminalEjax() {
     this.rows = curses.rows();
     this.columns = curses.columns();
     this.instance = new Ejax(this.rows, this.columns, this);
+    this.running = true;
 }
 
 TerminalEjax.fn = TerminalEjax.prototype;
@@ -150,6 +151,10 @@ TerminalEjax.fn.beep = function() {
 
 TerminalEjax.fn.file = function(filename) {
     return new File(filename);
+};
+
+TerminalEjax.fn.exit = function() {
+    this.running = false;
 };
 
 TerminalEjax.fn.processInput = function(mappedKey) {
@@ -189,6 +194,7 @@ TerminalEjax.main = function(args) {
     curses.keypad(true);
     curses.nonl();
     curses.cbreak();
+    curses.raw();
     curses.noecho();
     curses.clear();
     curses.move(0, 0);
@@ -199,7 +205,7 @@ TerminalEjax.main = function(args) {
     var c = curses.read();
     var size = 0;
 
-    while (c != -1) {
+    while (termEjax.running && c != -1) {
         var code = c;
         var codes = [c];
 
@@ -237,6 +243,10 @@ TerminalEjax.main = function(args) {
                     ejax.setBufferContent(str);
                 }
             }
+        }
+
+        if (!termEjax.running) {
+            break;
         }
 
         c = curses.read();
