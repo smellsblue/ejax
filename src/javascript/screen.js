@@ -6,6 +6,7 @@ function Screen(ejax, rows, columns) {
     this.buffers = {};
     this.buffers[this.currentBuffer.name] = this.currentBuffer;
     this.clear();
+    this.redraw();
     this.resetCursor();
 }
 
@@ -19,11 +20,16 @@ Screen.fn.clear = function() {
     }
 };
 
-Screen.fn.redrawBuffer = function(buffer) {
-    this.redrawBufferContent(buffer, this.rows, this.columns);
+Screen.fn.redraw = function() {
+    this.redrawBuffer(this.currentBuffer);
 };
 
-Screen.fn.redrawBufferContent = function(buffer, rows, columns) {
+Screen.fn.redrawBuffer = function(buffer) {
+    this.redrawBufferContent(buffer, 0, 0, this.rows - 1, this.columns);
+    this.redrawBufferStatus(buffer, 0, this.rows - 1, this.columns);
+};
+
+Screen.fn.redrawBufferContent = function(buffer, initialX, initialY, rows, columns) {
     var i = buffer.startingIndex();
 
     for (var y = 0; y < rows; y++) {
@@ -31,7 +37,7 @@ Screen.fn.redrawBufferContent = function(buffer, rows, columns) {
 
         for (var x = 0; x < columns; x++) {
             if (finishedLine) {
-                this.ejax.io.setPixel(" ", x, y);
+                this.ejax.io.setPixel(" ", initialX + x, initialY + y);
                 continue;
             }
 
@@ -39,15 +45,23 @@ Screen.fn.redrawBufferContent = function(buffer, rows, columns) {
 
             if (c == null || c == "\n") {
                 finishedLine = true;
-                this.ejax.io.setPixel(" ", x, y);
+                this.ejax.io.setPixel(" ", initialX + x, initialY + y);
                 continue;
             }
 
-            this.ejax.io.setPixel(c, x, y);
+            this.ejax.io.setPixel(c, initialX + x, initialY + y);
             i++;
         }
 
         i = buffer.indexAfterNext("\n", i);
+    }
+};
+
+Screen.fn.redrawBufferStatus = function(buffer, initialX, initialY, columns) {
+    this.ejax.io.setPixel(" ", initialX + 0, initialY);
+
+    for (var i = 0; i < buffer.name.length; i++) {
+        this.ejax.io.setPixel(buffer.name.charAt(i), initialX + i + 1, initialY);
     }
 };
 
@@ -61,7 +75,6 @@ Screen.fn.changeBuffer = function(name) {
     }
 
     this.currentBuffer = this.buffers[name];
-    this.clear();
     this.redrawBuffer(this.currentBuffer);
     this.resetCursor();
 };

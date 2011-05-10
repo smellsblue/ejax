@@ -14,7 +14,7 @@ File.fn.getJFile = function() {
 };
 
 File.fn.name = function() {
-    return this.getJFile().getName();
+    return new String(this.getJFile().getName());
 };
 
 File.fn.exists = function() {

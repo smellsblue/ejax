@@ -33,7 +33,7 @@ function setUp() {
     };
 }
 
-function testTestBufferContent() {
+function testTestScreenContent() {
     mockEjax.ejax.setBufferContent("abc\n123\nxyz\n\ndef\n\n456\n");
     assertEquals("Max y value", 23, mockEjax.pixels.maxY);
     assertEquals("Screen row  0", "abc                                                                             ", mockEjax.pixelRow(0));
@@ -59,5 +59,39 @@ function testTestBufferContent() {
     assertEquals("Screen row 20", "                                                                                ", mockEjax.pixelRow(20));
     assertEquals("Screen row 21", "                                                                                ", mockEjax.pixelRow(21));
     assertEquals("Screen row 22", "                                                                                ", mockEjax.pixelRow(22));
-    assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
+    assertEquals("Screen row 23", " *scratch*                                                                      ", mockEjax.pixelRow(23));
+}
+
+function testscreenContentAfterFindingFile() {
+    mockEjax.file = function(filename) {
+        return new File(filename);
+    };
+
+    mockEjax.ejax.setBufferContent("abc\n123\nxyz\n\ndef\n\n456\n");
+    mockEjax.ejax.findFile("src/test/javascript/testFile.txt");
+    assertEquals("Max y value", 23, mockEjax.pixels.maxY);
+    assertEquals("Screen row  0", "abc                                                                             ", mockEjax.pixelRow(0));
+    assertEquals("Screen row  1", "123                                                                             ", mockEjax.pixelRow(1));
+    assertEquals("Screen row  2", "                                                                                ", mockEjax.pixelRow(2));
+    assertEquals("Screen row  3", "                                                                                ", mockEjax.pixelRow(3));
+    assertEquals("Screen row  4", "                                                                                ", mockEjax.pixelRow(4));
+    assertEquals("Screen row  5", "                                                                                ", mockEjax.pixelRow(5));
+    assertEquals("Screen row  6", "                                                                                ", mockEjax.pixelRow(6));
+    assertEquals("Screen row  7", "                                                                                ", mockEjax.pixelRow(7));
+    assertEquals("Screen row  8", "                                                                                ", mockEjax.pixelRow(8));
+    assertEquals("Screen row  9", "                                                                                ", mockEjax.pixelRow(9));
+    assertEquals("Screen row 10", "                                                                                ", mockEjax.pixelRow(10));
+    assertEquals("Screen row 11", "                                                                                ", mockEjax.pixelRow(11));
+    assertEquals("Screen row 12", "                                                                                ", mockEjax.pixelRow(12));
+    assertEquals("Screen row 13", "                                                                                ", mockEjax.pixelRow(13));
+    assertEquals("Screen row 14", "                                                                                ", mockEjax.pixelRow(14));
+    assertEquals("Screen row 15", "                                                                                ", mockEjax.pixelRow(15));
+    assertEquals("Screen row 16", "                                                                                ", mockEjax.pixelRow(16));
+    assertEquals("Screen row 17", "                                                                                ", mockEjax.pixelRow(17));
+    assertEquals("Screen row 18", "                                                                                ", mockEjax.pixelRow(18));
+    assertEquals("Screen row 19", "                                                                                ", mockEjax.pixelRow(19));
+    assertEquals("Screen row 20", "                                                                                ", mockEjax.pixelRow(20));
+    assertEquals("Screen row 21", "                                                                                ", mockEjax.pixelRow(21));
+    assertEquals("Screen row 22", "                                                                                ", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", " testFile.txt                                                                   ", mockEjax.pixelRow(23));
 }
