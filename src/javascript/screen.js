@@ -20,34 +20,34 @@ Screen.fn.clear = function() {
 };
 
 Screen.fn.redrawBuffer = function(buffer) {
-    var x = 0;
-    var y = 0;
+    this.redrawBufferContent(buffer, this.rows, this.columns);
+};
+
+Screen.fn.redrawBufferContent = function(buffer, rows, columns) {
     var i = buffer.startingIndex();
 
-    while (true) {
-        var c = buffer.charAt(i);
+    for (var y = 0; y < rows; y++) {
+        var finishedLine = false;
 
-        if (c == null) {
-            break;
-        } else if (c == "\n") {
-            y++;
-            x = 0;
-        } else {
+        for (var x = 0; x < columns; x++) {
+            if (finishedLine) {
+                this.ejax.io.setPixel(" ", x, y);
+                continue;
+            }
+
+            var c = buffer.charAt(i);
+
+            if (c == null || c == "\n") {
+                finishedLine = true;
+                this.ejax.io.setPixel(" ", x, y);
+                continue;
+            }
+
             this.ejax.io.setPixel(c, x, y);
-            x++;
-        }
-
-        if (x >= this.columns) {
-            x = 0;
-            y++;
-            i = buffer.indexAfterNext("\n", i + 1);
-        } else {
             i++;
         }
 
-        if (y >= this.rows) {
-            break;
-        }
+        i = buffer.indexAfterNext("\n", i);
     }
 };
 

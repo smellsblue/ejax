@@ -169,6 +169,14 @@ TerminalEjax.fn.processInput = function(mappedKey) {
 };
 
 TerminalEjax.main = function(args) {
+    try {
+        TerminalEjax.run(args);
+    } catch(e) {
+        logger.error("Error caused the app the end.", e);
+    }
+};
+
+TerminalEjax.run = function(args) {
     for (var i = 0; i < args.length; i++) {
         var arg = args[i];
 
