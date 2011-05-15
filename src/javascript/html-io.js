@@ -1,6 +1,8 @@
 var HtmlEjax;
 
 (function($) {
+    var NORMAL_COLORS = { color: "black", backgroundColor: "white" };
+    var INVERTED_COLORS = { color: "white", backgroundColor: "black" };
     var COLUMNS = 80;
     var ROWS = 24;
 
@@ -12,7 +14,7 @@ var HtmlEjax;
         this.screen = [];
         this.rows = ROWS;
         this.columns = COLUMNS;
-        this.$screen.css({ color: "black", backgroundColor: "white" });
+        this.$screen.css(NORMAL_COLORS);
 
         for (var y = 0; y < this.rows; y++) {
             for (var x = 0; x < this.columns; x++) {
@@ -31,9 +33,9 @@ var HtmlEjax;
 
         setInterval(function() {
             if (toggle) {
-                $(".cursor", self.$element).css({ color: "black", backgroundColor: "white" });
+                $(".cursor", self.$element).css(NORMAL_COLORS);
             } else {
-                $(".cursor", self.$element).css({ color: "white", backgroundColor: "black" });
+                $(".cursor", self.$element).css(INVERTED_COLORS);
             }
 
             toggle = !toggle;
@@ -53,7 +55,13 @@ var HtmlEjax;
             c = escapables[c];
         }
 
-        this.screen[x][y].html(c);
+        var colors = NORMAL_COLORS;
+
+        if (options.invert) {
+            colors = INVERTED_COLORS;
+        }
+
+        this.screen[x][y].html(c).css(colors);
     };
 
     HtmlEjax.fn.registerKeyDown = function(fn) {
@@ -109,8 +117,8 @@ var HtmlEjax;
             throw new Error("Cursor out of range: " + x + ", " + y);
         }
 
-        $(".cursor", this.$element).removeClass("cursor").css({ color: "black", backgroundColor: "white" });
-        this.screen[x][y].addClass("cursor").css({ color: "white", backgroundColor: "black" });
+        $(".cursor", this.$element).removeClass("cursor").css(NORMAL_COLORS);
+        this.screen[x][y].addClass("cursor").css(INVERTED_COLORS);
     };
 
     HtmlEjax.fn.beep = function() {
