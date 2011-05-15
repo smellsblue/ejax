@@ -35,6 +35,8 @@ function setUp() {
 
 function testTestScreenContent() {
     mockEjax.ejax.setBufferContent("abc\n123\nxyz\n\ndef\n\n456\n");
+    mockEjax.ejax.screen.clear();
+    mockEjax.ejax.screen.redraw();
     assertEquals("Max y value", 23, mockEjax.pixels.maxY);
     assertEquals("Screen row  0", "abc                                                                             ", mockEjax.pixelRow(0));
     assertEquals("Screen row  1", "123                                                                             ", mockEjax.pixelRow(1));
@@ -58,8 +60,8 @@ function testTestScreenContent() {
     assertEquals("Screen row 19", "                                                                                ", mockEjax.pixelRow(19));
     assertEquals("Screen row 20", "                                                                                ", mockEjax.pixelRow(20));
     assertEquals("Screen row 21", "                                                                                ", mockEjax.pixelRow(21));
-    assertEquals("Screen row 22", "                                                                                ", mockEjax.pixelRow(22));
-    assertEquals("Screen row 23", " *scratch*                                                                      ", mockEjax.pixelRow(23));
+    assertEquals("Screen row 22", " *scratch*                                                                      ", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
 }
 
 function testscreenContentAfterFindingFile() {
@@ -69,6 +71,8 @@ function testscreenContentAfterFindingFile() {
 
     mockEjax.ejax.setBufferContent("abc\n123\nxyz\n\ndef\n\n456\n");
     mockEjax.ejax.findFile("src/test/javascript/testFile.txt");
+    mockEjax.ejax.screen.clear();
+    mockEjax.ejax.screen.redraw();
     assertEquals("Max y value", 23, mockEjax.pixels.maxY);
     assertEquals("Screen row  0", "abc                                                                             ", mockEjax.pixelRow(0));
     assertEquals("Screen row  1", "123                                                                             ", mockEjax.pixelRow(1));
@@ -92,6 +96,6 @@ function testscreenContentAfterFindingFile() {
     assertEquals("Screen row 19", "                                                                                ", mockEjax.pixelRow(19));
     assertEquals("Screen row 20", "                                                                                ", mockEjax.pixelRow(20));
     assertEquals("Screen row 21", "                                                                                ", mockEjax.pixelRow(21));
-    assertEquals("Screen row 22", "                                                                                ", mockEjax.pixelRow(22));
-    assertEquals("Screen row 23", " testFile.txt                                                                   ", mockEjax.pixelRow(23));
+    assertEquals("Screen row 22", " testFile.txt                                                                   ", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
 }

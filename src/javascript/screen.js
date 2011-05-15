@@ -2,9 +2,13 @@ function Screen(ejax, rows, columns) {
     this.ejax = ejax;
     this.rows = rows;
     this.columns = columns;
-    this.currentBuffer = new Buffer(this, { name: "*scratch*" });
+    var scratch = new Buffer(this, { name: "*scratch*" });
+    this.currentWindow = new EjaxWindow(this, scratch, 0, 0, rows - 1, columns);
     this.buffers = {};
-    this.buffers[this.currentBuffer.name] = this.currentBuffer;
+    this.buffers[scratch.name] = scratch;
+    this.windows = [this.currentWindow];
+    this.minibuffer = new Buffer(this, { name: "minibuffer", minibuffer: true });
+    this.windows.push(new EjaxWindow(this, this.minibuffer, 0, rows - 1, 1, columns));
     this.clear();
     this.redraw();
     this.resetCursor();
@@ -12,65 +16,35 @@ function Screen(ejax, rows, columns) {
 
 Screen.fn = Screen.prototype;
 
-Screen.fn.clear = function() {
-    for (var x = 0; x < this.columns; x++) {
-        for (var y = 0; y < this.rows; y++) {
-            this.ejax.io.setPixel(" ", x, y);
-        }
+Screen.fn.eachWindow = function(fn) {
+    for (var i = 0; i < this.windows.length; i++) {
+        fn(this.windows[i]);
     }
+};
+
+Screen.fn.clear = function() {
+    this.eachWindow(function(window) {
+        window.clear();
+    });
 };
 
 Screen.fn.redraw = function() {
-    this.redrawBuffer(this.currentBuffer);
+    this.eachWindow(function(window) {
+        window.redraw();
+    });
 };
 
 Screen.fn.redrawBuffer = function(buffer) {
-    this.redrawBufferContent(buffer, 0, 0, this.rows - 1, this.columns);
-    this.redrawBufferStatus(buffer, 0, this.rows - 1, this.columns);
-};
-
-Screen.fn.redrawBufferContent = function(buffer, initialX, initialY, rows, columns) {
-    var i = buffer.startingIndex();
-
-    for (var y = 0; y < rows; y++) {
-        var finishedLine = false;
-
-        for (var x = 0; x < columns; x++) {
-            if (finishedLine) {
-                this.ejax.io.setPixel(" ", initialX + x, initialY + y);
-                continue;
-            }
-
-            var c = buffer.charAt(i);
-
-            if (c == null || c == "\n") {
-                finishedLine = true;
-                this.ejax.io.setPixel(" ", initialX + x, initialY + y);
-                continue;
-            }
-
-            this.ejax.io.setPixel(c, initialX + x, initialY + y);
-            i++;
+    this.eachWindow(function(window) {
+        if (window.buffer == buffer) {
+            window.clear();
+            window.redraw();
         }
-
-        i = buffer.indexAfterNext("\n", i);
-    }
-};
-
-Screen.fn.redrawBufferStatus = function(buffer, initialX, initialY, columns) {
-    var status = buffer.getStatus();
-
-    for (var i = 0; i < columns && i < status.length; i++) {
-        this.ejax.io.setPixel(status.charAt(i), initialX + i, initialY, { invert: true });
-    }
-
-    for (var i = status.length; i < columns; i++) {
-        this.ejax.io.setPixel(" ", initialX + i, initialY, { invert: true });
-    }
+    });
 };
 
 Screen.fn.resetCursor = function() {
-    this.ejax.io.setCursor(this.currentBuffer.getCursorX(), this.currentBuffer.getCursorY());
+    this.ejax.io.setCursor(this.currentWindow.buffer.getCursorX(), this.currentWindow.buffer.getCursorY());
 };
 
 Screen.fn.changeBuffer = function(name) {
@@ -78,8 +52,8 @@ Screen.fn.changeBuffer = function(name) {
         return;
     }
 
-    this.currentBuffer = this.buffers[name];
-    this.redrawBuffer(this.currentBuffer);
+    this.currentWindow.buffer = this.buffers[name];
+    this.redrawBuffer(this.currentWindow.buffer);
     this.resetCursor();
 };
 

@@ -2,6 +2,7 @@ function Buffer(screen, options) {
     this.screen = screen;
     this.name = options.name;
     this.file = options.file;
+    this.minibuffer = options.minibuffer;
     this.content = "";
     this.startingLine = 0;
     this.cursor = 0;
@@ -95,7 +96,7 @@ Buffer.fn.setCursor = function(value) {
 };
 
 Ejax.fn.setCursor = function(value) {
-    this.screen.currentBuffer.setCursor(value);
+    this.screen.currentWindow.buffer.setCursor(value);
 };
 
 Buffer.fn.moveForward = function() {
@@ -103,7 +104,7 @@ Buffer.fn.moveForward = function() {
 };
 
 Ejax.fn.moveForward = function() {
-    this.screen.currentBuffer.moveForward();
+    this.screen.currentWindow.buffer.moveForward();
 };
 
 Buffer.fn.moveBackward = function() {
@@ -111,7 +112,7 @@ Buffer.fn.moveBackward = function() {
 };
 
 Ejax.fn.moveBackward = function() {
-    this.screen.currentBuffer.moveBackward();
+    this.screen.currentWindow.buffer.moveBackward();
 };
 
 Buffer.fn.nextLine = function() {
@@ -140,7 +141,7 @@ Buffer.fn.nextLine = function() {
 };
 
 Ejax.fn.nextLine = function() {
-    this.screen.currentBuffer.nextLine();
+    this.screen.currentWindow.buffer.nextLine();
 };
 
 Buffer.fn.previousLine = function() {
@@ -179,7 +180,7 @@ Buffer.fn.previousLine = function() {
 };
 
 Ejax.fn.previousLine = function() {
-    this.screen.currentBuffer.previousLine();
+    this.screen.currentWindow.buffer.previousLine();
 };
 
 Buffer.fn.insert = function(str) {
@@ -190,7 +191,7 @@ Buffer.fn.insert = function(str) {
 };
 
 Ejax.fn.insert = function(str) {
-    this.screen.currentBuffer.insert(str);
+    this.screen.currentWindow.buffer.insert(str);
 };
 
 Buffer.fn.deleteForward = function() {
@@ -205,7 +206,7 @@ Buffer.fn.deleteForward = function() {
 };
 
 Ejax.fn.deleteForward = function() {
-    this.screen.currentBuffer.deleteForward();
+    this.screen.currentWindow.buffer.deleteForward();
 };
 
 Buffer.fn.deleteBackward = function() {
@@ -221,7 +222,7 @@ Buffer.fn.deleteBackward = function() {
 };
 
 Ejax.fn.deleteBackward = function() {
-    this.screen.currentBuffer.deleteBackward();
+    this.screen.currentWindow.buffer.deleteBackward();
 };
 
 Buffer.fn.lineStart = function() {
@@ -235,7 +236,7 @@ Buffer.fn.lineStart = function() {
 };
 
 Ejax.fn.lineStart = function() {
-    this.screen.currentBuffer.lineStart();
+    this.screen.currentWindow.buffer.lineStart();
 };
 
 Buffer.fn.lineEnd = function() {
@@ -249,22 +250,15 @@ Buffer.fn.lineEnd = function() {
 };
 
 Ejax.fn.lineEnd = function() {
-    this.screen.currentBuffer.lineEnd();
-};
-
-Buffer.fn.isVisible = function() {
-    return this.screen.ejax.isBufferVisible(this);
+    this.screen.currentWindow.buffer.lineEnd();
 };
 
 Ejax.fn.isBufferVisible = function(buffer) {
-    return this.screen.currentBuffer == buffer;
+    return this.screen.currentWindow.buffer == buffer;
 };
 
 Buffer.fn.redraw = function() {
-    if (this.isVisible()) {
-        this.screen.clear();
-        this.screen.redrawBuffer(this);
-    }
+    this.screen.redrawBuffer(this);
 };
 
 Buffer.fn.setBufferContent = function(content) {
@@ -273,11 +267,11 @@ Buffer.fn.setBufferContent = function(content) {
 };
 
 Ejax.fn.setBufferContent = function(content) {
-    this.screen.currentBuffer.setBufferContent(content);
+    this.screen.currentWindow.buffer.setBufferContent(content);
 };
 
 Ejax.fn.getBufferContent = function() {
-    return this.screen.currentBuffer.content;
+    return this.screen.currentWindow.buffer.content;
 };
 
 Ejax.fn.findFile = function(filename) {
@@ -296,7 +290,7 @@ Buffer.fn.saveBuffer = function() {
 };
 
 Ejax.fn.saveBuffer = function() {
-    this.screen.currentBuffer.saveBuffer();
+    this.screen.currentWindow.buffer.saveBuffer();
 };
 
 Ejax.fn.getWorkingDirectory = function() {

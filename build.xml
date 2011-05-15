@@ -32,7 +32,7 @@
   <property name="yuicompressor.jar" value="${lib}/yuicompressor-2.4.6.jar"/>
   <property name="workingdir" location="${base.build}/tmp"/>
   <property name="bootstrap.js.files" value="bootstrap.js"/>
-  <property name="core.js.files" value="monkeypatches.js,logger.js,ejax.js,io.js,screen.js,buffers.js,bindings.js,modes.js,global.js"/>
+  <property name="core.js.files" value="monkeypatches.js,logger.js,ejax.js,io.js,screen.js,windows.js,buffers.js,bindings.js,modes.js,global.js"/>
   <property name="html.js.files" value="jquery-1.5.2.js,${core.js.files},html-io.js"/>
   <property name="terminal.js.files" value="${core.js.files},file.js,terminal-io.js"/>
   <property name="browser.js.files" value="monkeypatches.js,file.js,server.js,browser-main.js"/>
