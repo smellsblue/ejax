@@ -200,13 +200,16 @@ Ejax.fn.keyDown = function(event) {
 
     if (result && result.isFunction()) {
         logger.debug("Found function for key combo '" + this.keyCache + "'");
+        this.screen.minibuffer.setBufferContent("");
         this.keyCache = null;
         result();
     } else if (!result) {
         logger.debug("No match for key combo '" + this.keyCache + "'");
+        this.screen.minibuffer.setBufferContent(this.keyCache + " is undefined");
         this.keyCache = null;
     } else {
         logger.debug("Partial match for key combo '" + this.keyCache + "'");
+        this.screen.minibuffer.setBufferContent(this.keyCache + "-");
     }
 };
 
