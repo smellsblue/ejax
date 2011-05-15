@@ -73,8 +73,12 @@ JNIEXPORT jint JNICALL Java_org_ejax_Curses_move(JNIEnv *env, jclass clazz, jint
   return move(y, x);
 }
 
-JNIEXPORT jint JNICALL Java_org_ejax_Curses_mvaddch(JNIEnv *env, jclass clazz, jint x, jint y, jint c) {
-  return mvaddch(y, x, c);
+JNIEXPORT jint JNICALL Java_org_ejax_Curses_mvaddch(JNIEnv *env, jclass clazz, jint x, jint y, jint c, jint attributes) {
+  return mvaddch(y, x, c | attributes);
+}
+
+JNIEXPORT jint JNICALL Java_org_ejax_Curses_A_1REVERSE(JNIEnv *env, jclass clazz) {
+  return A_REVERSE;
 }
 
 JNIEXPORT jint JNICALL Java_org_ejax_Curses_read(JNIEnv *env, jclass clazz) {

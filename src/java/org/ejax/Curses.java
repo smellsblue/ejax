@@ -84,13 +84,32 @@ public class Curses {
     public native static int clear();
     public native static int refresh();
     public native static int move(int x, int y);
-    private native static int mvaddch(int x, int y, int c);
+    private native static int mvaddch(int x, int y, int c, int attributes);
 
-    public static void write(int x, int y, String str) {
+    public static int writeChar(int x, int y, int c, int... attributes) {
+        int attributesValue = 0;
+
+        for (int i = 0; i < attributes.length; i++) {
+            attributesValue |= attributes[i];
+        }
+
+        return mvaddch(x, y, c, attributesValue);
+    }
+
+    // Attribute copies
+    private native static int A_REVERSE();
+    public static final int ATTRIBUTE_REVERSE = A_REVERSE();
+
+    public static void write(int x, int y, String str, int... attributes) {
         int columns = columns();
+        int attributesValue = 0;
+
+        for (int i = 0; i < attributes.length; i++) {
+            attributesValue |= attributes[i];
+        }
 
         for (int i = 0; i < str.length() && i < columns; i++) {
-            mvaddch(x, y, str.charAt(i));
+            mvaddch(x, y, str.charAt(i), attributesValue);
         }
     }
 

@@ -130,8 +130,14 @@ function TerminalEjax() {
 
 TerminalEjax.fn = TerminalEjax.prototype;
 
-TerminalEjax.fn.setPixel = function(c, x, y) {
-    curses.write(x, y, c);
+TerminalEjax.fn.setPixel = function(c, x, y, options) {
+    var attributes = [];
+
+    if (options.invert) {
+        attributes.push(curses.ATTRIBUTE_REVERSE);
+    }
+
+    curses.write(x, y, c, attributes);
     curses.move(this.cursor.x, this.cursor.y);
 };
 

@@ -10,6 +10,10 @@ function Buffer(screen, options) {
 
 Buffer.fn = Buffer.prototype;
 
+Buffer.fn.getStatus = function() {
+    return " " + this.name;
+};
+
 Buffer.fn.charAt = function(index) {
     if (index < 0 || index >= this.length()) {
         return null;

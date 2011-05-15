@@ -48,7 +48,7 @@ var HtmlEjax;
         ">": "&gt;"
     };
 
-    HtmlEjax.fn.setPixel = function(c, x, y) {
+    HtmlEjax.fn.setPixel = function(c, x, y, options) {
         if (escapables[c]) {
             c = escapables[c];
         }

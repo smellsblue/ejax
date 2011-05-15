@@ -154,10 +154,18 @@ JNIEXPORT jint JNICALL Java_org_ejax_Curses_move
 /*
  * Class:     org_ejax_Curses
  * Method:    mvaddch
- * Signature: (III)I
+ * Signature: (IIII)I
  */
 JNIEXPORT jint JNICALL Java_org_ejax_Curses_mvaddch
-  (JNIEnv *, jclass, jint, jint, jint);
+  (JNIEnv *, jclass, jint, jint, jint, jint);
+
+/*
+ * Class:     org_ejax_Curses
+ * Method:    A_REVERSE
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_org_ejax_Curses_A_1REVERSE
+  (JNIEnv *, jclass);
 
 /*
  * Class:     org_ejax_Curses

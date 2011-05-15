@@ -58,10 +58,14 @@ Screen.fn.redrawBufferContent = function(buffer, initialX, initialY, rows, colum
 };
 
 Screen.fn.redrawBufferStatus = function(buffer, initialX, initialY, columns) {
-    this.ejax.io.setPixel(" ", initialX + 0, initialY);
+    var status = buffer.getStatus();
 
-    for (var i = 0; i < buffer.name.length; i++) {
-        this.ejax.io.setPixel(buffer.name.charAt(i), initialX + i + 1, initialY);
+    for (var i = 0; i < columns && i < status.length; i++) {
+        this.ejax.io.setPixel(status.charAt(i), initialX + i, initialY, { invert: true });
+    }
+
+    for (var i = status.length; i < columns; i++) {
+        this.ejax.io.setPixel(" ", initialX + i, initialY, { invert: true });
     }
 };
 

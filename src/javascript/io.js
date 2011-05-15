@@ -4,9 +4,13 @@ function IO(io) {
 
 IO.fn = IO.prototype;
 
-IO.fn.setPixel = function(c, x, y) {
+IO.fn.setPixel = function(c, x, y, options) {
+    if (!options) {
+        options = {};
+    }
+
     if (this.io.setPixel) {
-        return this.io.setPixel(c, x, y);
+        return this.io.setPixel(c, x, y, options);
     }
 };
 
