@@ -69,6 +69,6 @@ EjaxWindow.fn.redrawStatus = function() {
     }
 
     for (var i = status.length; i < this.columns; i++) {
-        this.screen.ejax.io.setPixel(" ", this.x + i, initialY, { invert: true });
+        this.screen.ejax.io.setPixel("-", this.x + i, initialY, { invert: true });
     }
 };

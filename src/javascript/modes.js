@@ -1,5 +1,6 @@
-function Mode(name) {
+function Mode(name, description) {
     this.name = name;
+    this.description = description;
     this.bindings = new Bindings();
 }
 

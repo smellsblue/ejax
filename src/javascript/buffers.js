@@ -12,7 +12,7 @@ function Buffer(screen, options) {
 Buffer.fn = Buffer.prototype;
 
 Buffer.fn.getStatus = function() {
-    return " " + this.name;
+    return " " + this.name + "    (" + this.mode.description + ")";
 };
 
 Buffer.fn.charAt = function(index) {

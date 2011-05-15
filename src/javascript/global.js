@@ -15,5 +15,5 @@ defaultBindings.bind("C-xC-s", function() { ejax.saveBuffer(); });
 defaultBindings.bind("C-xC-c", function() { ejax.exit(); });
 defaultBindings.type = function(key) { ejax.insert(key); };
 
-var fundamentalMode = new Mode("fundamental");
+var fundamentalMode = new Mode("fundamental", "Fundamental");
 fundamentalMode.bindings = defaultBindings;

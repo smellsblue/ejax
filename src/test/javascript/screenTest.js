@@ -60,7 +60,7 @@ function testTestScreenContent() {
     assertEquals("Screen row 19", "                                                                                ", mockEjax.pixelRow(19));
     assertEquals("Screen row 20", "                                                                                ", mockEjax.pixelRow(20));
     assertEquals("Screen row 21", "                                                                                ", mockEjax.pixelRow(21));
-    assertEquals("Screen row 22", " *scratch*                                                                      ", mockEjax.pixelRow(22));
+    assertEquals("Screen row 22", " *scratch*    (Fundamental)-----------------------------------------------------", mockEjax.pixelRow(22));
     assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
 }
 
@@ -96,6 +96,6 @@ function testscreenContentAfterFindingFile() {
     assertEquals("Screen row 19", "                                                                                ", mockEjax.pixelRow(19));
     assertEquals("Screen row 20", "                                                                                ", mockEjax.pixelRow(20));
     assertEquals("Screen row 21", "                                                                                ", mockEjax.pixelRow(21));
-    assertEquals("Screen row 22", " testFile.txt                                                                   ", mockEjax.pixelRow(22));
+    assertEquals("Screen row 22", " testFile.txt    (Fundamental)--------------------------------------------------", mockEjax.pixelRow(22));
     assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
 }
