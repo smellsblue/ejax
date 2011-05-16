@@ -49,6 +49,6 @@ BrowserEjax.main = function(args) {
     server.routes.to("/ejax-complete-min.js", function() { return BrowserEjax.fileContents("ejax-complete-min.js"); });
     var url = "http://localhost:" + server.port + "/?s=" + server.secret;
     server.log("Starting url for ejax: " + url);
-    java.lang.Runtime.getRuntime().exec(["google-chrome", url]);
+    java.lang.Runtime.getRuntime().exec(["xdg-open", url]);
     server.run();
 };

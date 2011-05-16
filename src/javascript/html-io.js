@@ -117,6 +117,14 @@ var HtmlEjax;
         // TODO
     };
 
+    HtmlEjax.fn.file = function() {
+        // TODO
+    };
+
+    HtmlEjax.fn.exit = function() {
+        // TODO
+    };
+
     $.fn.ejax = function() {
         if (ejax) {
             return this;
