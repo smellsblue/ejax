@@ -43,7 +43,7 @@ minibufferMode.bindings.type = function(key) {
         ejax.screen.minibuffer.content = "";
         ejax.screen.minibuffer.status.callback(ejax.screen.minibuffer.status.content);
         ejax.screen.minibuffer.status = null;
-        // TODO: finish parameter
+        ejax.screen.minibufferWindow.redraw();
     } else if (key == "\t") {
         // TODO: tab completion
     } else {

@@ -159,8 +159,6 @@ function testReadingParameterToLoadFile() {
 
     mockEjax.onKeyDown({ keyCode: 13, ctrl: false, alt: false, shift: false });
     assertEquals("The loaded filename", "testFile.txt", loadedFilename);
-    mockEjax.ejax.screen.clear();
-    mockEjax.ejax.screen.redraw();
     assertEquals("Max y value", 23, mockEjax.pixels.maxY);
     assertEquals("Screen row  0", "abc                                                                             ", mockEjax.pixelRow(0));
     assertEquals("Screen row  1", "123                                                                             ", mockEjax.pixelRow(1));
