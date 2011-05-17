@@ -37,6 +37,8 @@ fundamentalMode.bindings.onPartialBinding = function(code) {
 };
 
 var minibufferMode = new Mode("minibuffer", "MiniBuffer", editingBindings);
+minibufferMode.bindings.bind(["C-d", "DEL"], function() { ejax.screen.minibuffer.status.deleteForward(); });
+minibufferMode.bindings.bind("BSP", function() { ejax.screen.minibuffer.status.deleteBackward(); });
 minibufferMode.bindings.type = function(key) {
     if (key == "\n") {
         ejax.screen.currentWindow = ejax.screen.minibuffer.status.lastWindow;

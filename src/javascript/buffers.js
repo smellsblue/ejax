@@ -202,11 +202,7 @@ Buffer.fn.deleteForward = function() {
 };
 
 Ejax.fn.deleteForward = function() {
-    if (this.screen.currentWindow == this.screen.minibufferWindow) {
-        this.screen.minibuffer.status.deleteForward();
-    } else {
-        this.screen.currentWindow.buffer.deleteForward();
-    }
+    this.screen.currentWindow.buffer.deleteForward();
 };
 
 Buffer.fn.deleteBackward = function() {
@@ -220,11 +216,7 @@ Buffer.fn.deleteBackward = function() {
 };
 
 Ejax.fn.deleteBackward = function() {
-    if (this.screen.currentWindow == this.screen.minibufferWindow) {
-        this.screen.minibuffer.status.deleteBackward();
-    } else {
-        this.screen.currentWindow.buffer.deleteBackward();
-    }
+    this.screen.currentWindow.buffer.deleteBackward();
 };
 
 Buffer.fn.lineStart = function() {
