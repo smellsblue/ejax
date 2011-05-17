@@ -117,12 +117,19 @@ function testScreenAfterCallingInvalidCommandThenTyping() {
 }
 
 function testReadingParameterToLoadFile() {
+    var currentX, currentY;
+    mockEjax.setCursor = function(x, y) {
+        currentX = x;
+        currentY = y;
+    };
     mockEjax.file = function(filename) {
         return new File("src/test/javascript/testFile.txt");
     };
     mockEjax.ejax.setBufferContent("abc\n123\nxyz\n\ndef\n\n456\n");
     mockEjax.onKeyDown({ keyCode: 88, ctrl: true, alt: false, shift: false });
     mockEjax.onKeyDown({ keyCode: 70, ctrl: true, alt: false, shift: false });
+    assertEquals("X cursor after C-xC-f", 11, currentX);
+    assertEquals("Y cursor after C-xC-f", 23, currentY);
     mockEjax.ejax.screen.clear();
     mockEjax.ejax.screen.redraw();
     assertEquals("Max y value", 23, mockEjax.pixels.maxY);
@@ -141,6 +148,8 @@ function testReadingParameterToLoadFile() {
     mockEjax.onKeyDown({ keyCode: 84, ctrl: false, alt: false, shift: false });
     mockEjax.onKeyDown({ keyCode: 88, ctrl: false, alt: false, shift: false });
     mockEjax.onKeyDown({ keyCode: 84, ctrl: false, alt: false, shift: false });
+    assertEquals("X cursor after typing filename", 23, currentX);
+    assertEquals("Y cursor after typing filename", 23, currentY);
     mockEjax.ejax.screen.clear();
     mockEjax.ejax.screen.redraw();
     assertEquals("Max y value", 23, mockEjax.pixels.maxY);

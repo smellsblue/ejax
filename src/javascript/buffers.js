@@ -92,7 +92,7 @@ Buffer.fn.setCursor = function(value) {
     }
 
     this.cursor = value;
-    this.screen.ejax.io.setCursor(this.getCursorX(), this.getCursorY());
+    this.screen.resetCursor();
 };
 
 Ejax.fn.setCursor = function(value) {

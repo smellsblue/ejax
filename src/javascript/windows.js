@@ -10,6 +10,14 @@ function EjaxWindow(screen, buffer, x, y, rows, columns) {
 
 EjaxWindow.fn = EjaxWindow.prototype;
 
+EjaxWindow.fn.getCursorX = function() {
+    return this.buffer.getCursorX() + this.x;
+};
+
+EjaxWindow.fn.getCursorY = function() {
+    return this.buffer.getCursorY() + this.y;
+};
+
 EjaxWindow.fn.clear = function() {
     for (var x = 0; x < this.columns; x++) {
         for (var y = 0; y < this.rows; y++) {
