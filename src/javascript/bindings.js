@@ -1,5 +1,17 @@
-function Bindings() {
+function Bindings(inheritFrom) {
     this.tree = {};
+    this.bindings = [];
+
+    if (inheritFrom && inheritFrom.bindings) {
+        for (var i = 0; i < inheritFrom.bindings.length; i++) {
+            var binding = inheritFrom.bindings[i];
+            this.bind(binding.codes, binding.fn);
+        }
+    }
+
+    if (inheritFrom && inheritFrom.type) {
+        this.type = inheritFrom.type;
+    }
 }
 
 Bindings.fn = Bindings.prototype;
@@ -8,6 +20,8 @@ Bindings.fn.bind = function(codes, fn) {
     if (codes.isString()) {
         codes = [codes];
     }
+
+    this.bindings.push({ codes: codes, fn: fn });
 
     for (var index = 0; index < codes.length; index++) {
         var code = codes[index];
@@ -70,13 +84,13 @@ Bindings.fn.process = function(tokens) {
 Ejax.fn.processBinding = function(code) {
     var modeBindings = this.screen.currentWindow.buffer.mode.bindings;
     var tokens = this.parseBinding(code);
-    var result = modeBindings.process(tokens);
+    var result = overrideBindings.process(tokens);
 
     if (result) {
         return result;
     }
 
-    result = defaultBindings.process(tokens);
+    result = modeBindings.process(tokens);
 
     if (result) {
         return result;
@@ -85,12 +99,12 @@ Ejax.fn.processBinding = function(code) {
     if (tokens.length == 1 && tokens[0].isPrintable()) {
         var key = tokens[0].getPrintKey();
 
-        if (modeBindings.type) {
-            return function() { modeBindings.type(key); };
+        if (overrideBindings.type) {
+            return function() { overrideBindings.type(key); };
         }
 
-        if (defaultBindings.type) {
-            return function() { defaultBindings.type(key); };
+        if (modeBindings.type) {
+            return function() { modeBindings.type(key); };
         }
     }
 
@@ -173,7 +187,7 @@ Ejax.fn.parseBinding = function(code) {
 };
 
 Ejax.fn.bind = function(code, fn) {
-    defaultBindings.bind(code, fn);
+    overrideBindings.bind(code, fn);
 };
 
 function Token() {

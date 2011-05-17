@@ -1,7 +1,7 @@
-function Mode(name, description) {
+function Mode(name, description, bindings) {
     this.name = name;
     this.description = description;
-    this.bindings = new Bindings();
+    this.bindings = new Bindings(bindings);
 }
 
 Mode.fn = Mode.prototype;
