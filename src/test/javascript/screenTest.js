@@ -143,19 +143,22 @@ function testReadingParameterToLoadFile() {
     mockEjax.onKeyDown({ keyCode: 84, ctrl: false, alt: false, shift: false });
     mockEjax.onKeyDown({ keyCode: 70, ctrl: false, alt: false, shift: true });
     mockEjax.onKeyDown({ keyCode: 73, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 8, ctrl: false, alt: false, shift: false }); // backspace
+    mockEjax.onKeyDown({ keyCode: 73, ctrl: false, alt: false, shift: false });
     mockEjax.onKeyDown({ keyCode: 76, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 69, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 37, ctrl: false, alt: false, shift: false }); // left
+    mockEjax.onKeyDown({ keyCode: 46, ctrl: false, alt: false, shift: false }); // delete
     mockEjax.onKeyDown({ keyCode: 69, ctrl: false, alt: false, shift: false });
     mockEjax.onKeyDown({ keyCode: 190, ctrl: false, alt: false, shift: false });
     mockEjax.onKeyDown({ keyCode: 84, ctrl: false, alt: false, shift: false });
     mockEjax.onKeyDown({ keyCode: 88, ctrl: false, alt: false, shift: false });
     mockEjax.onKeyDown({ keyCode: 84, ctrl: false, alt: false, shift: false });
-    assertEquals("X cursor after typing filename", 23, currentX);
-    assertEquals("Y cursor after typing filename", 23, currentY);
-    mockEjax.ejax.screen.clear();
-    mockEjax.ejax.screen.redraw();
     assertEquals("Max y value", 23, mockEjax.pixels.maxY);
     assertEquals("Screen row 22", " *scratch*    (Fundamental)-----------------------------------------------------", mockEjax.pixelRow(22));
     assertEquals("Screen row 23", "Find file: testFile.txt                                                         ", mockEjax.pixelRow(23));
+    assertEquals("X cursor after typing filename", 23, currentX);
+    assertEquals("Y cursor after typing filename", 23, currentY);
 
     mockEjax.onKeyDown({ keyCode: 13, ctrl: false, alt: false, shift: false });
     assertEquals("The loaded filename", "testFile.txt", loadedFilename);

@@ -13,6 +13,12 @@ String.prototype.insert = function(str, index) {
     return before + str + after;
 };
 
+String.prototype.remove = function(index, length) {
+    var before = this.substring(0, index);
+    var after = this.substring(index + length, this.length);
+    return before + after;
+};
+
 Object.prototype.isFunction = function() {
     return typeof(this) == "function";
 };

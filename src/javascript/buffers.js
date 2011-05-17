@@ -198,13 +198,15 @@ Buffer.fn.deleteForward = function() {
         return;
     }
 
-    var before = this.content.substring(0, this.cursor);
-    var after = this.content.substring(this.cursor + 1, this.length());
-    this.setBufferContent(before + after);
+    this.setBufferContent(this.content.remove(this.cursor, 1));
 };
 
 Ejax.fn.deleteForward = function() {
-    this.screen.currentWindow.buffer.deleteForward();
+    if (this.screen.currentWindow == this.screen.minibufferWindow) {
+        this.screen.minibuffer.status.deleteForward();
+    } else {
+        this.screen.currentWindow.buffer.deleteForward();
+    }
 };
 
 Buffer.fn.deleteBackward = function() {
@@ -213,14 +215,16 @@ Buffer.fn.deleteBackward = function() {
         return;
     }
 
-    var before = this.content.substring(0, this.cursor - 1);
-    var after = this.content.substring(this.cursor, this.length());
-    this.setBufferContent(before + after);
+    this.setBufferContent(this.content.remove(this.cursor - 1, 1));
     this.moveBackward();
 };
 
 Ejax.fn.deleteBackward = function() {
-    this.screen.currentWindow.buffer.deleteBackward();
+    if (this.screen.currentWindow == this.screen.minibufferWindow) {
+        this.screen.minibuffer.status.deleteBackward();
+    } else {
+        this.screen.currentWindow.buffer.deleteBackward();
+    }
 };
 
 Buffer.fn.lineStart = function() {
@@ -341,7 +345,28 @@ MinibufferStatus.fn.insert = function(str) {
         return;
     }
 
-    this.content = this.content.insert(str, ejax.screen.minibuffer.cursor);
+    this.content = this.content.insert(str, ejax.screen.minibuffer.cursor - this.prompt.length);
     this.update();
     ejax.screen.minibuffer.setCursor(ejax.screen.minibuffer.cursor + str.length);
+};
+
+MinibufferStatus.fn.deleteForward = function() {
+    if (ejax.screen.minibuffer.cursor < this.prompt.length || ejax.screen.minibuffer.cursor >= ejax.screen.minibuffer.content.length) {
+        ejax.ringBell();
+        return;
+    }
+
+    this.content = this.content.remove(ejax.screen.minibuffer.cursor - this.prompt.length, 1);
+    this.update();
+};
+
+MinibufferStatus.fn.deleteBackward = function() {
+    if (ejax.screen.minibuffer.cursor <= this.prompt.length) {
+        ejax.ringBell();
+        return;
+    }
+
+    this.content = this.content.remove(ejax.screen.minibuffer.cursor - this.prompt.length - 1, 1);
+    this.update();
+    ejax.screen.minibuffer.moveBackward();
 };
