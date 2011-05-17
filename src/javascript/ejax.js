@@ -196,20 +196,30 @@ Ejax.fn.keyDown = function(event) {
         this.keyCache += code;
     }
 
+    var modeBindings = this.screen.currentWindow.buffer.mode.bindings;
     var result = this.processBinding(this.keyCache);
 
     if (result && result.isFunction()) {
-        logger.debug("Found function for key combo '" + this.keyCache + "'");
-        this.screen.minibuffer.setBufferContent("");
+        if (overrideBindings.onFoundBinding) {
+            overrideBindings.onFoundBinding(this.keyCache);
+        } else if (modeBindings.onFoundBinding) {
+            modeBindings.onFoundBinding(this.keyCache);
+        }
         this.keyCache = null;
         result();
     } else if (!result) {
-        logger.debug("No match for key combo '" + this.keyCache + "'");
-        this.screen.minibuffer.setBufferContent(this.keyCache + " is undefined");
+        if (overrideBindings.onMissedBinding) {
+            overrideBindings.onMissedBinding(this.keyCache);
+        } else if (modeBindings.onMissedBinding) {
+            modeBindings.onMissedBinding(this.keyCache);
+        }
         this.keyCache = null;
     } else {
-        logger.debug("Partial match for key combo '" + this.keyCache + "'");
-        this.screen.minibuffer.setBufferContent(this.keyCache + "-");
+        if (overrideBindings.onPartialBinding) {
+            overrideBindings.onPartialBinding(this.keyCache);
+        } else if (modeBindings.onPartialBinding) {
+            modeBindings.onPartialBinding(this.keyCache);
+        }
     }
 };
 

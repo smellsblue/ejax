@@ -6,7 +6,7 @@ function Buffer(screen, options) {
     this.content = "";
     this.startingLine = 0;
     this.cursor = 0;
-    this.mode = fundamentalMode;
+    this.mode = options.mode || fundamentalMode;
 }
 
 Buffer.fn = Buffer.prototype;
@@ -298,7 +298,41 @@ Ejax.fn.getWorkingDirectory = function() {
     return "";
 };
 
-Ejax.fn.readParameter = function(prompt, content) {
-    // TODO
-    return "test.html";
+Ejax.fn.readParameter = function(prompt, content, callback) {
+    if (this.screen.currentWindow == this.screen.minibufferWindow) {
+        throw new Error("Cannot read a parameter from the minibuffer!");
+    }
+
+    this.screen.minibuffer.setMinibufferStatus(new MinibufferStatus({
+        lastWindow: this.screen.currentWindow,
+        prompt: prompt,
+        content: content,
+        callback: callback
+    }));
+
+    this.screen.currentWindow = this.screen.minibufferWindow;
+    this.setCursor(this.screen.currentWindow.buffer.length());
+};
+
+Buffer.fn.setMinibufferStatus = function(status) {
+    if (!this.minibuffer) {
+        throw new Error("Cannot set minibuffer status of a non minibuffer!");
+    }
+
+    status.minibuffer = this;
+    this.status = status;
+    status.update();
+};
+
+function MinibufferStatus(options) {
+    this.lastWindow = options.lastWindow;
+    this.prompt = options.prompt || "";
+    this.content = options.content || "";
+    this.callback = options.callback || function(result) {};
+}
+
+MinibufferStatus.fn = MinibufferStatus.prototype;
+
+MinibufferStatus.fn.update = function() {
+    this.minibuffer.setBufferContent(this.prompt + this.content);
 };

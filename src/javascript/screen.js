@@ -7,8 +7,9 @@ function Screen(ejax, rows, columns) {
     this.buffers = {};
     this.buffers[scratch.name] = scratch;
     this.windows = [this.currentWindow];
-    this.minibuffer = new Buffer(this, { name: "minibuffer", minibuffer: true });
-    this.windows.push(new EjaxWindow(this, this.minibuffer, 0, rows - 1, 1, columns));
+    this.minibuffer = new Buffer(this, { name: "minibuffer", minibuffer: true, mode: minibufferMode });
+    this.minibufferWindow = new EjaxWindow(this, this.minibuffer, 0, rows - 1, 1, columns);
+    this.windows.push(this.minibufferWindow);
     this.clear();
     this.redraw();
     this.resetCursor();
