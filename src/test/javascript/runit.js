@@ -5,7 +5,8 @@ runit.verbose = runit.verbose || false;
 runit.context = runit.context || this;
 runit.engine = runit.engine || scriptEngine;
 
-runit.TestResult = runit.TestResult || function(testName, passed, error) {
+runit.TestResult = runit.TestResult || function(script, testName, passed, error) {
+    this.script = script;
     this.testName = testName;
     this.passed = passed;
     this.error = error;
@@ -38,12 +39,22 @@ runit.TestResult = runit.TestResult || function(testName, passed, error) {
         print(this.getResultType());
     };
 
-    this.printDetails = function(count) {
+    this.printDetails = function(count, fullDetails) {
         if (!this.passed) {
             println("");
             print(count + ") ");
             print(this.getResultTypeName());
-            println(" from test '" + this.testName + "'");
+            print(" from test '");
+
+            if (fullDetails && this.script && this.script != "") {
+                var scriptName = /\\|\/([^\\\/]*)$/.exec(this.script)[1];
+
+                if (scriptName && scriptName != "") {
+                    print(scriptName + " -> ");
+                }
+            }
+
+            println(this.testName + "'");
             this.printError();
         }
     };
@@ -82,7 +93,19 @@ runit.TestResultSet = runit.TestResultSet || function() {
 
             this.results[i].printDetails(count);
         }
-    }
+    };
+
+    this.getFailures = function() {
+        var failures = [];
+
+        for (var i = 0; i < this.results.length; i++) {
+            if (!this.results[i].passed) {
+                failures.push(this.results[i]);
+            }
+        }
+
+        return failures;
+    };
 };
 
 runit.TestFilter = runit.TestFilter || function(filter) {
@@ -223,6 +246,7 @@ runit.main = runit.main || function(argv) {
     testsToRunFilter = new runit.TestFilter(testsToRunFilter);
     var testCount = 0;
     var failureCount = 0;
+    var failures = [];
     println("Running JavaScript tests.");
     scripts = testsToRunFilter.filterScripts(scripts);
 
@@ -237,11 +261,16 @@ runit.main = runit.main || function(argv) {
             var engine = org.ejax.javascript.Execute.newEngine();
             engine.eval("load(\"runit.js\")");
             engine.eval(new java.io.FileReader(runit.file(script)));
-            engine.invokeMethod(engine.eval("runit"), "run", [{verbose: runit.verbose, filter: testsToRunFilter}]);
+            engine.invokeMethod(engine.eval("runit"), "run", [{verbose: runit.verbose, filter: testsToRunFilter, script: script}]);
             var lastCount = engine.eval("runit.lastRun.testCount;");
             var lastFailureCount = engine.eval("runit.lastRun.failureCount;");
+            var lastFailures = engine.eval("runit.lastRun.failures;");
             testCount += lastCount.intValue();
             failureCount += lastFailureCount.intValue();
+
+            for (var j = 0; j < lastFailures.length; j++) {
+                failures.push(lastFailures[j]);
+            }
         } catch (e) {
             if (e.rhinoException && typeof(e.rhinoException.printStackTrace) == "function") {
                 e.rhinoException.printStackTrace();
@@ -250,6 +279,17 @@ runit.main = runit.main || function(argv) {
             }
             testCount++;
             failureCount++;
+            failures.push(new runit.TestResult("", script, false, e));
+        }
+    }
+
+    if (failures.length > 0) {
+        println("");
+        println("");
+        println("All Failures:");
+
+        for (var i = 0; i < failures.length; i++) {
+            failures[i].printDetails(i + 1, true);
         }
     }
 
@@ -273,6 +313,7 @@ runit.run = runit.run || function(options) {
 
     var tests = [];
     var results = new runit.TestResultSet();
+    var script = options.script;
 
     for (var property in runit.context) {
         if (typeof(runit.context[property]) == "function" && property.match(/^test.+/)) {
@@ -284,7 +325,7 @@ runit.run = runit.run || function(options) {
     }
 
     for (var i = 0; i < tests.length; i++) {
-        var result = runit.runTest(tests[i]);
+        var result = runit.runTest(script, tests[i]);
         results.push(result);
         result.print();
     }
@@ -298,21 +339,22 @@ runit.run = runit.run || function(options) {
     println("------------------------------------------");
     runit.lastRun.testCount = results.length;
     runit.lastRun.failureCount = results.failureCount;
+    runit.lastRun.failures = results.getFailures();
 };
 
-runit.runTest = runit.runTest || function(test) {
+runit.runTest = runit.runTest || function(script, test) {
     try {
         if (typeof(runit.context.setUp) == "function") {
             runit.context.setUp();
         }
     } catch (e) {
-        return new runit.TestResult(test.name + "[setUp]", false, e);
+        return new runit.TestResult(script, test.name + "[setUp]", false, e);
     }
 
     try {
         test.fn();
     } catch (e) {
-        return new runit.TestResult(test.name, false, e);
+        return new runit.TestResult(script, test.name, false, e);
     }
 
     try {
@@ -320,10 +362,10 @@ runit.runTest = runit.runTest || function(test) {
             runit.context.tearDown();
         }
     } catch (e) {
-        return new runit.TestResult(test.name + "[tearDown]", false, e);
+        return new runit.TestResult(script, test.name + "[tearDown]", false, e);
     }
 
-    return new runit.TestResult(test.name, true);
+    return new runit.TestResult(script, test.name, true);
 };
 
 runit.verbosePrint = runit.verbosePrint || function(msg) {
