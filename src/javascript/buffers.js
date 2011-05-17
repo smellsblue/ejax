@@ -184,9 +184,7 @@ Ejax.fn.previousLine = function() {
 };
 
 Buffer.fn.insert = function(str) {
-    var before = this.content.substring(0, this.cursor);
-    var after = this.content.substring(this.cursor, this.length());
-    this.setBufferContent(before + str + after);
+    this.setBufferContent(this.content.insert(str, this.cursor));
     this.setCursor(this.cursor + str.length);
 };
 
@@ -335,4 +333,15 @@ MinibufferStatus.fn = MinibufferStatus.prototype;
 
 MinibufferStatus.fn.update = function() {
     this.minibuffer.setBufferContent(this.prompt + this.content);
+};
+
+MinibufferStatus.fn.insert = function(str) {
+    if (ejax.screen.minibuffer.cursor < this.prompt.length) {
+        ejax.ringBell();
+        return;
+    }
+
+    this.content = this.content.insert(str, ejax.screen.minibuffer.cursor);
+    this.update();
+    ejax.screen.minibuffer.setCursor(ejax.screen.minibuffer.cursor + str.length);
 };

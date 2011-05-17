@@ -43,14 +43,11 @@ function testFindFile() {
     mockEjax.onKeyDown({ keyCode: 69, ctrl: false, alt: false, shift: false });
     mockEjax.onKeyDown({ keyCode: 83, ctrl: false, alt: false, shift: false });
     mockEjax.onKeyDown({ keyCode: 84, ctrl: false, alt: false, shift: false });
-    mockEjax.onKeyDown({ keyCode: 70, ctrl: false, alt: false, shift: true });
-    mockEjax.onKeyDown({ keyCode: 73, ctrl: false, alt: false, shift: false });
-    mockEjax.onKeyDown({ keyCode: 76, ctrl: false, alt: false, shift: false });
-    mockEjax.onKeyDown({ keyCode: 69, ctrl: false, alt: false, shift: false });
     mockEjax.onKeyDown({ keyCode: 190, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 72, ctrl: false, alt: false, shift: false });
     mockEjax.onKeyDown({ keyCode: 84, ctrl: false, alt: false, shift: false });
-    mockEjax.onKeyDown({ keyCode: 88, ctrl: false, alt: false, shift: false });
-    mockEjax.onKeyDown({ keyCode: 84, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 77, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 76, ctrl: false, alt: false, shift: false });
     mockEjax.onKeyDown({ keyCode: 13, ctrl: false, alt: false, shift: false });
     assertEquals("Name of file loaded", "test.html", nameLoaded);
     assertEquals("Buffer content after finding file", "abc\n123", mockEjax.ejax.getBufferContent());

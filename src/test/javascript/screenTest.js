@@ -117,12 +117,13 @@ function testScreenAfterCallingInvalidCommandThenTyping() {
 }
 
 function testReadingParameterToLoadFile() {
-    var currentX, currentY;
+    var currentX, currentY, loadedFilename;
     mockEjax.setCursor = function(x, y) {
         currentX = x;
         currentY = y;
     };
     mockEjax.file = function(filename) {
+        loadedFilename = filename;
         return new File("src/test/javascript/testFile.txt");
     };
     mockEjax.ejax.setBufferContent("abc\n123\nxyz\n\ndef\n\n456\n");
@@ -157,6 +158,7 @@ function testReadingParameterToLoadFile() {
     assertEquals("Screen row 23", "Find file: testFile.txt                                                         ", mockEjax.pixelRow(23));
 
     mockEjax.onKeyDown({ keyCode: 13, ctrl: false, alt: false, shift: false });
+    assertEquals("The loaded filename", "testFile.txt", loadedFilename);
     mockEjax.ejax.screen.clear();
     mockEjax.ejax.screen.redraw();
     assertEquals("Max y value", 23, mockEjax.pixels.maxY);

@@ -41,12 +41,12 @@ minibufferMode.bindings.type = function(key) {
     if (key == "\n") {
         ejax.screen.currentWindow = ejax.screen.minibuffer.status.lastWindow;
         ejax.screen.minibuffer.content = "";
-        ejax.screen.minibuffer.status.callback("test.html");
+        ejax.screen.minibuffer.status.callback(ejax.screen.minibuffer.status.content);
         ejax.screen.minibuffer.status = null;
         // TODO: finish parameter
     } else if (key == "\t") {
         // TODO: tab completion
     } else {
-        ejax.insert(key);
+        ejax.screen.minibuffer.status.insert(key);
     }
 };
