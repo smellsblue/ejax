@@ -60,7 +60,7 @@ EjaxWindow.fn.redrawContent = function() {
             i++;
         }
 
-        i = this.buffer.indexAfterNext("\n", i);
+        i = this.buffer.startOfNextLine(i);
     }
 };
 

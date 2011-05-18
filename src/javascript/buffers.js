@@ -27,13 +27,13 @@ Buffer.fn.length = function() {
     return this.content.length;
 };
 
-Buffer.fn.indexAfterNext = function(c, index) {
+Buffer.fn.startOfNextLine = function(index) {
     while (true) {
         var nextC = this.charAt(index);
 
         if (nextC == null) {
             return index;
-        } else if (nextC == c) {
+        } else if (nextC == "\n") {
             return index + 1;
         }
 
