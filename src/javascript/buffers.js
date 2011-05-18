@@ -1,9 +1,45 @@
+function BufferContent(buffer, content) {
+    this.buffer = buffer;
+    this.content = content;
+}
+
+BufferContent.fn = BufferContent.prototype;
+
+BufferContent.fn.length = function() {
+    return this.content.length;
+};
+
+BufferContent.fn.charAt = function(index) {
+    return this.content.charAt(index);
+};
+
+BufferContent.fn.redraw = function() {
+    this.buffer.redraw();
+};
+
+BufferContent.fn.insert = function(str, index) {
+    this.set(this.content.insert(str, index));
+};
+
+BufferContent.fn.remove = function(index, length) {
+    this.set(this.content.remove(index, length));
+};
+
+BufferContent.fn.set = function(content) {
+    this.content = content;
+    this.redraw();
+};
+
+BufferContent.fn.get = function() {
+    return this.content;
+};
+
 function Buffer(screen, options) {
     this.screen = screen;
     this.name = options.name;
     this.file = options.file;
     this.minibuffer = options.minibuffer;
-    this.content = "";
+    this.content = new BufferContent(this, "");
     this.startingLine = 0;
     this.cursor = 0;
     this.mode = options.mode || fundamentalMode;
@@ -24,7 +60,7 @@ Buffer.fn.charAt = function(index) {
 };
 
 Buffer.fn.length = function() {
-    return this.content.length;
+    return this.content.length();
 };
 
 Buffer.fn.startOfNextLine = function(index) {
@@ -184,7 +220,7 @@ Ejax.fn.previousLine = function() {
 };
 
 Buffer.fn.insert = function(str) {
-    this.setBufferContent(this.content.insert(str, this.cursor));
+    this.content.insert(str, this.cursor);
     this.setCursor(this.cursor + str.length);
 };
 
@@ -193,12 +229,12 @@ Ejax.fn.insert = function(str) {
 };
 
 Buffer.fn.deleteForward = function() {
-    if (this.cursor >= this.content.length) {
+    if (this.cursor >= this.content.length()) {
         this.screen.ejax.ringBell();
         return;
     }
 
-    this.setBufferContent(this.content.remove(this.cursor, 1));
+    this.content.remove(this.cursor, 1);
 };
 
 Ejax.fn.deleteForward = function() {
@@ -211,7 +247,7 @@ Buffer.fn.deleteBackward = function() {
         return;
     }
 
-    this.setBufferContent(this.content.remove(this.cursor - 1, 1));
+    this.content.remove(this.cursor - 1, 1);
     this.moveBackward();
 };
 
@@ -236,7 +272,7 @@ Ejax.fn.lineStart = function() {
 Buffer.fn.lineEnd = function() {
     var index = this.cursor;
 
-    while (index < this.content.length && this.charAt(index) != "\n") {
+    while (index < this.content.length() && this.charAt(index) != "\n") {
         index++;
     }
 
@@ -256,8 +292,7 @@ Buffer.fn.redraw = function() {
 };
 
 Buffer.fn.setBufferContent = function(content) {
-    this.content = content;
-    this.redraw();
+    this.content.set(content);
 };
 
 Ejax.fn.setBufferContent = function(content) {
@@ -265,7 +300,7 @@ Ejax.fn.setBufferContent = function(content) {
 };
 
 Ejax.fn.getBufferContent = function() {
-    return this.screen.currentWindow.buffer.content;
+    return this.screen.currentWindow.buffer.content.get();
 };
 
 Ejax.fn.findFile = function(filename) {
@@ -280,7 +315,7 @@ Buffer.fn.saveBuffer = function() {
         throw new Error("Saving a non-file buffer is not yet supported!");
     }
 
-    this.file.save(this.content);
+    this.file.save(this.content.get());
 };
 
 Ejax.fn.saveBuffer = function() {
@@ -343,7 +378,7 @@ MinibufferStatus.fn.insert = function(str) {
 };
 
 MinibufferStatus.fn.deleteForward = function() {
-    if (ejax.screen.minibuffer.cursor < this.prompt.length || ejax.screen.minibuffer.cursor >= ejax.screen.minibuffer.content.length) {
+    if (ejax.screen.minibuffer.cursor < this.prompt.length || ejax.screen.minibuffer.cursor >= ejax.screen.minibuffer.content.length()) {
         ejax.ringBell();
         return;
     }

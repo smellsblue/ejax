@@ -188,3 +188,55 @@ function testReadingParameterToLoadFile() {
     assertEquals("Screen row 22", " testFile.txt    (Fundamental)--------------------------------------------------", mockEjax.pixelRow(22));
     assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
 }
+
+function testScrollingVertically() {
+    var currentX, currentY;
+    mockEjax.setCursor = function(x, y) {
+        currentX = x;
+        currentY = y;
+    };
+    mockEjax.ejax.screen.clear();
+    mockEjax.ejax.screen.redraw();
+    var content = "";
+
+    for (var i = 1; i < 100; i++) {
+        content += "" + i + "\n";
+    }
+
+    var assertContent = function(startValue) {
+        for (var i = 0; i < 21; i++) {
+            var line = "" + (i + startValue);
+
+            while (line.length < 80) {
+                line += " ";
+            }
+
+            assertEquals("Screen row  " + i, line, mockEjax.pixelRow(i));
+        }
+
+        assertEquals("Screen row 22", " *scratch*    (Fundamental)-----------------------------------------------------", mockEjax.pixelRow(22));
+        assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
+    };
+
+    mockEjax.ejax.setBufferContent(content);
+    assertContent(1);
+
+    for (var i = 0; i < 21; i++) {
+        mockEjax.onKeyDown({ keyCode: 40, ctrl: false, alt: false, shift: false });
+    }
+
+    assertEquals("X cursor after moving down 21 times", 0, currentX);
+    assertEquals("Y cursor after moving down 21 times", 21, currentY);
+    mockEjax.onKeyDown({ keyCode: 40, ctrl: false, alt: false, shift: false });
+    assertContent(19);
+    assertEquals("X cursor after moving down 22 times", 0, currentX);
+    assertEquals("Y cursor after moving down 22 times", 4, currentY);
+
+    for (var i = 0; i < 5; i++) {
+        mockEjax.onKeyDown({ keyCode: 38, ctrl: false, alt: false, shift: false });
+    }
+
+    assertContent(1);
+    assertEquals("X cursor after moving up 5 times", 0, currentX);
+    assertEquals("Y cursor after moving up 5 times", 17, currentY);
+}

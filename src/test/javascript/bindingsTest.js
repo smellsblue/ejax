@@ -56,9 +56,11 @@ function testFindFile() {
 function testEnterThenUp() {
     mockEjax.ejax.setBufferContent("abc");
     mockEjax.onKeyDown({ keyCode: 13, ctrl: false, alt: false, shift: false });
+    assertEquals("Buffer position after enter", 1, mockEjax.ejax.screen.currentWindow.buffer.cursor);
+    assertEquals("Buffer content after enter", "\nabc", mockEjax.ejax.getBufferContent());
     mockEjax.onKeyDown({ keyCode: 38, ctrl: false, alt: false, shift: false });
-    assertEquals("Buffer position after enter and up", 0, mockEjax.ejax.screen.currentWindow.buffer.cursor);
-    assertEquals("Buffer content after enter and up", "\nabc", mockEjax.ejax.getBufferContent());
+    assertEquals("Buffer position after up", 0, mockEjax.ejax.screen.currentWindow.buffer.cursor);
+    assertEquals("Buffer content after up", "\nabc", mockEjax.ejax.getBufferContent());
 }
 
 function testSaveFileBindings() {

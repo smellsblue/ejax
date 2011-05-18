@@ -18,7 +18,7 @@ function MockEjax(options) {
     this.ejax = new Ejax(rows, columns, this);
 
     if (content) {
-        this.ejax.setContent(content);
+        this.ejax.setBufferContent(content);
     }
 }
 

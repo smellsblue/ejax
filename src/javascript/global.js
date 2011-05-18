@@ -43,7 +43,7 @@ minibufferMode.bindings.bind("BSP", function() { ejax.screen.minibuffer.status.d
 minibufferMode.bindings.type = function(key) {
     if (key == "\n") {
         ejax.screen.currentWindow = ejax.screen.minibuffer.status.lastWindow;
-        ejax.screen.minibuffer.content = "";
+        ejax.screen.minibuffer.content.set("");
         ejax.screen.minibuffer.status.callback(ejax.screen.minibuffer.status.content);
         ejax.screen.minibuffer.status = null;
         ejax.screen.minibufferWindow.redraw();
