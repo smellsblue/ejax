@@ -4,6 +4,8 @@ runit.lastRun = runit.lastRun || {};
 runit.verbose = runit.verbose || false;
 runit.context = runit.context || this;
 runit.engine = runit.engine || scriptEngine;
+runit.asserts = runit.asserts || {};
+runit.asserts.ignoreAssertObjectEquals = runit.asserts.ignoreAssertObjectEquals || {};
 
 runit.TestResult = runit.TestResult || function(script, testName, passed, error) {
     this.script = script;
@@ -397,6 +399,25 @@ function assertionMessage(message) {
     return msg;
 }
 
+function assertArrayEquals() {
+    var args = parseAssertArguments(arguments);
+
+    if (args.expected === null || args.expected === undefined) {
+        assertEquals(args.message, args.expected, args.actual);
+        return;
+    }
+
+    if (args.actual === null || args.actual === undefined) {
+        assertEquals(args.message, args.expected, args.actual);
+    }
+
+    assertEquals("Array lengths: " + args.msg, args.expected.length, args.actual.length);
+
+    for (var i = 0; i < args.expected.length; i++) {
+        assertEquals("Array value " + i + ": " + args.msg, args.expected[i], args.actual[i]);
+    }
+}
+
 function assertObjectEquals() {
     var args = parseAssertArguments(arguments);
 
@@ -434,7 +455,10 @@ function assertObjectEquals() {
         }
 
         var msg = args.message || "";
-        assertObjectEquals(msg + "[" + property + "]", args.expected[property], args.actual[property]);
+
+        if (runit.asserts.ignoreAssertObjectEquals[property] !== true) {
+            assertObjectEquals(msg + "[" + property + "]", args.expected[property], args.actual[property]);
+        }
 
         if (args.expected[property] && typeof(args.expected[property].toString) == "function") {
             assertEquals(msg + "[" + property + "]", args.expected[property].toString(), args.actual[property].toString());

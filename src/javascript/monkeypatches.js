@@ -1,3 +1,18 @@
+String.prototype.inclusiveSplit = function(splitOn) {
+    var result = [];
+    var remaining = this;
+    var index = remaining.indexOf(splitOn);
+
+    while (index != -1) {
+        result.push(remaining.substring(0, index + 1));
+        remaining = remaining.substring(index + 1);
+        index = remaining.indexOf(splitOn);
+    }
+
+    result.push(remaining);
+    return result;
+};
+
 String.prototype.startsWith = function(value) {
     return this.indexOf(value) == 0;
 };

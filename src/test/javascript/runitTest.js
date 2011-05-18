@@ -113,6 +113,11 @@ function testAssertObjectEqualsEmpty() {
     assertObjectEquals("Custom Message", {}, {});
 }
 
+function testAssertObjectEqualsEmptyArray() {
+    assertObjectEquals([], []);
+    assertObjectEquals("Custom Message", [], []);
+}
+
 function CustomObject(property1, property2) {
     this.property1 = property1;
     this.property2 = property2;

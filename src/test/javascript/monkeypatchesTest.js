@@ -21,3 +21,11 @@ function testIsNotFunction() {
     assertEquals("Object isFunction", false, {}.isFunction());
     assertEquals("Number isFunction", false, (1).isFunction());
 }
+
+function testInclusiveSplit() {
+    assertArrayEquals("Inclusive split: ''", [""], "".inclusiveSplit("\n"));
+    assertArrayEquals("Inclusive split: 'abc'", ["abc"], "abc".inclusiveSplit("\n"));
+    assertArrayEquals("Inclusive split: 'abc\n'", ["abc\n", ""], "abc\n".inclusiveSplit("\n"));
+    assertArrayEquals("Inclusive split: 'abc\n123'", ["abc\n", "123"], "abc\n123".inclusiveSplit("\n"));
+    assertArrayEquals("Inclusive split: 'abc\n123\nxyz\n'", ["abc\n", "123\n", "xyz\n", ""], "abc\n123\nxyz\n".inclusiveSplit("\n"));
+}
