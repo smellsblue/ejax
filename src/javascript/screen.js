@@ -2,11 +2,12 @@ function Screen(ejax, rows, columns) {
     this.ejax = ejax;
     this.rows = rows;
     this.columns = columns;
+    this.windows = [];
     var scratch = new Buffer(this, { name: "*scratch*" });
     this.currentWindow = new EjaxWindow(this, scratch, 0, 0, rows - 1, columns);
     this.buffers = {};
     this.buffers[scratch.name] = scratch;
-    this.windows = [this.currentWindow];
+    this.windows.push(this.currentWindow);
     this.minibuffer = new Buffer(this, { name: "minibuffer", minibuffer: true, mode: minibufferMode });
     this.minibufferWindow = new EjaxWindow(this, this.minibuffer, 0, rows - 1, 1, columns);
     this.windows.push(this.minibufferWindow);

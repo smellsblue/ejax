@@ -409,12 +409,13 @@ function assertArrayEquals() {
 
     if (args.actual === null || args.actual === undefined) {
         assertEquals(args.message, args.expected, args.actual);
+        return;
     }
 
-    assertEquals("Array lengths: " + args.msg, args.expected.length, args.actual.length);
+    assertEquals("Array lengths: " + args.message, args.expected.length, args.actual.length);
 
     for (var i = 0; i < args.expected.length; i++) {
-        assertEquals("Array value " + i + ": " + args.msg, args.expected[i], args.actual[i]);
+        assertEquals("Array value " + i + ": " + args.message, args.expected[i], args.actual[i]);
     }
 }
 
@@ -428,6 +429,7 @@ function assertObjectEquals() {
 
     if (args.actual === null || args.actual === undefined) {
         assertEquals(args.message, args.expected, args.actual);
+        return;
     }
 
     if (args.expected.constructor != args.actual.constructor) {

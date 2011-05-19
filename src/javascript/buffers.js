@@ -1,16 +1,39 @@
 function BufferContent(buffer, content) {
     this.buffer = buffer;
-    this.content = content;
+    this.set(content);
 }
 
 BufferContent.fn = BufferContent.prototype;
 
 BufferContent.fn.length = function() {
-    return this.content.length;
+    return this.cache.length;
+};
+
+BufferContent.fn.lineFrom = function(index) {
+    var length = this.length();
+    var result = -1;
+    var start = 0;
+
+    if (index == length) {
+        start = length - this.lines[this.lines.length - 1].length;
+        return { index: this.lines.length - 1, start: start, lineIndex: index - start };
+    }
+
+    this.eachLine(function(line, i) {
+        if (index < line.length + start) {
+            result = i;
+            return false;
+        }
+
+        start += line.length;
+    });
+
+    return { index: result, start: start, lineIndex: index - start };
 };
 
 BufferContent.fn.charAt = function(index) {
-    return this.content.charAt(index);
+    var line = this.lineFrom(index);
+    return this.lines[line.index].charAt(line.lineIndex);
 };
 
 BufferContent.fn.redraw = function() {
@@ -18,20 +41,69 @@ BufferContent.fn.redraw = function() {
 };
 
 BufferContent.fn.insert = function(str, index) {
-    this.set(this.content.insert(str, index));
+    var line = this.lineFrom(index);
+    var toInsert = str.inclusiveSplit("\n");
+
+    if (toInsert[0].indexOf("\n") >= 0) {
+        var lineContent = this.lines[line.index];
+        var remaining = lineContent.substring(line.lineIndex, lineContent.length);
+        this.lines[line.index] = lineContent.substring(0, line.lineIndex);
+        this.lines.splice(line.index + 1, 0, remaining);
+    }
+
+    this.lines[line.index] = this.lines[line.index].insert(toInsert.shift(), line.lineIndex);
+
+    if (toInsert.length > 1 && toInsert[toInsert.length - 1].lastIndexOf("\n") < 0 && this.lines.length > line.index) {
+        this.lines[line.index + 1] = this.lines[line.index + 1].insert(toInsert.splice(toInsert.length - 1, 1)[0], 0);
+    }
+
+    toInsert.splice(0, 0, line.index + 1, 0);
+    this.lines.splice.apply(toInsert);
+    this.cache.length += str.length;
+    this.redraw();
+};
+
+BufferContent.fn.deleteAt = function(index) {
+    var line = this.lineFrom(index);
+    this.lines[line.index] = this.lines[line.index].remove(line.lineIndex, 1);
+
+    if (this.lines[line.index].lastIndexOf("\n") < 0 && this.lines.length > line.index + 1) {
+        this.lines[line.index] = this.lines[line.index] + this.lines.splice(line.index + 1, 1)[0];
+    }
+
+    this.cache.length--;
+    this.redraw();
 };
 
 BufferContent.fn.remove = function(index, length) {
-    this.set(this.content.remove(index, length));
+    // Naive for now
+    for (var i = 0; i < length; i++) {
+        this.deleteAt(index);
+    }
+};
+
+BufferContent.fn.eachLine = function(fn) {
+    for (var i = 0; i < this.lines.length; i++) {
+        if (fn(this.lines[i], i) === false) {
+            break;
+        }
+    }
 };
 
 BufferContent.fn.set = function(content) {
-    this.content = content;
+    this.lines = content.inclusiveSplit("\n");
+    var cache = { length: 0 };
+    this.cache = cache;
+
+    this.eachLine(function(line) {
+        cache.length += line.length;
+    });
+
     this.redraw();
 };
 
 BufferContent.fn.get = function() {
-    return this.content;
+    return this.lines.join("");
 };
 
 function Buffer(screen, options) {
