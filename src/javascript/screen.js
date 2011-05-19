@@ -1,4 +1,5 @@
 function Screen(ejax, rows, columns) {
+    this.toRedraw = [];
     this.ejax = ejax;
     this.rows = rows;
     this.columns = columns;
@@ -12,7 +13,7 @@ function Screen(ejax, rows, columns) {
     this.minibufferWindow = new EjaxWindow(this, this.minibuffer, 0, rows - 1, 1, columns);
     this.windows.push(this.minibufferWindow);
     this.clear();
-    this.redraw();
+    this.hardRedraw();
     this.resetCursor();
 }
 
@@ -30,17 +31,30 @@ Screen.fn.clear = function() {
     });
 };
 
-Screen.fn.redraw = function() {
+Screen.fn.hardRedraw = function() {
     this.eachWindow(function(window) {
         window.redraw();
     });
 };
 
-Screen.fn.redrawBuffer = function(buffer) {
+Screen.fn.postRedraw = function(window) {
+    if (!this.toRedraw.contains(window)) {
+        this.toRedraw.push(window);
+    }
+};
+
+Screen.fn.redraw = function() {
+    while (this.toRedraw.length > 0) {
+        this.toRedraw.shift().redraw();
+    }
+};
+
+Screen.fn.postRedrawBuffer = function(buffer) {
+    var self = this;
+
     this.eachWindow(function(window) {
         if (window.buffer == buffer) {
-            window.clear();
-            window.redraw();
+            self.postRedraw(window);
         }
     });
 };
@@ -56,7 +70,7 @@ Screen.fn.changeBuffer = function(name) {
     }
 
     this.currentWindow.buffer = this.buffers[name];
-    this.redrawBuffer(this.currentWindow.buffer);
+    this.postRedrawBuffer(this.currentWindow.buffer);
     this.resetCursor();
 };
 

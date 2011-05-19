@@ -221,6 +221,11 @@ Ejax.fn.keyDown = function(event) {
             modeBindings.onPartialBinding(this.keyCache);
         }
     }
+
+    // After keyboard processing, we can safely redraw just
+    // once... this could go into some kind of interval function later
+    // on perhaps, though then we have to deal with concurrency.
+    this.screen.redraw();
 };
 
 Ejax.fn.ringBell = function() {

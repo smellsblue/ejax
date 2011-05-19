@@ -73,8 +73,8 @@ BufferContent.fn.charAt = function(index) {
     return this.lines[line.index].charAt(line.lineIndex);
 };
 
-BufferContent.fn.redraw = function() {
-    this.buffer.redraw();
+BufferContent.fn.postRedraw = function() {
+    this.buffer.postRedraw();
 };
 
 BufferContent.fn.insert = function(str, index) {
@@ -97,7 +97,7 @@ BufferContent.fn.insert = function(str, index) {
     toInsert.splice(0, 0, line.index + 1, 0);
     this.lines.splice.apply(toInsert);
     this.cache.length += str.length;
-    this.redraw();
+    this.postRedraw();
 };
 
 BufferContent.fn.deleteAt = function(index) {
@@ -109,7 +109,7 @@ BufferContent.fn.deleteAt = function(index) {
     }
 
     this.cache.length--;
-    this.redraw();
+    this.postRedraw();
 };
 
 BufferContent.fn.remove = function(index, length) {
@@ -136,7 +136,7 @@ BufferContent.fn.set = function(content) {
         cache.length += line.length;
     });
 
-    this.redraw();
+    this.postRedraw();
 };
 
 BufferContent.fn.get = function() {
@@ -364,8 +364,8 @@ Ejax.fn.isBufferVisible = function(buffer) {
     return this.screen.currentWindow.buffer == buffer;
 };
 
-Buffer.fn.redraw = function() {
-    this.screen.redrawBuffer(this);
+Buffer.fn.postRedraw = function() {
+    this.screen.postRedrawBuffer(this);
 };
 
 Buffer.fn.setBufferContent = function(content) {

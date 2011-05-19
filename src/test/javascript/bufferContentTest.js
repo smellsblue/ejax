@@ -4,7 +4,7 @@ Ejax.fn = Ejax.prototype;
 load("monkeypatches.js");
 load("buffers.js");
 
-var mockBuffer = { redraw: function() { } };
+var mockBuffer = { redraw: function() { }, postRedraw: function() { } };
 
 function testBufferContentLength() {
     assertEquals("Length of buffer content ''", 0, new BufferContent(mockBuffer, "").length());

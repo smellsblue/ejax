@@ -1,3 +1,7 @@
+Array.prototype.contains = function(value) {
+    return this.indexOf(value) >= 0;
+};
+
 String.prototype.inclusiveSplit = function(splitOn) {
     var result = [];
     var remaining = this;

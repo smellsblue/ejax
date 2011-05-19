@@ -22,24 +22,24 @@ EjaxWindow.fn.updatePage = function() {
     if (!this.buffer.minibuffer && this.buffer.getCursorY() >= this.rows - 1) {
         while (this.buffer.getCursorY() >= this.rows - 1) {
             this.buffer.updateStartingLine((this.rows - 1) * 3 / 4);
-            this.redraw();
+            this.postRedraw();
         }
     } else if (!this.buffer.minibuffer && this.buffer.getCursorY() < 0) {
         while (this.buffer.getCursorY() < 0) {
             this.buffer.updateStartingLine(-(this.rows - 1) * 3 / 4);
-            this.redraw();
+            this.postRedraw();
         }
     }
 
     if (this.buffer.getCursorX() >= this.columns - 1) {
         while (this.buffer.getCursorX() >= this.columns - 1) {
             this.buffer.updateStartingColumn(this.columns * 3 / 4);
-            this.redraw();
+            this.postRedraw();
         }
     } else if (this.buffer.startingColumn == 0 && this.buffer.getCursorX() < 0 || this.buffer.startingColumn != 0 && this.buffer.getCursorX() < 1) {
         while (this.buffer.startingColumn == 0 && this.buffer.getCursorX() < 0 || this.buffer.startingColumn != 0 && this.buffer.getCursorX() < 1) {
             this.buffer.updateStartingColumn(-this.columns * 3 / 4);
-            this.redraw();
+            this.postRedraw();
         }
     }
 };
@@ -50,6 +50,10 @@ EjaxWindow.fn.clear = function() {
             this.screen.ejax.io.setPixel(" ", this.x + x, this.y + y);
         }
     }
+};
+
+EjaxWindow.fn.postRedraw = function() {
+    this.screen.postRedraw(this);
 };
 
 EjaxWindow.fn.redraw = function() {

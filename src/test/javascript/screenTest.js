@@ -35,8 +35,7 @@ function setUp() {
 
 function testScreenContent() {
     mockEjax.ejax.setBufferContent("abc\n123\nxyz\n\ndef\n\n456\n");
-    mockEjax.ejax.screen.clear();
-    mockEjax.ejax.screen.redraw();
+    mockEjax.ejax.screen.hardRedraw();
     assertEquals("Max y value", 23, mockEjax.pixels.maxY);
     assertEquals("Screen row  0", "abc                                                                             ", mockEjax.pixelRow(0));
     assertEquals("Screen row  1", "123                                                                             ", mockEjax.pixelRow(1));
@@ -65,8 +64,7 @@ function testScreenContent() {
 }
 
 function testScreenAfterStartingCommand() {
-    mockEjax.ejax.screen.clear();
-    mockEjax.ejax.screen.redraw();
+    mockEjax.ejax.screen.hardRedraw();
     mockEjax.onKeyDown({ keyCode: 88, ctrl: true, alt: false, shift: false });
     assertEquals("Max y value", 23, mockEjax.pixels.maxY);
     assertEquals("Screen row 22", " *scratch*    (Fundamental)-----------------------------------------------------", mockEjax.pixelRow(22));
@@ -74,8 +72,7 @@ function testScreenAfterStartingCommand() {
 }
 
 function testScreenAfterCallingInvalidCommand() {
-    mockEjax.ejax.screen.clear();
-    mockEjax.ejax.screen.redraw();
+    mockEjax.ejax.screen.hardRedraw();
     mockEjax.onKeyDown({ keyCode: 88, ctrl: true, alt: false, shift: false });
     mockEjax.onKeyDown({ keyCode: 72, ctrl: true, alt: false, shift: false });
     assertEquals("Max y value", 23, mockEjax.pixels.maxY);
@@ -84,8 +81,7 @@ function testScreenAfterCallingInvalidCommand() {
 }
 
 function testScreenAfterCallingInvalidCommandThenTyping() {
-    mockEjax.ejax.screen.clear();
-    mockEjax.ejax.screen.redraw();
+    mockEjax.ejax.screen.hardRedraw();
     mockEjax.onKeyDown({ keyCode: 88, ctrl: true, alt: false, shift: false });
     mockEjax.onKeyDown({ keyCode: 72, ctrl: true, alt: false, shift: false });
     mockEjax.onKeyDown({ keyCode: 72, ctrl: false, alt: false, shift: false });
@@ -131,8 +127,7 @@ function testReadingParameterToLoadFile() {
     mockEjax.onKeyDown({ keyCode: 70, ctrl: true, alt: false, shift: false });
     assertEquals("X cursor after C-xC-f", 11, currentX);
     assertEquals("Y cursor after C-xC-f", 23, currentY);
-    mockEjax.ejax.screen.clear();
-    mockEjax.ejax.screen.redraw();
+    mockEjax.ejax.screen.hardRedraw();
     assertEquals("Max y value", 23, mockEjax.pixels.maxY);
     assertEquals("Screen row 22", " *scratch*    (Fundamental)-----------------------------------------------------", mockEjax.pixelRow(22));
     assertEquals("Screen row 23", "Find file:                                                                      ", mockEjax.pixelRow(23));
@@ -195,8 +190,6 @@ function testScrollingVertically() {
         currentX = x;
         currentY = y;
     };
-    mockEjax.ejax.screen.clear();
-    mockEjax.ejax.screen.redraw();
     var content = "";
 
     for (var i = 1; i < 100; i++) {
@@ -219,6 +212,7 @@ function testScrollingVertically() {
     };
 
     mockEjax.ejax.setBufferContent(content);
+    mockEjax.ejax.screen.hardRedraw();
     assertContent(1);
 
     for (var i = 0; i < 21; i++) {
@@ -247,8 +241,6 @@ function testScrollingHorizontally() {
         currentX = x;
         currentY = y;
     };
-    mockEjax.ejax.screen.clear();
-    mockEjax.ejax.screen.redraw();
     var content = "";
 
     var line = function(size) {
@@ -268,6 +260,7 @@ function testScrollingHorizontally() {
     line(30);
     content += "\nabc\n\n";
     mockEjax.ejax.setBufferContent(content);
+    mockEjax.ejax.screen.hardRedraw();
 
     assertEquals("Screen row 0", "0123456789012345678901234567890123456789012345678901234567890123456789012345678$", mockEjax.pixelRow(0));
     assertEquals("Screen row 1", "0123456789012345678901234567890123456789012345678901234567890123456789012345678$", mockEjax.pixelRow(1));
