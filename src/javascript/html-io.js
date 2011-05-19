@@ -6,7 +6,45 @@ var HtmlEjax;
     var COLUMNS = 80;
     var ROWS = 24;
 
-    HtmlEjax = function(element) {
+    var AjaxFile = function(filename, secret) {
+        this.filename = filename;
+        this.secret = secret;
+    };
+
+    AjaxFile.fn = AjaxFile.prototype;
+
+    AjaxFile.fn.ajax = function(action, data) {
+        if (!data) {
+            data = {};
+        }
+
+        data.s = this.secret;
+        data.filename = this.filename;
+
+        var result = $.ajax({
+            async: false,
+            data: data,
+            dataType: "json",
+            type: "GET",
+            url: "/file/" + action
+        });
+        return eval("[" + result.responseText + "]")[0].result;
+    };
+
+    AjaxFile.fn.name = function() {
+        return this.ajax("name");
+    };
+
+    AjaxFile.fn.contents = function() {
+        return this.ajax("contents");
+    };
+
+    AjaxFile.fn.save = function(contents) {
+        this.ajax("save", { contents: contents });
+    };
+
+    HtmlEjax = function(element, secret) {
+        this.secret = secret;
         this.element = element;
         this.$element = $(element);
         this.$element.html("<pre></pre>");
@@ -125,15 +163,15 @@ var HtmlEjax;
         // TODO
     };
 
-    HtmlEjax.fn.file = function() {
-        // TODO
+    HtmlEjax.fn.file = function(filename) {
+        return new AjaxFile(filename, this.secret);
     };
 
     HtmlEjax.fn.exit = function() {
         // TODO
     };
 
-    $.fn.ejax = function() {
+    $.fn.ejax = function(secret) {
         if (ejax) {
             return this;
         }
@@ -144,7 +182,7 @@ var HtmlEjax;
             }
         }));
 
-        this[0].ejax = new HtmlEjax(this[0]);
+        this[0].ejax = new HtmlEjax(this[0], secret);
         return this;
     };
 })(jQuery);

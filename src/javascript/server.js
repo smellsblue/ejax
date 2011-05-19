@@ -253,7 +253,7 @@ Routes.fn.route = function(request, path, params) {
         request.status(500, "Secret does not match!");
     } else if (this.routes[path]) {
         try {
-            var content = this.routes[path]();
+            var content = this.routes[path](params);
             if (!content) {
                 request.server.log("Empty content at " + path);
                 request.status(404, "Could not find: " + path);
@@ -288,6 +288,32 @@ function h(str) {
             result.append("&#039;");
         } else if (c == "&") {
             result.append("&amp;");
+        } else {
+            result.append(c);
+        }
+    }
+
+    return result.toString();
+}
+
+function js(str) {
+    var result = new java.lang.StringBuilder();
+
+    for (var i = 0; i < str.length; i++) {
+        var c = str.charAt(i);
+
+        if (c == "\n") {
+            result.append("\\n");
+        } else if (c == "\r") {
+            result.append("\\r");
+        } else if (c == "\t") {
+            result.append("\\t");
+        } else if (c == "\"") {
+            result.append("\\\"");
+        } else if (c == "\'") {
+            result.append("\\\'");
+        } else if (c == "\\") {
+            result.append("\\\\");
         } else {
             result.append(c);
         }

@@ -22,9 +22,33 @@ BrowserEjax.fileContents = function(filename) {
 BrowserEjax.template = function(file, template) {
     for (var key in template) {
         file = file.replaceAll("\\{\\{" + key + "\\}\\}", template[key]);
+        file = file.replaceAll("\\{\\{h:" + key + "\\}\\}", h(template[key]));
     }
 
     return file;
+};
+
+BrowserEjax.getFileName = function(params) {
+    var result = new java.lang.StringBuilder();
+    result.append('{ "result": "');
+    result.append(js(new File(params.filename).name()));
+    result.append('" }');
+    return result.toString();
+};
+
+BrowserEjax.getFileContents = function(params) {
+    var result = new java.lang.StringBuilder();
+    result.append('{ "result": "');
+    result.append(js(new File(params.filename).contents()));
+    result.append('" }');
+    return result.toString();
+};
+
+BrowserEjax.saveFileContents = function(params) {
+    new File(params.filename).save(params.contents);
+    var result = new java.lang.StringBuilder();
+    result.append('{ "result": "success" }');
+    return result.toString();
 };
 
 BrowserEjax.main = function(args) {
@@ -47,6 +71,9 @@ BrowserEjax.main = function(args) {
     var server = new Server(options);
     server.routes.to("/", function() { return BrowserEjax.template(BrowserEjax.fileContents("ejax.html"), { secret: server.secret }); });
     server.routes.to("/ejax-complete-min.js", function() { return BrowserEjax.fileContents("ejax-complete-min.js"); });
+    server.routes.to("/file/name", BrowserEjax.getFileName);
+    server.routes.to("/file/contents", BrowserEjax.getFileContents);
+    server.routes.to("/file/save", BrowserEjax.saveFileContents);
     var url = "http://localhost:" + server.port + "/?s=" + server.secret;
     server.log("Starting url for ejax: " + url);
     java.lang.Runtime.getRuntime().exec(["xdg-open", url]);

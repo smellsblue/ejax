@@ -1,16 +1,16 @@
 <html>
   <head>
     <title>Ejax</title>
-    <script type="text/javascript" src="ejax-complete-min.js?s={{secret}}"></script>
+    <script type="text/javascript" src="ejax-complete-min.js?s={{h:secret}}"></script>
     <script type="text/javascript">
       $(function() {
-        $(".ejax").ejax();
-        ejax.setBufferContent("This is the content.\nThis is all the content.\nThis is testing all the content.\nThis is testing a really really super duper humungoid ungodly wham bam thank you ma'am ridonculously long line.\nAnd now short one.");
+        $(".ejax").ejax($("#secret").val());
       });
     </script>
   </head>
 
   <body>
+    <input id="secret" type="hidden" value="{{h:secret}}" />
     <div class="ejax"></div>
   </body>
 </html>
