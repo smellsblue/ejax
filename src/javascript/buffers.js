@@ -279,38 +279,22 @@ Ejax.fn.nextLine = function() {
 };
 
 Buffer.fn.previousLine = function() {
-    var x = this.getCursorX();
-    var index = this.cursor - 1;
-    var newlineCount = 0;
+    var line = this.content.lineFrom(this.cursor);
 
-    while (index >= 0) {
-        if (this.charAt(index) == "\n") {
-            newlineCount++;
-
-            if (newlineCount == 2) {
-                break;
-            }
-        }
-
-        index--;
-    }
-
-    if (newlineCount == 0) {
+    if (line.index == 0) {
         this.setCursor(0);
         return;
     }
 
-    index++;
+    var prevLine = this.content.getLine(line.index - 1);
+    var prevStart = line.start - prevLine.length;
+    var x = line.lineIndex;
 
-    for (var i = 0; index < this.length() && i < x; i++) {
-        if (this.charAt(index) == "\n") {
-            break;
-        }
-
-        index++;
+    if (x >= prevLine.length) {
+        x = prevLine.length - 1;
     }
 
-    this.setCursor(index);
+    this.setCursor(prevStart + x);
 };
 
 Ejax.fn.previousLine = function() {
@@ -354,13 +338,7 @@ Ejax.fn.deleteBackward = function() {
 };
 
 Buffer.fn.lineStart = function() {
-    var index = this.cursor;
-
-    while (index > 0 && this.charAt(index - 1) != "\n") {
-        index--;
-    }
-
-    this.setCursor(index);
+    this.setCursor(this.content.lineFrom(this.cursor).start);
 };
 
 Ejax.fn.lineStart = function() {
@@ -368,9 +346,10 @@ Ejax.fn.lineStart = function() {
 };
 
 Buffer.fn.lineEnd = function() {
-    var index = this.cursor;
+    var line = this.content.lineFrom(this.cursor);
+    var index = line.start + line.length - 1;
 
-    while (index < this.content.length() && this.charAt(index) != "\n") {
+    if (this.content.isLastLine(line.index)) {
         index++;
     }
 
