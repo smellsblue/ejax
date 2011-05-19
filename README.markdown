@@ -1,30 +1,30 @@
-*Description*
+# Description
 
 This is a work in progress.  The goal is to have an editor with
 functionality based on Emacs but written (almost) purely in JavaScript
 so that it can run on the command line with Rhino, or in the browser
 directly.
 
-*Installation*
+# Installation
 
 To install, you just need to run ant.  Though, to run ant, you will
 need ant (obviously), the JDK with development headers (jni.h) and
 recent enough to include Rhino (JDK 6 will work), curses with
 development headers, and gcc.
 
-*Running*
+# Running
 
 After you run ant, you should be able to run:
 
-  java -jar bin/ejax.jar
+    java -jar bin/ejax.jar
 
 to run in command line mode, or
 
-  java -jar bin/ejax.jar --browser
+    java -jar bin/ejax.jar --browser
 
 to run in the browser.
 
-*Caveats*
+# Caveats
 
 Keep in mind this is still heavily a work in progress... I am focusing
 on the terminal side of things, but a lot of the code will work in a
@@ -33,11 +33,11 @@ implemented (probably soon).  I have some performance issues right
 now, but the terminal side of things basically works... though don't
 trust it to be totally stable yet.
 
-*Contributions*
+# Contributions
 
 Contributions are welcome, just send me a pull request on github.
 
-*About Me*
+# About Me
 
 You can follow me as @smellsblue on twitter.  I love Ruby, Rails and
 JavaScript, though I couldn't work 2 of those into this project,
