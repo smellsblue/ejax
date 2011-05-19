@@ -24,27 +24,30 @@ BufferContent.fn.length = function() {
 BufferContent.fn.lineFrom = function(index) {
     var length = this.length();
     var result = -1;
+    var lineLength = -1;
     var start = 0;
 
     if (index == length) {
-        start = length - this.lines[this.lastLine()].length;
-        return { index: this.lastLine(), start: start, lineIndex: index - start };
+        lineLength = this.lines[this.lastLine()].length;
+        start = length - lineLength;
+        return { index: this.lastLine(), start: start, lineIndex: index - start, length: lineLength };
     }
 
     this.eachLine(function(line, i) {
         if (index < line.length + start) {
             result = i;
+            lineLength = line.length;
             return false;
         }
 
         start += line.length;
     });
 
-    return { index: result, start: start, lineIndex: index - start };
+    return { index: result, start: start, lineIndex: index - start, length: lineLength };
 };
 
-BufferContent.fn.isLastAndEmptyLine = function(y) {
-    return y == this.lastLine() && this.lines[y].length == 0;
+BufferContent.fn.isLastLine = function(y) {
+    return y == this.lastLine();
 };
 
 BufferContent.fn.hasCharAt = function(x, y) {
@@ -61,24 +64,8 @@ BufferContent.fn.hasCharAt = function(x, y) {
     return line.charAt(x) != "\n";
 };
 
-BufferContent.fn.displayCharAt = function(x, y) {
-    if (y < 0 || y >= this.lines.length) {
-        return " ";
-    }
-
-    var line = this.lines[y];
-
-    if (x < 0 || x >= line.length) {
-        return " ";
-    }
-
-    var c = line.charAt(x);
-
-    if (c == "\n") {
-        return " ";
-    }
-
-    return c;
+BufferContent.fn.getLine = function(y) {
+    return this.lines[y];
 };
 
 BufferContent.fn.charAt = function(index) {
@@ -174,16 +161,16 @@ Buffer.fn.getStatus = function() {
     return " " + this.name + "    (" + this.mode.description + ")";
 };
 
-Buffer.fn.isLastAndEmptyLine = function(y) {
-    return this.content.isLastAndEmptyLine(y + this.startingLine);
+Buffer.fn.isLastLine = function(y) {
+    return this.content.isLastLine(y + this.startingLine);
 };
 
 Buffer.fn.hasCharAt = function(x, y) {
     return this.content.hasCharAt(x + this.startingColumn, y + this.startingLine);
 };
 
-Buffer.fn.displayCharAt = function(x, y) {
-    return this.content.displayCharAt(x + this.startingColumn, y + this.startingLine);
+Buffer.fn.getLine = function(y) {
+    return this.content.getLine(y + this.startingLine);
 };
 
 Buffer.fn.charAt = function(index) {
@@ -265,28 +252,26 @@ Ejax.fn.moveBackward = function() {
 };
 
 Buffer.fn.nextLine = function() {
-    var x = this.getCursorX();
-    var index = this.cursor;
+    var line = this.content.lineFrom(this.cursor);
 
-    if (this.charAt(index) != "\n") {
-        while (index < this.length()) {
-            index++;
+    if (this.content.isLastLine(line.index)) {
+        this.setCursor(this.content.length());
+        return;
+    }
 
-            if (this.charAt(index) == "\n") {
-                break;
-            }
+    var nextLine = this.content.getLine(line.index + 1);
+    var nextStart = line.start + line.length;
+    var x = line.lineIndex;
+
+    if (x >= nextLine.length) {
+        if (nextLine.length > 0) {
+            x = nextLine.length - 1;
+        } else {
+            x = 0;
         }
     }
 
-    for (var i = 0; index < this.length() && i <= x; i++) {
-        index++;
-
-        if (this.charAt(index) == "\n") {
-            break;
-        }
-    }
-
-    this.setCursor(index);
+    this.setCursor(nextStart + x);
 };
 
 Ejax.fn.nextLine = function() {

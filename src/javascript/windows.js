@@ -59,35 +59,52 @@ EjaxWindow.fn.redraw = function() {
 
 EjaxWindow.fn.redrawContent = function() {
     var rows = this.rows - 1;
+    var startingColumn = this.buffer.startingColumn;
 
     if (this.buffer.minibuffer) {
         rows++;
     }
 
     for (var y = 0; y < rows; y++) {
-        var finishedLine = false;
-        var x = 0;
-        var c;
+        var line = this.buffer.getLine(y);
+        var x = 0, c;
 
-        if (this.buffer.startingColumn == 0) {
-            c = this.buffer.displayCharAt(x, y);
-            this.screen.ejax.io.setPixel(c, this.x + x, this.y + y);
-        } else if (!this.buffer.isLastAndEmptyLine(y)) {
-            this.screen.ejax.io.setPixel("$", this.x + x, this.y + y);
+        if (startingColumn == 0) {
+            if (line === undefined || x >= line.length) {
+                c = " ";
+            } else {
+                c = line.charAt(x);
+            }
+
+            if (c == "\n") {
+                c = " ";
+            }
+        } else if (line === undefined || line.length == 0 && this.buffer.isLastLine(y)) {
+            c = " ";
         } else {
-            this.screen.ejax.io.setPixel(" ", this.x + x, this.y + y);
+            c = "$";
         }
+
+        this.screen.ejax.io.setPixel(c, this.x + x, this.y + y);
 
         for (x++; x < this.columns - 1; x++) {
-            c = this.buffer.displayCharAt(x, y);
+            if (line === undefined || x + startingColumn >= line.length) {
+                c = " ";
+            } else {
+                c = line.charAt(x + startingColumn);
+            }
+
+            if (c == "\n") {
+                c = " ";
+            }
+
             this.screen.ejax.io.setPixel(c, this.x + x, this.y + y);
         }
 
-        x = this.columns - 1;
-        c = " ";
-
-        if (this.buffer.hasCharAt(x, y)) {
-            c = "$"
+        if (line && x + startingColumn < line.length && line.charAt(x + startingColumn) != "\n") {
+            c = "$";
+        } else {
+            c = " ";
         }
 
         this.screen.ejax.io.setPixel(c, this.x + x, this.y + y);
