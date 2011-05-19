@@ -31,6 +31,26 @@ BufferContent.fn.lineFrom = function(index) {
     return { index: result, start: start, lineIndex: index - start };
 };
 
+BufferContent.fn.displayCharAt = function(x, y) {
+    if (y < 0 || y >= this.lines.length) {
+        return " ";
+    }
+
+    var line = this.lines[y];
+
+    if (x < 0 || x >= line.length) {
+        return " ";
+    }
+
+    var c = line.charAt(x);
+
+    if (c == "\n") {
+        return " ";
+    }
+
+    return c;
+};
+
 BufferContent.fn.charAt = function(index) {
     var line = this.lineFrom(index);
     return this.lines[line.index].charAt(line.lineIndex);
@@ -123,6 +143,10 @@ Buffer.fn.getStatus = function() {
     return " " + this.name + "    (" + this.mode.description + ")";
 };
 
+Buffer.fn.displayCharAt = function(x, y) {
+    return this.content.displayCharAt(x, y);
+};
+
 Buffer.fn.charAt = function(index) {
     if (index < 0 || index >= this.length()) {
         return null;
@@ -133,27 +157,6 @@ Buffer.fn.charAt = function(index) {
 
 Buffer.fn.length = function() {
     return this.content.length();
-};
-
-Buffer.fn.startOfNextLine = function(index) {
-    while (true) {
-        var nextC = this.charAt(index);
-
-        if (nextC == null) {
-            return index;
-        } else if (nextC == "\n") {
-            return index + 1;
-        }
-
-        index++;
-    }
-
-    return null;
-};
-
-Buffer.fn.startingIndex = function() {
-    // TODO: implement;
-    return 0;
 };
 
 Buffer.fn.getCursorX = function() {

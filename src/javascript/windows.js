@@ -33,7 +33,6 @@ EjaxWindow.fn.redraw = function() {
 
 EjaxWindow.fn.redrawContent = function() {
     var rows = this.rows - 1;
-    var i = this.buffer.startingIndex();
 
     if (this.buffer.minibuffer) {
         rows++;
@@ -43,24 +42,9 @@ EjaxWindow.fn.redrawContent = function() {
         var finishedLine = false;
 
         for (var x = 0; x < this.columns; x++) {
-            if (finishedLine) {
-                this.screen.ejax.io.setPixel(" ", this.x + x, this.y + y);
-                continue;
-            }
-
-            var c = this.buffer.charAt(i);
-
-            if (c == null || c == "\n") {
-                finishedLine = true;
-                this.screen.ejax.io.setPixel(" ", this.x + x, this.y + y);
-                continue;
-            }
-
+            var c = this.buffer.displayCharAt(x, y);
             this.screen.ejax.io.setPixel(c, this.x + x, this.y + y);
-            i++;
         }
-
-        i = this.buffer.startOfNextLine(i);
     }
 };
 
