@@ -389,6 +389,38 @@ function assertEquals() {
     }
 }
 
+function assertLessThan() {
+    var args = parseAssertArguments(arguments);
+
+    if (args.expected <= args.actual) {
+        fail(assertionMessage(args.message) + "expected less than <" + args.expected + "> but was <" + args.actual + ">");
+    }
+}
+
+function assertLessThanOrEqual() {
+    var args = parseAssertArguments(arguments);
+
+    if (args.expected < args.actual) {
+        fail(assertionMessage(args.message) + "expected less than or equal to <" + args.expected + "> but was <" + args.actual + ">");
+    }
+}
+
+function assertGreaterThan() {
+    var args = parseAssertArguments(arguments);
+
+    if (args.expected >= args.actual) {
+        fail(assertionMessage(args.message) + "expected greater than <" + args.expected + "> but was <" + args.actual + ">");
+    }
+}
+
+function assertGreaterThanOrEqual() {
+    var args = parseAssertArguments(arguments);
+
+    if (args.expected > args.actual) {
+        fail(assertionMessage(args.message) + "expected greater than or equal to <" + args.expected + "> but was <" + args.actual + ">");
+    }
+}
+
 function assertionMessage(message) {
     var msg = "";
 
