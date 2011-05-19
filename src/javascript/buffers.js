@@ -5,6 +5,14 @@ function BufferContent(buffer, content) {
 
 BufferContent.fn = BufferContent.prototype;
 
+BufferContent.fn.getX = function(index) {
+    return this.lineFrom(index).lineIndex;
+};
+
+BufferContent.fn.getY = function(index) {
+    return this.lineFrom(index).index;
+};
+
 BufferContent.fn.length = function() {
     return this.cache.length;
 };
@@ -160,35 +168,11 @@ Buffer.fn.length = function() {
 };
 
 Buffer.fn.getCursorX = function() {
-    if (this.cursor == 0) {
-        return 0;
-    }
-
-    var endIndex = this.cursor;
-    var startIndex = endIndex - 1;
-
-    while (startIndex >= 0 && this.charAt(startIndex) != "\n") {
-        startIndex--;
-    }
-
-    return endIndex - startIndex - 1;
+    return this.content.getX(this.cursor);
 };
 
 Buffer.fn.getCursorY = function() {
-    var count = 0;
-    var index = this.cursor;
-
-    if (this.charAt(index) == "\n") {
-        index--;
-    }
-
-    for (; index >= 0; index--) {
-        if (this.charAt(index) == "\n") {
-            count++;
-        }
-    }
-
-    return count;
+    return this.content.getY(this.cursor);
 };
 
 Buffer.fn.setCursor = function(value) {
