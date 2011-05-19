@@ -43,6 +43,24 @@ BufferContent.fn.lineFrom = function(index) {
     return { index: result, start: start, lineIndex: index - start };
 };
 
+BufferContent.fn.isLastAndEmptyLine = function(y) {
+    return y == this.lastLine() && this.lines[y].length == 0;
+};
+
+BufferContent.fn.hasCharAt = function(x, y) {
+    if (y < 0 || y >= this.lines.length) {
+        return false;
+    }
+
+    var line = this.lines[y];
+
+    if (x < 0 || x >= line.length) {
+        return false;
+    }
+
+    return line.charAt(x) != "\n";
+};
+
 BufferContent.fn.displayCharAt = function(x, y) {
     if (y < 0 || y >= this.lines.length) {
         return " ";
@@ -145,6 +163,7 @@ function Buffer(screen, options) {
     this.minibuffer = options.minibuffer;
     this.content = new BufferContent(this, "");
     this.startingLine = 0;
+    this.startingColumn = 0;
     this.cursor = 0;
     this.mode = options.mode || fundamentalMode;
 }
@@ -155,8 +174,16 @@ Buffer.fn.getStatus = function() {
     return " " + this.name + "    (" + this.mode.description + ")";
 };
 
+Buffer.fn.isLastAndEmptyLine = function(y) {
+    return this.content.isLastAndEmptyLine(y + this.startingLine);
+};
+
+Buffer.fn.hasCharAt = function(x, y) {
+    return this.content.hasCharAt(x + this.startingColumn, y + this.startingLine);
+};
+
 Buffer.fn.displayCharAt = function(x, y) {
-    return this.content.displayCharAt(x, y + this.startingLine);
+    return this.content.displayCharAt(x + this.startingColumn, y + this.startingLine);
 };
 
 Buffer.fn.charAt = function(index) {
@@ -183,8 +210,19 @@ Buffer.fn.updateStartingLine = function(adjustment) {
     }
 };
 
+Buffer.fn.updateStartingColumn = function(adjustment) {
+    this.startingColumn += Math.floor(adjustment);
+
+    if (this.startingColumn < 0) {
+        this.startingColumn = 0;
+    }
+
+    // TODO: Should we have an upper bounds check like in
+    // updateStartingLine?
+};
+
 Buffer.fn.getCursorX = function() {
-    return this.content.getX(this.cursor);
+    return this.content.getX(this.cursor) - this.startingColumn;
 };
 
 Buffer.fn.getCursorY = function() {

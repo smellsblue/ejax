@@ -240,3 +240,120 @@ function testScrollingVertically() {
     assertEquals("X cursor after moving up 7 times", 0, currentX);
     assertEquals("Y cursor after moving up 7 times", 15, currentY);
 }
+
+function testScrollingHorizontally() {
+    var currentX, currentY;
+    mockEjax.setCursor = function(x, y) {
+        currentX = x;
+        currentY = y;
+    };
+    mockEjax.ejax.screen.clear();
+    mockEjax.ejax.screen.redraw();
+    var content = "";
+
+    var line = function(size) {
+        for (var i = 0; i < size; i++) {
+            content += "" + (i % 10);
+        }
+
+        content += "\n";
+    };
+
+    line(120);
+    line(100);
+    line(90);
+    line(81);
+    line(80);
+    line(79);
+    line(30);
+    content += "\nabc\n\n";
+    mockEjax.ejax.setBufferContent(content);
+
+    assertEquals("Screen row 0", "0123456789012345678901234567890123456789012345678901234567890123456789012345678$", mockEjax.pixelRow(0));
+    assertEquals("Screen row 1", "0123456789012345678901234567890123456789012345678901234567890123456789012345678$", mockEjax.pixelRow(1));
+    assertEquals("Screen row 2", "0123456789012345678901234567890123456789012345678901234567890123456789012345678$", mockEjax.pixelRow(2));
+    assertEquals("Screen row 3", "0123456789012345678901234567890123456789012345678901234567890123456789012345678$", mockEjax.pixelRow(3));
+    assertEquals("Screen row 4", "0123456789012345678901234567890123456789012345678901234567890123456789012345678$", mockEjax.pixelRow(4));
+    assertEquals("Screen row 5", "0123456789012345678901234567890123456789012345678901234567890123456789012345678 ", mockEjax.pixelRow(5));
+    assertEquals("Screen row 6", "012345678901234567890123456789                                                  ", mockEjax.pixelRow(6));
+    assertEquals("Screen row 7", "                                                                                ", mockEjax.pixelRow(7));
+    assertEquals("Screen row 8", "abc                                                                             ", mockEjax.pixelRow(8));
+    assertEquals("Screen row 9", "                                                                                ", mockEjax.pixelRow(9));
+    assertEquals("Screen row 10", "                                                                                ", mockEjax.pixelRow(10));
+    assertEquals("Screen row 22", " *scratch*    (Fundamental)-----------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
+
+    for (var i = 0; i < 78; i++) {
+        mockEjax.onKeyDown({ keyCode: 39, ctrl: false, alt: false, shift: false });
+    }
+
+    assertEquals("Screen row 0", "0123456789012345678901234567890123456789012345678901234567890123456789012345678$", mockEjax.pixelRow(0));
+    assertEquals("Screen row 1", "0123456789012345678901234567890123456789012345678901234567890123456789012345678$", mockEjax.pixelRow(1));
+    assertEquals("Screen row 2", "0123456789012345678901234567890123456789012345678901234567890123456789012345678$", mockEjax.pixelRow(2));
+    assertEquals("Screen row 3", "0123456789012345678901234567890123456789012345678901234567890123456789012345678$", mockEjax.pixelRow(3));
+    assertEquals("Screen row 4", "0123456789012345678901234567890123456789012345678901234567890123456789012345678$", mockEjax.pixelRow(4));
+    assertEquals("Screen row 5", "0123456789012345678901234567890123456789012345678901234567890123456789012345678 ", mockEjax.pixelRow(5));
+    assertEquals("Screen row 6", "012345678901234567890123456789                                                  ", mockEjax.pixelRow(6));
+    assertEquals("Screen row 7", "                                                                                ", mockEjax.pixelRow(7));
+    assertEquals("Screen row 8", "abc                                                                             ", mockEjax.pixelRow(8));
+    assertEquals("Screen row 9", "                                                                                ", mockEjax.pixelRow(9));
+    assertEquals("Screen row 10", "                                                                                ", mockEjax.pixelRow(10));
+    assertEquals("Screen row 22", " *scratch*    (Fundamental)-----------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
+    assertEquals("X cursor after moving right 78 times", 78, currentX);
+    assertEquals("Y cursor after moving right 78 times", 0, currentY);
+
+    mockEjax.onKeyDown({ keyCode: 39, ctrl: false, alt: false, shift: false });
+    assertEquals("Screen row 0", "$12345678901234567890123456789012345678901234567890123456789                    ", mockEjax.pixelRow(0));
+    assertEquals("Screen row 1", "$123456789012345678901234567890123456789                                        ", mockEjax.pixelRow(1));
+    assertEquals("Screen row 2", "$12345678901234567890123456789                                                  ", mockEjax.pixelRow(2));
+    assertEquals("Screen row 3", "$12345678901234567890                                                           ", mockEjax.pixelRow(3));
+    assertEquals("Screen row 4", "$1234567890123456789                                                            ", mockEjax.pixelRow(4));
+    assertEquals("Screen row 5", "$123456789012345678                                                             ", mockEjax.pixelRow(5));
+    assertEquals("Screen row 6", "$                                                                               ", mockEjax.pixelRow(6));
+    assertEquals("Screen row 7", "$                                                                               ", mockEjax.pixelRow(7));
+    assertEquals("Screen row 8", "$                                                                               ", mockEjax.pixelRow(8));
+    assertEquals("Screen row 9", "$                                                                               ", mockEjax.pixelRow(9));
+    assertEquals("Screen row 10", "                                                                                ", mockEjax.pixelRow(10));
+    assertEquals("Screen row 22", " *scratch*    (Fundamental)-----------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
+    assertEquals("X cursor after moving right 79 times", 19, currentX);
+    assertEquals("Y cursor after moving right 79 times", 0, currentY);
+
+    for (var i = 0; i < 18; i++) {
+        mockEjax.onKeyDown({ keyCode: 37, ctrl: false, alt: false, shift: false });
+    }
+
+    assertEquals("Screen row 0", "$12345678901234567890123456789012345678901234567890123456789                    ", mockEjax.pixelRow(0));
+    assertEquals("Screen row 1", "$123456789012345678901234567890123456789                                        ", mockEjax.pixelRow(1));
+    assertEquals("Screen row 2", "$12345678901234567890123456789                                                  ", mockEjax.pixelRow(2));
+    assertEquals("Screen row 3", "$12345678901234567890                                                           ", mockEjax.pixelRow(3));
+    assertEquals("Screen row 4", "$1234567890123456789                                                            ", mockEjax.pixelRow(4));
+    assertEquals("Screen row 5", "$123456789012345678                                                             ", mockEjax.pixelRow(5));
+    assertEquals("Screen row 6", "$                                                                               ", mockEjax.pixelRow(6));
+    assertEquals("Screen row 7", "$                                                                               ", mockEjax.pixelRow(7));
+    assertEquals("Screen row 8", "$                                                                               ", mockEjax.pixelRow(8));
+    assertEquals("Screen row 9", "$                                                                               ", mockEjax.pixelRow(9));
+    assertEquals("Screen row 10", "                                                                                ", mockEjax.pixelRow(10));
+    assertEquals("Screen row 22", " *scratch*    (Fundamental)-----------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
+    assertEquals("X cursor after moving left 18 times", 1, currentX);
+    assertEquals("Y cursor after moving left 18 times", 0, currentY);
+
+    mockEjax.onKeyDown({ keyCode: 37, ctrl: false, alt: false, shift: false });
+    assertEquals("Screen row 0", "0123456789012345678901234567890123456789012345678901234567890123456789012345678$", mockEjax.pixelRow(0));
+    assertEquals("Screen row 1", "0123456789012345678901234567890123456789012345678901234567890123456789012345678$", mockEjax.pixelRow(1));
+    assertEquals("Screen row 2", "0123456789012345678901234567890123456789012345678901234567890123456789012345678$", mockEjax.pixelRow(2));
+    assertEquals("Screen row 3", "0123456789012345678901234567890123456789012345678901234567890123456789012345678$", mockEjax.pixelRow(3));
+    assertEquals("Screen row 4", "0123456789012345678901234567890123456789012345678901234567890123456789012345678$", mockEjax.pixelRow(4));
+    assertEquals("Screen row 5", "0123456789012345678901234567890123456789012345678901234567890123456789012345678 ", mockEjax.pixelRow(5));
+    assertEquals("Screen row 6", "012345678901234567890123456789                                                  ", mockEjax.pixelRow(6));
+    assertEquals("Screen row 7", "                                                                                ", mockEjax.pixelRow(7));
+    assertEquals("Screen row 8", "abc                                                                             ", mockEjax.pixelRow(8));
+    assertEquals("Screen row 9", "                                                                                ", mockEjax.pixelRow(9));
+    assertEquals("Screen row 10", "                                                                                ", mockEjax.pixelRow(10));
+    assertEquals("Screen row 22", " *scratch*    (Fundamental)-----------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
+    assertEquals("X cursor after moving left 19 times", 60, currentX);
+    assertEquals("Y cursor after moving left 19 times", 0, currentY);
+}
