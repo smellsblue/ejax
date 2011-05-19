@@ -7,10 +7,14 @@ directly.
 
 # Installation
 
-To install, you just need to run ant.  Though, to run ant, you will
-need ant (obviously), the JDK with development headers (jni.h) and
-recent enough to include Rhino (JDK 6 will work), curses with
-development headers, and gcc.
+To install, you just need to run ant.
+
+The libraries you need:
+
+* ant
+* JDK with development headers (jni.h) and Rhino (OpenJDK 6 should work)
+* curses with development headers
+* gcc
 
 # Running
 
