@@ -18,6 +18,18 @@ EjaxWindow.fn.getCursorY = function() {
     return this.buffer.getCursorY() + this.y;
 };
 
+EjaxWindow.fn.updatePage = function() {
+    if (this.buffer.getCursorY() >= this.rows - 1) {
+        this.buffer.updateStartingLine((this.rows - 1) * 3 / 4);
+        this.redraw();
+    }
+
+    if (this.buffer.getCursorY() < 0) {
+        this.buffer.updateStartingLine(-(this.rows - 1) * 3 / 4);
+        this.redraw();
+    }
+};
+
 EjaxWindow.fn.clear = function() {
     for (var x = 0; x < this.columns; x++) {
         for (var y = 0; y < this.rows; y++) {

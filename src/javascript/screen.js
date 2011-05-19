@@ -46,6 +46,7 @@ Screen.fn.redrawBuffer = function(buffer) {
 };
 
 Screen.fn.resetCursor = function() {
+    this.currentWindow.updatePage();
     this.ejax.io.setCursor(this.currentWindow.getCursorX(), this.currentWindow.getCursorY());
 };
 

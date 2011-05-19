@@ -13,6 +13,10 @@ BufferContent.fn.getY = function(index) {
     return this.lineFrom(index).index;
 };
 
+BufferContent.fn.lastLine = function() {
+    return this.lines.length - 1;
+};
+
 BufferContent.fn.length = function() {
     return this.cache.length;
 };
@@ -23,8 +27,8 @@ BufferContent.fn.lineFrom = function(index) {
     var start = 0;
 
     if (index == length) {
-        start = length - this.lines[this.lines.length - 1].length;
-        return { index: this.lines.length - 1, start: start, lineIndex: index - start };
+        start = length - this.lines[this.lastLine()].length;
+        return { index: this.lastLine(), start: start, lineIndex: index - start };
     }
 
     this.eachLine(function(line, i) {
@@ -152,7 +156,7 @@ Buffer.fn.getStatus = function() {
 };
 
 Buffer.fn.displayCharAt = function(x, y) {
-    return this.content.displayCharAt(x, y);
+    return this.content.displayCharAt(x, y + this.startingLine);
 };
 
 Buffer.fn.charAt = function(index) {
@@ -167,12 +171,24 @@ Buffer.fn.length = function() {
     return this.content.length();
 };
 
+Buffer.fn.updateStartingLine = function(adjustment) {
+    this.startingLine += Math.floor(adjustment);
+
+    if (this.startingLine < 0) {
+        this.startingLine = 0;
+    }
+
+    if (this.startingLine >= this.content.lastLine()) {
+        this.startingLine = this.content.lastLine();
+    }
+};
+
 Buffer.fn.getCursorX = function() {
     return this.content.getX(this.cursor);
 };
 
 Buffer.fn.getCursorY = function() {
-    return this.content.getY(this.cursor);
+    return this.content.getY(this.cursor) - this.startingLine;
 };
 
 Buffer.fn.setCursor = function(value) {

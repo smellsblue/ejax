@@ -189,7 +189,7 @@ function testReadingParameterToLoadFile() {
     assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
 }
 
-function ignore_testScrollingVertically() {
+function testScrollingVertically() {
     var currentX, currentY;
     mockEjax.setCursor = function(x, y) {
         currentX = x;
@@ -228,15 +228,15 @@ function ignore_testScrollingVertically() {
     assertEquals("X cursor after moving down 21 times", 0, currentX);
     assertEquals("Y cursor after moving down 21 times", 21, currentY);
     mockEjax.onKeyDown({ keyCode: 40, ctrl: false, alt: false, shift: false });
-    assertContent(19);
+    assertContent(17);
     assertEquals("X cursor after moving down 22 times", 0, currentX);
-    assertEquals("Y cursor after moving down 22 times", 4, currentY);
+    assertEquals("Y cursor after moving down 22 times", 6, currentY);
 
-    for (var i = 0; i < 5; i++) {
+    for (var i = 0; i < 7; i++) {
         mockEjax.onKeyDown({ keyCode: 38, ctrl: false, alt: false, shift: false });
     }
 
     assertContent(1);
-    assertEquals("X cursor after moving up 5 times", 0, currentX);
-    assertEquals("Y cursor after moving up 5 times", 17, currentY);
+    assertEquals("X cursor after moving up 7 times", 0, currentX);
+    assertEquals("Y cursor after moving up 7 times", 15, currentY);
 }
