@@ -9,7 +9,7 @@ function setUp() {
     mockEjax = new MockEjax();
 }
 
-function ignore_testInsertPerformance() {
+function testInsertPerformance() {
     var delta = time(function() {
         for (var i = 0; i < 100; i++) {
             mockEjax.onKeyDown({ keyCode: 65, ctrl: false, alt: false, shift: false });

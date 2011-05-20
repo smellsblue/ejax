@@ -49,14 +49,14 @@ function testCharAt() {
 
 function testInsertFromEmpty() {
     var bufferContent = new BufferContent(mockBuffer, "");
-    bufferContent.insert("a", 0);
+    bufferContent.insert("a", 0, 0);
     assertEquals("Result", "a", bufferContent.get());
 }
 
 function testInsertNoNewlines() {
     var insertAndGet = function(i) {
         var bufferContent = new BufferContent(mockBuffer, "abc");
-        bufferContent.insert("1", i);
+        bufferContent.insert("1", i, 0);
         return bufferContent.get();
     };
     assertEquals("Result", "1abc", insertAndGet(0));
@@ -66,105 +66,105 @@ function testInsertNoNewlines() {
 }
 
 function testInsertWithNewlines() {
-    var insertAndGet = function(i) {
+    var insertAndGet = function(x, y) {
         var bufferContent = new BufferContent(mockBuffer, "abc\n123\nxyz");
-        bufferContent.insert("i", i);
+        bufferContent.insert("i", x, y);
         return bufferContent.get();
     };
-    assertEquals("Result", "iabc\n123\nxyz", insertAndGet(0));
-    assertEquals("Result", "aibc\n123\nxyz", insertAndGet(1));
-    assertEquals("Result", "abic\n123\nxyz", insertAndGet(2));
-    assertEquals("Result", "abci\n123\nxyz", insertAndGet(3));
-    assertEquals("Result", "abc\ni123\nxyz", insertAndGet(4));
-    assertEquals("Result", "abc\n1i23\nxyz", insertAndGet(5));
-    assertEquals("Result", "abc\n12i3\nxyz", insertAndGet(6));
-    assertEquals("Result", "abc\n123i\nxyz", insertAndGet(7));
-    assertEquals("Result", "abc\n123\nixyz", insertAndGet(8));
-    assertEquals("Result", "abc\n123\nxiyz", insertAndGet(9));
-    assertEquals("Result", "abc\n123\nxyiz", insertAndGet(10));
-    assertEquals("Result", "abc\n123\nxyzi", insertAndGet(11));
+    assertEquals("Result", "iabc\n123\nxyz", insertAndGet(0, 0));
+    assertEquals("Result", "aibc\n123\nxyz", insertAndGet(1, 0));
+    assertEquals("Result", "abic\n123\nxyz", insertAndGet(2, 0));
+    assertEquals("Result", "abci\n123\nxyz", insertAndGet(3, 0));
+    assertEquals("Result", "abc\ni123\nxyz", insertAndGet(0, 1));
+    assertEquals("Result", "abc\n1i23\nxyz", insertAndGet(1, 1));
+    assertEquals("Result", "abc\n12i3\nxyz", insertAndGet(2, 1));
+    assertEquals("Result", "abc\n123i\nxyz", insertAndGet(3, 1));
+    assertEquals("Result", "abc\n123\nixyz", insertAndGet(0, 2));
+    assertEquals("Result", "abc\n123\nxiyz", insertAndGet(1, 2));
+    assertEquals("Result", "abc\n123\nxyiz", insertAndGet(2, 2));
+    assertEquals("Result", "abc\n123\nxyzi", insertAndGet(3, 2));
 }
 
 function testInsertNewline() {
-    var insertAndGet = function(i) {
+    var insertAndGet = function(x, y) {
         var bufferContent = new BufferContent(mockBuffer, "abc\n123\nxyz");
-        bufferContent.insert("\n", i);
+        bufferContent.insert("\n", x, y);
         return bufferContent.get();
     };
-    var insertAndGetLines = function(i) {
+    var insertAndGetLines = function(x, y) {
         var bufferContent = new BufferContent(mockBuffer, "abc\n123\nxyz");
-        bufferContent.insert("\n", i);
+        bufferContent.insert("\n", x, y);
         return bufferContent.lines;
     };
-    assertEquals("Result index 0", "\nabc\n123\nxyz", insertAndGet(0));
-    assertArrayEquals("Array result index 0", ["\n", "abc\n", "123\n", "xyz"], insertAndGetLines(0));
-    assertEquals("Result index 1", "a\nbc\n123\nxyz", insertAndGet(1));
-    assertArrayEquals("Array result index 1", ["a\n", "bc\n", "123\n", "xyz"], insertAndGetLines(1));
-    assertEquals("Result index 2", "ab\nc\n123\nxyz", insertAndGet(2));
-    assertArrayEquals("Array result index 2", ["ab\n", "c\n", "123\n", "xyz"], insertAndGetLines(2));
-    assertEquals("Result index 3", "abc\n\n123\nxyz", insertAndGet(3));
-    assertArrayEquals("Array result index 3", ["abc\n", "\n", "123\n", "xyz"], insertAndGetLines(3));
-    assertEquals("Result index 4", "abc\n\n123\nxyz", insertAndGet(4));
-    assertArrayEquals("Array result index 4", ["abc\n", "\n", "123\n", "xyz"], insertAndGetLines(4));
-    assertEquals("Result index 5", "abc\n1\n23\nxyz", insertAndGet(5));
-    assertArrayEquals("Array result index 5", ["abc\n", "1\n", "23\n", "xyz"], insertAndGetLines(5));
-    assertEquals("Result index 6", "abc\n12\n3\nxyz", insertAndGet(6));
-    assertArrayEquals("Array result index 6", ["abc\n", "12\n", "3\n", "xyz"], insertAndGetLines(6));
-    assertEquals("Result index 7", "abc\n123\n\nxyz", insertAndGet(7));
-    assertArrayEquals("Array result index 7", ["abc\n", "123\n", "\n", "xyz"], insertAndGetLines(7));
-    assertEquals("Result index 8", "abc\n123\n\nxyz", insertAndGet(8));
-    assertArrayEquals("Array result index 8", ["abc\n", "123\n", "\n", "xyz"], insertAndGetLines(8));
-    assertEquals("Result index 9", "abc\n123\nx\nyz", insertAndGet(9));
-    assertArrayEquals("Array result index 9", ["abc\n", "123\n", "x\n", "yz"], insertAndGetLines(9));
-    assertEquals("Result index 10", "abc\n123\nxy\nz", insertAndGet(10));
-    assertArrayEquals("Array result index 10", ["abc\n", "123\n", "xy\n", "z"], insertAndGetLines(10));
-    assertEquals("Result index 11", "abc\n123\nxyz\n", insertAndGet(11));
-    assertArrayEquals("Array result index 11", ["abc\n", "123\n", "xyz\n", ""], insertAndGetLines(11));
+    assertEquals("Result index 0", "\nabc\n123\nxyz", insertAndGet(0, 0));
+    assertArrayEquals("Array result index 0", ["\n", "abc\n", "123\n", "xyz"], insertAndGetLines(0, 0));
+    assertEquals("Result index 1", "a\nbc\n123\nxyz", insertAndGet(1, 0));
+    assertArrayEquals("Array result index 1", ["a\n", "bc\n", "123\n", "xyz"], insertAndGetLines(1, 0));
+    assertEquals("Result index 2", "ab\nc\n123\nxyz", insertAndGet(2, 0));
+    assertArrayEquals("Array result index 2", ["ab\n", "c\n", "123\n", "xyz"], insertAndGetLines(2, 0));
+    assertEquals("Result index 3", "abc\n\n123\nxyz", insertAndGet(3, 0));
+    assertArrayEquals("Array result index 3", ["abc\n", "\n", "123\n", "xyz"], insertAndGetLines(3, 0));
+    assertEquals("Result index 4", "abc\n\n123\nxyz", insertAndGet(0, 1));
+    assertArrayEquals("Array result index 4", ["abc\n", "\n", "123\n", "xyz"], insertAndGetLines(0, 1));
+    assertEquals("Result index 5", "abc\n1\n23\nxyz", insertAndGet(1, 1));
+    assertArrayEquals("Array result index 5", ["abc\n", "1\n", "23\n", "xyz"], insertAndGetLines(1, 1));
+    assertEquals("Result index 6", "abc\n12\n3\nxyz", insertAndGet(2, 1));
+    assertArrayEquals("Array result index 6", ["abc\n", "12\n", "3\n", "xyz"], insertAndGetLines(2, 1));
+    assertEquals("Result index 7", "abc\n123\n\nxyz", insertAndGet(3, 1));
+    assertArrayEquals("Array result index 7", ["abc\n", "123\n", "\n", "xyz"], insertAndGetLines(3, 1));
+    assertEquals("Result index 8", "abc\n123\n\nxyz", insertAndGet(0, 2));
+    assertArrayEquals("Array result index 8", ["abc\n", "123\n", "\n", "xyz"], insertAndGetLines(0, 2));
+    assertEquals("Result index 9", "abc\n123\nx\nyz", insertAndGet(1, 2));
+    assertArrayEquals("Array result index 9", ["abc\n", "123\n", "x\n", "yz"], insertAndGetLines(1, 2));
+    assertEquals("Result index 10", "abc\n123\nxy\nz", insertAndGet(2, 2));
+    assertArrayEquals("Array result index 10", ["abc\n", "123\n", "xy\n", "z"], insertAndGetLines(2, 2));
+    assertEquals("Result index 11", "abc\n123\nxyz\n", insertAndGet(3, 2));
+    assertArrayEquals("Array result index 11", ["abc\n", "123\n", "xyz\n", ""], insertAndGetLines(3, 2));
 }
 
 function testRemoveSingleCharacter() {
     var bufferContent = new BufferContent(mockBuffer, "a");
-    bufferContent.remove(0, 1);
+    bufferContent.remove(0, 0, 1);
     assertEquals("Content after delete letter", "", bufferContent.get());
     assertArrayEquals("Array after delete letter", [""], bufferContent.lines);
 
     bufferContent = new BufferContent(mockBuffer, "\n");
-    bufferContent.remove(0, 1);
+    bufferContent.remove(0, 0, 1);
     assertEquals("Content after delete newline", "", bufferContent.get());
     assertArrayEquals("Array after delete newline", [""], bufferContent.lines);
 }
 
 function testRemoveWithNewlines() {
-    var removeAndGet = function(i) {
+    var removeAndGet = function(x, y) {
         var bufferContent = new BufferContent(mockBuffer, "abc\n123\nxyz");
-        bufferContent.remove(i, 1);
+        bufferContent.remove(x, y, 1);
         return bufferContent.get();
     };
-    var removeAndGetLines = function(i) {
+    var removeAndGetLines = function(x, y) {
         var bufferContent = new BufferContent(mockBuffer, "abc\n123\nxyz");
-        bufferContent.remove(i, 1);
+        bufferContent.remove(x, y, 1);
         return bufferContent.lines;
     };
-    assertEquals("Result index 0", "bc\n123\nxyz", removeAndGet(0));
-    assertArrayEquals("Array result index 0", ["bc\n", "123\n", "xyz"], removeAndGetLines(0));
-    assertEquals("Result index 1", "ac\n123\nxyz", removeAndGet(1));
-    assertArrayEquals("Array result index 1", ["ac\n", "123\n", "xyz"], removeAndGetLines(1));
-    assertEquals("Result index 2", "ab\n123\nxyz", removeAndGet(2));
-    assertArrayEquals("Array result index 2", ["ab\n", "123\n", "xyz"], removeAndGetLines(2));
-    assertEquals("Result index 3", "abc123\nxyz", removeAndGet(3));
-    assertArrayEquals("Array result index 3", ["abc123\n", "xyz"], removeAndGetLines(3));
-    assertEquals("Result index 4", "abc\n23\nxyz", removeAndGet(4));
-    assertArrayEquals("Array result index 4", ["abc\n", "23\n", "xyz"], removeAndGetLines(4));
-    assertEquals("Result index 5", "abc\n13\nxyz", removeAndGet(5));
-    assertArrayEquals("Array result index 5", ["abc\n", "13\n", "xyz"], removeAndGetLines(5));
-    assertEquals("Result index 6", "abc\n12\nxyz", removeAndGet(6));
-    assertArrayEquals("Array result index 6", ["abc\n", "12\n", "xyz"], removeAndGetLines(6));
-    assertEquals("Result index 7", "abc\n123xyz", removeAndGet(7));
-    assertArrayEquals("Array result index 7", ["abc\n", "123xyz"], removeAndGetLines(7));
-    assertEquals("Result index 8", "abc\n123\nyz", removeAndGet(8));
-    assertArrayEquals("Array result index 8", ["abc\n", "123\n", "yz"], removeAndGetLines(8));
-    assertEquals("Result index 9", "abc\n123\nxz", removeAndGet(9));
-    assertArrayEquals("Array result index 9", ["abc\n", "123\n", "xz"], removeAndGetLines(9));
-    assertEquals("Result index 10", "abc\n123\nxy", removeAndGet(10));
-    assertArrayEquals("Array result index 10", ["abc\n", "123\n", "xy"], removeAndGetLines(10));
+    assertEquals("Result index 0", "bc\n123\nxyz", removeAndGet(0, 0));
+    assertArrayEquals("Array result index 0", ["bc\n", "123\n", "xyz"], removeAndGetLines(0, 0));
+    assertEquals("Result index 1", "ac\n123\nxyz", removeAndGet(1, 0));
+    assertArrayEquals("Array result index 1", ["ac\n", "123\n", "xyz"], removeAndGetLines(1, 0));
+    assertEquals("Result index 2", "ab\n123\nxyz", removeAndGet(2, 0));
+    assertArrayEquals("Array result index 2", ["ab\n", "123\n", "xyz"], removeAndGetLines(2, 0));
+    assertEquals("Result index 3", "abc123\nxyz", removeAndGet(3, 0));
+    assertArrayEquals("Array result index 3", ["abc123\n", "xyz"], removeAndGetLines(3, 0));
+    assertEquals("Result index 4", "abc\n23\nxyz", removeAndGet(0, 1));
+    assertArrayEquals("Array result index 4", ["abc\n", "23\n", "xyz"], removeAndGetLines(0, 1));
+    assertEquals("Result index 5", "abc\n13\nxyz", removeAndGet(1, 1));
+    assertArrayEquals("Array result index 5", ["abc\n", "13\n", "xyz"], removeAndGetLines(1, 1));
+    assertEquals("Result index 6", "abc\n12\nxyz", removeAndGet(2, 1));
+    assertArrayEquals("Array result index 6", ["abc\n", "12\n", "xyz"], removeAndGetLines(2, 1));
+    assertEquals("Result index 7", "abc\n123xyz", removeAndGet(3, 1));
+    assertArrayEquals("Array result index 7", ["abc\n", "123xyz"], removeAndGetLines(3, 1));
+    assertEquals("Result index 8", "abc\n123\nyz", removeAndGet(0, 2));
+    assertArrayEquals("Array result index 8", ["abc\n", "123\n", "yz"], removeAndGetLines(0, 2));
+    assertEquals("Result index 9", "abc\n123\nxz", removeAndGet(1, 2));
+    assertArrayEquals("Array result index 9", ["abc\n", "123\n", "xz"], removeAndGetLines(1, 2));
+    assertEquals("Result index 10", "abc\n123\nxy", removeAndGet(2, 2));
+    assertArrayEquals("Array result index 10", ["abc\n", "123\n", "xy"], removeAndGetLines(2, 2));
 }

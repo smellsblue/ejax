@@ -21,6 +21,18 @@ String.prototype.startsWith = function(value) {
     return this.indexOf(value) == 0;
 };
 
+String.prototype.count = function(value) {
+    var result = 0;
+    var index = this.indexOf(value);
+
+    while (index >= 0) {
+        result++;
+        index = this.indexOf(value, index + 1);
+    }
+
+    return result;
+};
+
 String.prototype.isString = function() {
     // For some reason typeof(this) doesn't work for strings...
     return true;

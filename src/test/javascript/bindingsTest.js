@@ -11,23 +11,27 @@ function setUp() {
 
 function testDeleteBinding() {
     mockEjax.ejax.setBufferContent("abc");
-    mockEjax.ejax.setCursor(2);
+    mockEjax.ejax.setCursor(2, 0);
     mockEjax.onKeyDown({ keyCode: 46, ctrl: false, alt: false, shift: false });
-    assertEquals("Buffer position after first delete", 2, mockEjax.ejax.screen.currentWindow.buffer.cursor);
+    assertEquals("Buffer X position after first delete", 2, mockEjax.ejax.screen.currentWindow.buffer.cursorX);
+    assertEquals("Buffer Y position after first delete", 0, mockEjax.ejax.screen.currentWindow.buffer.cursorY);
     assertEquals("Buffer content after first delete", "ab", mockEjax.ejax.getBufferContent());
     mockEjax.onKeyDown({ keyCode: 46, ctrl: false, alt: false, shift: false });
-    assertEquals("Buffer position after second delete", 2, mockEjax.ejax.screen.currentWindow.buffer.cursor);
+    assertEquals("Buffer X position after second delete", 2, mockEjax.ejax.screen.currentWindow.buffer.cursorX);
+    assertEquals("Buffer Y position after second delete", 0, mockEjax.ejax.screen.currentWindow.buffer.cursorY);
     assertEquals("Buffer content after first delete", "ab", mockEjax.ejax.getBufferContent());
 }
 
 function testBackspaceBinding() {
     mockEjax.ejax.setBufferContent("abc");
-    mockEjax.ejax.setCursor(1);
+    mockEjax.ejax.setCursor(1, 0);
     mockEjax.onKeyDown({ keyCode: 8, ctrl: false, alt: false, shift: false });
-    assertEquals("Buffer position after first delete", 0, mockEjax.ejax.screen.currentWindow.buffer.cursor);
+    assertEquals("Buffer X position after first delete", 0, mockEjax.ejax.screen.currentWindow.buffer.cursorX);
+    assertEquals("Buffer Y position after first delete", 0, mockEjax.ejax.screen.currentWindow.buffer.cursorY);
     assertEquals("Buffer content after first delete", "bc", mockEjax.ejax.getBufferContent());
     mockEjax.onKeyDown({ keyCode: 8, ctrl: false, alt: false, shift: false });
-    assertEquals("Buffer position after second delete", 0, mockEjax.ejax.screen.currentWindow.buffer.cursor);
+    assertEquals("Buffer X position after second delete", 0, mockEjax.ejax.screen.currentWindow.buffer.cursorX);
+    assertEquals("Buffer Y position after second delete", 0, mockEjax.ejax.screen.currentWindow.buffer.cursorY);
     assertEquals("Buffer content after first delete", "bc", mockEjax.ejax.getBufferContent());
 }
 
@@ -56,10 +60,12 @@ function testFindFile() {
 function testEnterThenUp() {
     mockEjax.ejax.setBufferContent("abc");
     mockEjax.onKeyDown({ keyCode: 13, ctrl: false, alt: false, shift: false });
-    assertEquals("Buffer position after enter", 1, mockEjax.ejax.screen.currentWindow.buffer.cursor);
+    assertEquals("Buffer X position after enter", 0, mockEjax.ejax.screen.currentWindow.buffer.cursorX);
+    assertEquals("Buffer Y position after enter", 1, mockEjax.ejax.screen.currentWindow.buffer.cursorY);
     assertEquals("Buffer content after enter", "\nabc", mockEjax.ejax.getBufferContent());
     mockEjax.onKeyDown({ keyCode: 38, ctrl: false, alt: false, shift: false });
-    assertEquals("Buffer position after up", 0, mockEjax.ejax.screen.currentWindow.buffer.cursor);
+    assertEquals("Buffer X position after up", 0, mockEjax.ejax.screen.currentWindow.buffer.cursorX);
+    assertEquals("Buffer Y position after up", 0, mockEjax.ejax.screen.currentWindow.buffer.cursorY);
     assertEquals("Buffer content after up", "\nabc", mockEjax.ejax.getBufferContent());
 }
 
