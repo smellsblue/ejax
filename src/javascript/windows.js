@@ -64,13 +64,13 @@ EjaxWindow.fn.redraw = function() {
 EjaxWindow.fn.redrawContent = function() {
     var rows = this.rows - 1;
     var startingColumn = this.buffer.startingColumn;
+    var self = this;
 
     if (this.buffer.minibuffer) {
         rows++;
     }
 
-    for (var y = 0; y < rows; y++) {
-        var line = this.buffer.getLine(y);
+    this.buffer.eachDisplayLine(rows, function(line, y) {
         var x = 0, c;
 
         if (startingColumn == 0) {
@@ -83,15 +83,15 @@ EjaxWindow.fn.redrawContent = function() {
             if (c == "\n") {
                 c = " ";
             }
-        } else if (line === undefined || line.length == 0 && this.buffer.isLastLine(y)) {
+        } else if (line === undefined || line.length == 0 && self.buffer.isLastLine(y)) {
             c = " ";
         } else {
             c = "$";
         }
 
-        this.screen.ejax.io.setPixel(c, this.x + x, this.y + y);
+        self.screen.ejax.io.setPixel(c, self.x + x, self.y + y);
 
-        for (x++; x < this.columns - 1; x++) {
+        for (x++; x < self.columns - 1; x++) {
             if (line === undefined || x + startingColumn >= line.length) {
                 c = " ";
             } else {
@@ -102,7 +102,7 @@ EjaxWindow.fn.redrawContent = function() {
                 c = " ";
             }
 
-            this.screen.ejax.io.setPixel(c, this.x + x, this.y + y);
+            self.screen.ejax.io.setPixel(c, self.x + x, self.y + y);
         }
 
         if (line && x + startingColumn < line.length && line.charAt(x + startingColumn) != "\n") {
@@ -111,8 +111,8 @@ EjaxWindow.fn.redrawContent = function() {
             c = " ";
         }
 
-        this.screen.ejax.io.setPixel(c, this.x + x, this.y + y);
-    }
+        self.screen.ejax.io.setPixel(c, self.x + x, self.y + y);
+    });
 };
 
 EjaxWindow.fn.redrawStatus = function() {

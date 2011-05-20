@@ -119,8 +119,16 @@ BufferContent.fn.remove = function(index, length) {
     }
 };
 
-BufferContent.fn.eachLine = function(fn) {
-    for (var i = 0; i < this.lines.length; i++) {
+BufferContent.fn.eachLine = function(arg1, arg2) {
+    var fn = arg1;
+    var start = 0;
+
+    if (!fn.isFunction()) {
+        fn = arg2;
+        start = arg1;
+    }
+
+    for (var i = start; i < this.lines.length; i++) {
         if (fn(this.lines[i], i) === false) {
             break;
         }
@@ -167,6 +175,23 @@ Buffer.fn.isLastLine = function(y) {
 
 Buffer.fn.hasCharAt = function(x, y) {
     return this.content.hasCharAt(x + this.startingColumn, y + this.startingLine);
+};
+
+Buffer.fn.eachDisplayLine = function(rows, fn) {
+    var y = 0;
+
+    this.content.eachLine(this.startingLine, function(line, i) {
+        fn(line, y);
+        y++;
+
+        if (y >= rows) {
+            return false;
+        }
+    });
+
+    for (; y < rows; y++) {
+        fn(undefined, y);
+    }
 };
 
 Buffer.fn.getLine = function(y) {
