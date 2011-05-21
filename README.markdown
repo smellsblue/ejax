@@ -30,12 +30,10 @@ to run in the browser.
 
 # Caveats
 
-Keep in mind this is still heavily a work in progress... I am focusing
-on the terminal side of things, but a lot of the code will work in a
-modern browser, though some key functionality is still to be
-implemented (probably soon).  I have some performance issues right
-now, but the terminal side of things basically works... though don't
-trust it to be totally stable yet.
+Keep in mind this is still heavily a work in progress... don't trust
+it to be totally stable yet.  There are currently some performance
+issues when running in the browser, but terminal performance is pretty
+good.
 
 # Contributions
 

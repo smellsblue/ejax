@@ -102,7 +102,7 @@ var HtmlEjax;
         this.screen[x][y].html(c).css(colors);
     };
 
-    HtmlEjax.fn.setPixel = function(str, x, y, options) {
+    HtmlEjax.fn.setPixels = function(str, x, y, options) {
         var colors = NORMAL_COLORS;
 
         if (options.invert) {
@@ -116,7 +116,7 @@ var HtmlEjax;
                 c = escapables[c];
             }
 
-            this.screen[x][y].html(c).css(colors);
+            this.screen[x + i][y].html(c).css(colors);
         }
     };
 
