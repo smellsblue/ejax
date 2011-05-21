@@ -18,7 +18,11 @@ function testLoadFileThenBufferName() {
         return new File(filename);
     };
 
-    mockEjax.ejax.findFile("src/test/javascript/testFile.txt");
+    mockEjax.ejax.readParameter = function(prompt, value, fn) {
+        fn("src/test/javascript/testFile.txt");
+    };
+
+    mockEjax.ejax.findFile();
     assertEquals("Buffer name after loading file", "testFile.txt", mockEjax.ejax.screen.currentWindow.buffer.name);
 }
 
@@ -30,7 +34,11 @@ function testSaveFile() {
         return new File(file.getAbsolutePath());
     };
 
-    mockEjax.ejax.findFile(file.getAbsolutePath());
+    mockEjax.ejax.readParameter = function(prompt, value, fn) {
+        fn(file.getAbsolutePath());
+    };
+
+    mockEjax.ejax.findFile();
     mockEjax.ejax.setBufferContent("This is the contents of a test file.\n");
     mockEjax.ejax.saveBuffer();
     assertEquals("File content after saving", "This is the contents of a test file.\n", new File(file.getAbsolutePath()).contents());

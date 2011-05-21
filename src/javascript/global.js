@@ -21,9 +21,10 @@ editingBindings.bind("BSP", function() { ejax.deleteBackward(); });
 editingBindings.type = function(key) { ejax.insert(key); };
 
 var fundamentalMode = new Mode("fundamental", "Fundamental", editingBindings);
+fundamentalMode.bindings.bind("M-x", function() { ejax.executeCommand(); });
 fundamentalMode.bindings.bind("M-<", function() { ejax.bufferStart(); });
 fundamentalMode.bindings.bind("M->", function() { ejax.bufferEnd(); });
-fundamentalMode.bindings.bind("C-xC-f", function() { ejax.readParameter("Find file: ", ejax.getWorkingDirectory(), function(result) { ejax.findFile(result); }); });
+fundamentalMode.bindings.bind("C-xC-f", function() { ejax.findFile(); });
 fundamentalMode.bindings.bind("C-xC-s", function() { ejax.saveBuffer(); });
 fundamentalMode.bindings.onFoundBinding = function(code) {
     logger.debug("Found function for key combo '" + code + "'");
@@ -49,6 +50,7 @@ minibufferMode.bindings.type = function(key) {
         ejax.screen.minibuffer.status.callback(ejax.screen.minibuffer.status.content);
         ejax.screen.minibuffer.status = null;
         ejax.screen.minibufferWindow.postRedraw();
+        ejax.screen.resetCursor();
     } else if (key == "\t") {
         // TODO: tab completion
     } else {

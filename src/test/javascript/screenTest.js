@@ -404,7 +404,6 @@ function testGotoBufferStartAndEnd() {
     assertEquals("Buffer X position after second buffer start", 0, mockEjax.ejax.screen.currentWindow.buffer.cursorX);
     assertEquals("Buffer Y position after second buffer start", 0, mockEjax.ejax.screen.currentWindow.buffer.cursorY);
 
-
     // With just a couple lines
     content = "1\n2\n3\n4\n5\n6\n7\n8\n9\n";
     mockEjax.ejax.setBufferContent(content);
@@ -418,4 +417,52 @@ function testGotoBufferStartAndEnd() {
     assertContent(1, 9);
     assertEquals("Buffer X position after second buffer start", 0, mockEjax.ejax.screen.currentWindow.buffer.cursorX);
     assertEquals("Buffer Y position after second buffer start", 0, mockEjax.ejax.screen.currentWindow.buffer.cursorY);
+}
+
+function testExecuteCommand() {
+    var currentX, currentY;
+    mockEjax.setCursor = function(x, y) {
+        currentX = x;
+        currentY = y;
+    };
+    mockEjax.ejax.setBufferContent("abc\n");
+    mockEjax.onKeyDown({ keyCode: 88, ctrl: false, alt: true, shift: false });
+    assertEquals("X cursor after M-x", 4, currentX);
+    assertEquals("Y cursor after M-x", 23, currentY);
+    mockEjax.ejax.screen.hardRedraw();
+    assertEquals("Max y value", 23, mockEjax.pixels.maxY);
+    assertEquals("Screen row 22", " *scratch*    (Fundamental)-----------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "M-x                                                                             ", mockEjax.pixelRow(23));
+
+    // nextLine
+    mockEjax.onKeyDown({ keyCode: 78, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 69, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 88, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 84, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 76, ctrl: false, alt: false, shift: true });
+    mockEjax.onKeyDown({ keyCode: 73, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 78, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 69, ctrl: false, alt: false, shift: false });
+    assertEquals("Max y value", 23, mockEjax.pixels.maxY);
+    assertEquals("Screen row 22", " *scratch*    (Fundamental)-----------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "M-x nextLine                                                                    ", mockEjax.pixelRow(23));
+    assertEquals("X cursor after typing command", 12, currentX);
+    assertEquals("Y cursor after typing command", 23, currentY);
+    mockEjax.onKeyDown({ keyCode: 13, ctrl: false, alt: false, shift: false });
+    assertEquals("Max y value", 23, mockEjax.pixels.maxY);
+    assertEquals("Screen row 22", " *scratch*    (Fundamental)-----------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
+    assertEquals("X cursor after pressing enter", 0, currentX);
+    assertEquals("Y cursor after pressing enter", 1, currentY);
+
+    mockEjax.onKeyDown({ keyCode: 88, ctrl: false, alt: true, shift: false });
+    mockEjax.onKeyDown({ keyCode: 78, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 69, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 88, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 13, ctrl: false, alt: false, shift: false });
+    assertEquals("Max y value", 23, mockEjax.pixels.maxY);
+    assertEquals("Screen row 22", " *scratch*    (Fundamental)-----------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "nex is undefined                                                                ", mockEjax.pixelRow(23));
+    assertEquals("X cursor after pressing enter", 0, currentX);
+    assertEquals("Y cursor after pressing enter", 1, currentY);
 }

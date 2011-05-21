@@ -237,3 +237,17 @@ Ejax.fn.ringBell = function() {
 Ejax.fn.exit = function() {
     this.io.exit();
 };
+
+Ejax.fn.executeCommand = function() {
+    var self = this;
+
+    this.readParameter("M-x ", "", function(fnName) {
+        var fn = self[fnName];
+
+        if (fn && fn.isFunction()) {
+            self[fnName]();
+        } else {
+            self.screen.minibuffer.setBufferContent(fnName + " is undefined");
+        }
+    });
+};
