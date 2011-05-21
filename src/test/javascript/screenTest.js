@@ -364,3 +364,58 @@ function testScrollingHorizontally() {
     assertEquals("X cursor after moving left 19 times", 60, currentX);
     assertEquals("Y cursor after moving left 19 times", 0, currentY);
 }
+
+function testGotoBufferStartAndEnd() {
+    var content = "";
+
+    for (var i = 1; i < 100; i++) {
+        content += "" + i + "\n";
+    }
+    content += "100";
+
+    var assertContent = function(startValue, max) {
+        for (var i = 0; i < 21; i++) {
+            var line = "";
+
+            if (i + startValue <= max) {
+                line += (i + startValue);
+            }
+
+            while (line.length < 80) {
+                line += " ";
+            }
+
+            assertEquals("Screen row  " + i, line, mockEjax.pixelRow(i));
+        }
+
+        assertEquals("Screen row 22", " *scratch*    (Fundamental)-----------------------------------------------------", mockEjax.pixelRow(22));
+        assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
+    };
+
+    mockEjax.ejax.setBufferContent(content);
+    mockEjax.ejax.screen.hardRedraw();
+    assertContent(1, 22);
+    mockEjax.onKeyDown({ keyCode: 190, ctrl: false, alt: true, shift: true });
+    assertContent(80, 100);
+    assertEquals("Buffer X position after second buffer end", 3, mockEjax.ejax.screen.currentWindow.buffer.cursorX);
+    assertEquals("Buffer Y position after second buffer end", 99, mockEjax.ejax.screen.currentWindow.buffer.cursorY);
+    mockEjax.onKeyDown({ keyCode: 188, ctrl: false, alt: true, shift: true });
+    assertContent(1, 22);
+    assertEquals("Buffer X position after second buffer start", 0, mockEjax.ejax.screen.currentWindow.buffer.cursorX);
+    assertEquals("Buffer Y position after second buffer start", 0, mockEjax.ejax.screen.currentWindow.buffer.cursorY);
+
+
+    // With just a couple lines
+    content = "1\n2\n3\n4\n5\n6\n7\n8\n9\n";
+    mockEjax.ejax.setBufferContent(content);
+    mockEjax.ejax.screen.hardRedraw();
+    assertContent(1, 9);
+    mockEjax.onKeyDown({ keyCode: 190, ctrl: false, alt: true, shift: true });
+    assertContent(1, 9);
+    assertEquals("Buffer X position after second buffer end", 0, mockEjax.ejax.screen.currentWindow.buffer.cursorX);
+    assertEquals("Buffer Y position after second buffer end", 9, mockEjax.ejax.screen.currentWindow.buffer.cursorY);
+    mockEjax.onKeyDown({ keyCode: 188, ctrl: false, alt: true, shift: true });
+    assertContent(1, 9);
+    assertEquals("Buffer X position after second buffer start", 0, mockEjax.ejax.screen.currentWindow.buffer.cursorX);
+    assertEquals("Buffer Y position after second buffer start", 0, mockEjax.ejax.screen.currentWindow.buffer.cursorY);
+}

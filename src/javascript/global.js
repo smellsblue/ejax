@@ -21,6 +21,8 @@ editingBindings.bind("BSP", function() { ejax.deleteBackward(); });
 editingBindings.type = function(key) { ejax.insert(key); };
 
 var fundamentalMode = new Mode("fundamental", "Fundamental", editingBindings);
+fundamentalMode.bindings.bind("M-<", function() { ejax.bufferStart(); });
+fundamentalMode.bindings.bind("M->", function() { ejax.bufferEnd(); });
 fundamentalMode.bindings.bind("C-xC-f", function() { ejax.readParameter("Find file: ", ejax.getWorkingDirectory(), function(result) { ejax.findFile(result); }); });
 fundamentalMode.bindings.bind("C-xC-s", function() { ejax.saveBuffer(); });
 fundamentalMode.bindings.onFoundBinding = function(code) {

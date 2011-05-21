@@ -436,6 +436,31 @@ Ejax.fn.lineEnd = function() {
     this.screen.currentWindow.buffer.lineEnd();
 };
 
+Buffer.fn.bufferStart = function() {
+    this.startingLine = 0;
+    this.setCursor(0, 0);
+    this.postRedraw();
+};
+
+Ejax.fn.bufferStart = function() {
+    this.screen.currentWindow.buffer.bufferStart();
+};
+
+Buffer.fn.bufferEnd = function(rows) {
+    this.startingLine = this.content.lines.length - rows + 1;
+
+    if (this.startingLine < 0) {
+        this.startingLine = 0;
+    }
+
+    this.setCursor(this.content.getLine(this.content.lastLine()).length, this.content.lastLine());
+    this.postRedraw();
+};
+
+Ejax.fn.bufferEnd = function() {
+    this.screen.currentWindow.buffer.bufferEnd(this.screen.currentWindow.rows - 1);
+};
+
 Ejax.fn.isBufferVisible = function(buffer) {
     return this.screen.currentWindow.buffer == buffer;
 };
