@@ -24,7 +24,7 @@ function testHardRedrawPerformance() {
             mockEjax.ejax.screen.hardRedraw();
         }
     });
-    assertLessThan("Hard redrawing 100 times takes less than 100ms", 100, delta);
+    assertLessThan("Hard redrawing 100 times takes less than 500ms", 500, delta);
 }
 
 function testInsertPerformance() {
@@ -47,7 +47,7 @@ function testDownUpPerformance() {
     assertLessThan("Moving down and up 100 times takes less than 100ms", 100, delta);
 }
 
-function ignore_testDownUpPerformanceViaKeydown() {
+function testDownUpPerformanceViaKeydown() {
     mockEjax.ejax.setBufferContent("\n");
     var delta = time(function() {
         for (var i = 0; i < 100; i++) {
@@ -55,5 +55,5 @@ function ignore_testDownUpPerformanceViaKeydown() {
             mockEjax.onKeyDown({ keyCode: 38, ctrl: false, alt: false, shift: false });
         }
     });
-    assertLessThan("Moving down and up 100 times via keydown takes less than 100ms", 100, delta);
+    assertLessThan("Moving down and up 100 times via keydown takes less than 500ms", 500, delta);
 }

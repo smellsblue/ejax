@@ -102,6 +102,24 @@ var HtmlEjax;
         this.screen[x][y].html(c).css(colors);
     };
 
+    HtmlEjax.fn.setPixel = function(str, x, y, options) {
+        var colors = NORMAL_COLORS;
+
+        if (options.invert) {
+            colors = INVERTED_COLORS;
+        }
+
+        for (var i = 0; i < str.length; i++) {
+            var c = str.charAt(i);
+
+            if (escapables[c]) {
+                c = escapables[c];
+            }
+
+            this.screen[x][y].html(c).css(colors);
+        }
+    };
+
     HtmlEjax.fn.registerKeyDown = function(fn) {
         var alt = false;
         var ctrl = false;

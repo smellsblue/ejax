@@ -141,6 +141,17 @@ TerminalEjax.fn.setPixel = function(c, x, y, options) {
     curses.move(this.cursor.x, this.cursor.y);
 };
 
+TerminalEjax.fn.setPixels = function(str, x, y, options) {
+    var attributes = [];
+
+    if (options.invert) {
+        attributes.push(curses.ATTRIBUTE_REVERSE);
+    }
+
+    curses.write(x, y, str, attributes);
+    curses.move(this.cursor.x, this.cursor.y);
+};
+
 TerminalEjax.fn.registerKeyDown = function(fn) {
     this.keyDownFn = fn;
 };

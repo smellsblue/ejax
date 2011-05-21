@@ -109,7 +109,7 @@ public class Curses {
         }
 
         for (int i = 0; i < str.length() && i < columns; i++) {
-            mvaddch(x, y, str.charAt(i), attributesValue);
+            mvaddch(x + i, y, str.charAt(i), attributesValue);
         }
     }
 

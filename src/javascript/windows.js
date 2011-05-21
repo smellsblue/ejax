@@ -69,15 +69,18 @@ EjaxWindow.fn.redrawContent = function() {
     var selfY = this.y;
     var io = this.screen.ejax.io;
     var buffer = this.buffer;
+    var whitespace = "";
+
+    for (var i = 0; i < columns; i++) {
+        whitespace += " ";
+    }
 
     if (buffer.minibuffer) {
         rows++;
     }
 
-    var lines = buffer.displayLines(rows);
-
     for (var y = 0; y < rows; y++) {
-        var line = lines[y];
+        var line = buffer.getLine(y);
         var x = 0, c;
         var lineUndefined = line === undefined;
         var lineLength = 0;
@@ -104,19 +107,23 @@ EjaxWindow.fn.redrawContent = function() {
         }
 
         io.setPixel(c, selfX + x, adjustedY);
+        x++;
 
-        for (x++; x < columns - 1; x++) {
-            if (lineUndefined || x + startingColumn >= lineLength) {
-                c = " ";
-            } else {
-                c = line.charAt(x + startingColumn);
+        if (!lineUndefined) {
+            var toPrint = line.substring(startingColumn + x, startingColumn + x + columns - 2);
+
+            if (toPrint.charAt(toPrint.length - 1) == "\n") {
+                toPrint = toPrint.substring(0, toPrint.length - 1);
             }
 
-            if (c == "\n") {
-                c = " ";
-            }
+            io.setPixels(toPrint, selfX + x, adjustedY);
+            x += toPrint.length;
+        }
 
-            io.setPixel(c, selfX + x, adjustedY);
+        if (x < columns - 1) {
+            var toPrint = whitespace.substring(0, columns - 1 - x);
+            io.setPixels(toPrint, selfX + x, adjustedY);
+            x += toPrint.length;
         }
 
         if (!lineUndefined && x + startingColumn < lineLength && line.charAt(x + startingColumn) != "\n") {

@@ -4,6 +4,16 @@ function IO(io) {
 
 IO.fn = IO.prototype;
 
+IO.fn.setPixels = function(str, x, y, options) {
+    if (!options) {
+        options = {};
+    }
+
+    if (this.io.setPixels) {
+        return this.io.setPixels(str, x, y, options);
+    }
+};
+
 IO.fn.setPixel = function(c, x, y, options) {
     if (!options) {
         options = {};

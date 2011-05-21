@@ -17,6 +17,12 @@ function setUp() {
         this.pixels.maxY = Math.max(y, this.pixels.maxY);
     };
 
+    mockEjax.setPixels = function(str, x, y) {
+        for (var i = 0; i < str.length; i++) {
+            this.setPixel(str.charAt(i), x + i, y);
+        }
+    };
+
     mockEjax.pixelRow = function(y) {
         if (y > this.pixels.maxY) {
             fail("" + y + " is outside the max y value of " + this.pixels.maxY);

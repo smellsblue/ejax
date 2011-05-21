@@ -68,10 +68,6 @@ BufferContent.fn.getLine = function(y) {
     return this.lines[y];
 };
 
-BufferContent.fn.getLines = function(start, length) {
-    return this.lines.slice(start, start + length);
-};
-
 BufferContent.fn.charAt = function(index) {
     var line = this.lineFrom(index);
     return this.lines[line.index].charAt(line.lineIndex);
@@ -178,10 +174,6 @@ Buffer.fn.isLastLine = function(y) {
 
 Buffer.fn.hasCharAt = function(x, y) {
     return this.content.hasCharAt(x + this.startingColumn, y + this.startingLine);
-};
-
-Buffer.fn.displayLines = function(rows) {
-    return this.content.getLines(this.startingLine, rows);
 };
 
 Buffer.fn.getLine = function(y) {
