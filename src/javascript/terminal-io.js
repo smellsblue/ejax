@@ -225,8 +225,6 @@ TerminalEjax.run = function(args) {
     curses.move(0, 0);
     curses.refresh();
     var termEjax = new TerminalEjax();
-    // Temporary dummy content.
-    //ejax.setBufferContent("\nThis is the content.\n\n\nThis is all the content.\n\nThis is testing all the content.\nThis is testing a really really super duper humungoid ungodly wham bam thank you ma'am ridonculously long line.\nAnd now short one.\n\<script\>alert(\"hello & world!\");\</script\>");
     var c = curses.read();
     var size = 0;
 
