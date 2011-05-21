@@ -341,7 +341,7 @@ Buffer.fn.previousLine = function() {
             return;
         }
 
-        x--;
+        x = 0;
     } else {
         y--;
         var lineLength = this.content.getLine(y).length;

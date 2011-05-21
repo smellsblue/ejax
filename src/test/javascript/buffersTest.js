@@ -144,14 +144,14 @@ function testPreviousLineFromFirstCharacterOfLastLine() {
     assertEquals("Buffer Y position after third previous line", 0, mockEjax.ejax.screen.currentWindow.buffer.cursorY);
 }
 
-function testPreviousLineFromSecondCharacterOfLastLine() {
+function testPreviousLineFromThirdCharacterOfLastLine() {
     mockEjax.ejax.setBufferContent("abc\n123\nxyz");
-    mockEjax.ejax.setCursor(1, 2);
+    mockEjax.ejax.setCursor(2, 2);
     mockEjax.ejax.previousLine();
-    assertEquals("Buffer X position after first previous line", 1, mockEjax.ejax.screen.currentWindow.buffer.cursorX);
+    assertEquals("Buffer X position after first previous line", 2, mockEjax.ejax.screen.currentWindow.buffer.cursorX);
     assertEquals("Buffer Y position after first previous line", 1, mockEjax.ejax.screen.currentWindow.buffer.cursorY);
     mockEjax.ejax.previousLine();
-    assertEquals("Buffer X position after second previous line", 1, mockEjax.ejax.screen.currentWindow.buffer.cursorX);
+    assertEquals("Buffer X position after second previous line", 2, mockEjax.ejax.screen.currentWindow.buffer.cursorX);
     assertEquals("Buffer Y position after second previous line", 0, mockEjax.ejax.screen.currentWindow.buffer.cursorY);
     mockEjax.ejax.previousLine();
     assertEquals("Buffer X position after third previous line", 0, mockEjax.ejax.screen.currentWindow.buffer.cursorX);
