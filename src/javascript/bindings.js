@@ -1,5 +1,6 @@
 function Bindings(inheritFrom) {
-    this.tree = {};
+    this.tree = new CompletionTree();
+    this.tree.tokenizer = parseBinding;
     this.bindings = [];
 
     if (inheritFrom && inheritFrom.bindings) {
@@ -24,26 +25,7 @@ Bindings.fn.bind = function(codes, fn) {
     this.bindings.push({ codes: codes, fn: fn });
 
     for (var index = 0; index < codes.length; index++) {
-        var code = codes[index];
-        var tokens = parseBinding(code);
-        var tree = this.tree;
-
-        for (var i = 0; i < tokens.length - 1; i++) {
-            var token = tokens[i];
-            var next = tree[token.toString()];
-
-            if (!next) {
-                tree[token.toString()] = {};
-                next = tree[token.toString()];
-            } else if (next.isFunction()) {
-                tree[token.toString()] = {};
-                next = tree[token.toString()];
-            }
-
-            tree = next;
-        }
-
-        tree[tokens[tokens.length - 1].toString()] = fn;
+        this.tree.add(codes[index], fn);
     }
 };
 
@@ -53,27 +35,17 @@ Bindings.fn.bind = function(codes, fn) {
  * is a complete binding.
  */
 Bindings.fn.process = function(tokens) {
-    var tree = this.tree;
+    var result = this.tree.find(tokens);
 
-    for (var i = 0; i < tokens.length; i++) {
-        var next = tree[tokens[i].toString()];
-
-        if (!next) {
-            return null;
-        }
-
-        if (next.isFunction()) {
-            if (i != tokens.length - 1) {
-                return null;
-            } else {
-                return next;
-            }
-        }
-
-        tree = next;
+    if (result.exists && result.partial) {
+        return "partial";
     }
 
-    return "partial";
+    if (result.exists) {
+        return result.value;
+    }
+
+    return null;
 };
 
 /**
@@ -83,18 +55,19 @@ Bindings.fn.process = function(tokens) {
  */
 Ejax.fn.processBinding = function(code) {
     var modeBindings = this.screen.currentWindow.buffer.mode.bindings;
-    var tokens = this.parseBinding(code);
-    var result = overrideBindings.process(tokens);
+    var result = overrideBindings.process(code);
 
     if (result) {
         return result;
     }
 
-    result = modeBindings.process(tokens);
+    result = modeBindings.process(code);
 
     if (result) {
         return result;
     }
+
+    var tokens = parseBinding(code);
 
     if (tokens.length == 1 && tokens[0].isPrintable()) {
         var key = tokens[0].getPrintKey();
@@ -180,10 +153,6 @@ function parseBinding(code) {
     }
 
     return tokens;
-};
-
-Ejax.fn.parseBinding = function(code) {
-    return parseBinding(code);
 };
 
 Ejax.fn.bind = function(code, fn) {

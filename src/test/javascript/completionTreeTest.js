@@ -1,3 +1,4 @@
+load("monkeypatches.js");
 load("completionTree.js");
 
 var tree;

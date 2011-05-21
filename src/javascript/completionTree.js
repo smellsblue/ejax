@@ -29,6 +29,10 @@ CompletionNode.fn.add = function(tokens, value) {
 
     var token = tokens.shift();
 
+    if (token.toString && token.toString.isFunction()) {
+        token = token.toString();
+    }
+
     if (tokens.length == 0) {
         this.node[token] = { value: value };
         return;
