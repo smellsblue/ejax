@@ -68,6 +68,10 @@ BufferContent.fn.getLine = function(y) {
     return this.lines[y];
 };
 
+BufferContent.fn.getLines = function(start, length) {
+    return this.lines.slice(start, start + length);
+};
+
 BufferContent.fn.charAt = function(index) {
     var line = this.lineFrom(index);
     return this.lines[line.index].charAt(line.lineIndex);
@@ -176,21 +180,8 @@ Buffer.fn.hasCharAt = function(x, y) {
     return this.content.hasCharAt(x + this.startingColumn, y + this.startingLine);
 };
 
-Buffer.fn.eachDisplayLine = function(rows, fn) {
-    var y = 0;
-
-    this.content.eachLine(this.startingLine, function(line, i) {
-        fn(line, y);
-        y++;
-
-        if (y >= rows) {
-            return false;
-        }
-    });
-
-    for (; y < rows; y++) {
-        fn(undefined, y);
-    }
+Buffer.fn.displayLines = function(rows) {
+    return this.content.getLines(this.startingLine, rows);
 };
 
 Buffer.fn.getLine = function(y) {
