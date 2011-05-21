@@ -465,4 +465,28 @@ function testExecuteCommand() {
     assertEquals("Screen row 23", "nex is undefined                                                                ", mockEjax.pixelRow(23));
     assertEquals("X cursor after pressing enter", 0, currentX);
     assertEquals("Y cursor after pressing enter", 1, currentY);
+
+    mockEjax.onKeyDown({ keyCode: 88, ctrl: false, alt: true, shift: false });
+    mockEjax.onKeyDown({ keyCode: 69, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 88, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 69, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 67, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 85, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 84, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 69, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 67, ctrl: false, alt: false, shift: true });
+    mockEjax.onKeyDown({ keyCode: 79, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 77, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 77, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 65, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 78, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 68, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 13, ctrl: false, alt: false, shift: false });
+    assertEquals("Max y value", 23, mockEjax.pixels.maxY);
+    assertEquals("Screen row 22", " *scratch*    (Fundamental)-----------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "M-x                                                                             ", mockEjax.pixelRow(23));
+    mockEjax.onKeyDown({ keyCode: 69, ctrl: false, alt: false, shift: false });
+    assertEquals("Max y value", 23, mockEjax.pixels.maxY);
+    assertEquals("Screen row 22", " *scratch*    (Fundamental)-----------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "M-x e                                                                           ", mockEjax.pixelRow(23));
 }
