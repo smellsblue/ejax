@@ -408,8 +408,8 @@ Buffer.fn.deleteBackward = function() {
         x--;
     }
 
-    this.content.remove(x, y, 1);
     this.moveBackward();
+    this.content.remove(x, y, 1);
 };
 
 Ejax.fn.deleteBackward = function() {

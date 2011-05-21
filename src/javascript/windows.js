@@ -142,13 +142,10 @@ EjaxWindow.fn.redrawStatus = function() {
     }
 
     var status = this.buffer.getStatus();
-    var initialY = this.rows - 1;
-
-    for (var i = 0; i < this.columns && i < status.length; i++) {
-        this.screen.ejax.io.setPixel(status.charAt(i), this.x + i, initialY, { invert: true });
-    }
 
     for (var i = status.length; i < this.columns; i++) {
-        this.screen.ejax.io.setPixel("-", this.x + i, initialY, { invert: true });
+        status += "-";
     }
+
+    this.screen.ejax.io.setPixels(status, this.x, this.rows - 1, { invert: true });
 };

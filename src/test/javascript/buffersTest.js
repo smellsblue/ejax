@@ -238,6 +238,15 @@ function testDeleteBackward() {
     assertEquals("Buffer content after first delete", "bc", mockEjax.ejax.getBufferContent());
 }
 
+function testDeleteBackwardOnNewline() {
+    mockEjax.ejax.setBufferContent("abc\n123\nxyz");
+    mockEjax.ejax.setCursor(0, 2);
+    mockEjax.ejax.deleteBackward();
+    assertEquals("Buffer X position after delete", 3, mockEjax.ejax.screen.currentWindow.buffer.cursorX);
+    assertEquals("Buffer Y position after delete", 1, mockEjax.ejax.screen.currentWindow.buffer.cursorY);
+    assertEquals("Buffer content after delete", "abc\n123xyz", mockEjax.ejax.getBufferContent());
+}
+
 function testGotoStartOfLineWithPreviousLines() {
     mockEjax.ejax.setBufferContent("abc\nxyz");
     mockEjax.ejax.setCursor(1, 1);
