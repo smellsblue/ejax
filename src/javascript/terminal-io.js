@@ -90,7 +90,7 @@ var cursesKeyMapping = {};
 
     for (var key in differentShifted) {
         cursesKeyMapping[key] = custom(differentShifted[key], false, false, true);
-        cursesKeyMapping["27-" + key] = custom(different[key], false, true, true);
+        cursesKeyMapping["27-" + key] = custom(differentShifted[key], false, true, true);
     }
 
     // a-zA-Z
@@ -193,9 +193,71 @@ TerminalEjax.main = function(args) {
     }
 };
 
+TerminalEjax.cursesSetup = function() {
+    curses.keypad(true);
+    curses.nonl();
+    curses.cbreak();
+    curses.raw();
+    curses.noecho();
+    curses.clear();
+    curses.move(0, 0);
+    curses.refresh();
+};
+
+TerminalEjax.cursesKeys = function() {
+    TerminalEjax.cursesSetup();
+    curses.write(0, 0, "Press q to quit", []);
+    var c = curses.read();
+
+    while (c != -1) {
+        var code = c;
+
+        while (curses.available()) {
+            var nextCode = curses.read();
+            code += "-" + nextCode;
+        }
+
+        if (code == 113) {
+            break;
+        }
+
+        var mappedKey = cursesKeyMapping[code];
+        curses.write(0, 1, "                                                                               ", []);
+        curses.write(0, 2, "                                                                               ", []);
+        code = "You typed: " + code;
+        curses.write(0, 1, code, []);
+
+        if (mappedKey) {
+            var value = "The key was mapped to " + mappedKey.keyCode;
+
+            if (mappedKey.ctrl) {
+                value += " ctrl";
+            }
+
+            if (mappedKey.alt) {
+                value += " alt";
+            }
+
+            if (mappedKey.shift) {
+                value += " shift";
+            }
+
+            curses.write(0, 2, value, []);
+        } else {
+            curses.write(0, 2, "The key was not mapped", []);
+        }
+
+        c = curses.read();
+    }
+};
+
 TerminalEjax.run = function(args) {
     for (var i = 0; i < args.length; i++) {
         var arg = args[i];
+
+        if (arg == "--curseskeys") {
+            return TerminalEjax.cursesKeys();
+        }
 
         if (arg == "-l" || arg == "--log") {
             var log = new java.io.File("ejax.log");
@@ -216,14 +278,7 @@ TerminalEjax.run = function(args) {
         }
     }
 
-    curses.keypad(true);
-    curses.nonl();
-    curses.cbreak();
-    curses.raw();
-    curses.noecho();
-    curses.clear();
-    curses.move(0, 0);
-    curses.refresh();
+    TerminalEjax.cursesSetup();
     var termEjax = new TerminalEjax();
     var c = curses.read();
     var size = 0;
@@ -255,15 +310,6 @@ TerminalEjax.run = function(args) {
             if (mappable) {
                 for (var i = 0; i < codes.length; i++) {
                     termEjax.processInput(cursesKeyMapping[codes[i]]);
-                }
-            } else {
-                var str = "KEY: " + code + "\n";
-                if (size < 24) {
-                    ejax.setBufferContent(ejax.getBufferContent() + str);
-                    size++;
-                } else {
-                    size = 1;
-                    ejax.setBufferContent(str);
                 }
             }
         }

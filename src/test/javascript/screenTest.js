@@ -86,6 +86,14 @@ function testScreenAfterCallingInvalidCommand() {
     assertEquals("Screen row 23", "C-xC-h is undefined                                                             ", mockEjax.pixelRow(23));
 }
 
+function testScreenAfterCallingSingleInvalidCommand() {
+    mockEjax.ejax.screen.hardRedraw();
+    mockEjax.onKeyDown({ keyCode: 222, ctrl: false, alt: true, shift: true });
+    assertEquals("Max y value", 23, mockEjax.pixels.maxY);
+    assertEquals("Screen row 22", " *scratch*    (Fundamental)-----------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "M-\" is undefined                                                                ", mockEjax.pixelRow(23));
+}
+
 function testScreenAfterCallingInvalidCommandThenTyping() {
     mockEjax.ejax.screen.hardRedraw();
     mockEjax.onKeyDown({ keyCode: 88, ctrl: true, alt: false, shift: false });
