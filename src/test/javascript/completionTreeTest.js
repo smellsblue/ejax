@@ -41,3 +41,13 @@ function testMultiItemTreeWithExactValue() {
     assertEquals("Partial result of finding exact thing", false, tree.find("xya").partial);
     assertEquals("Value result of finding exact thing", 321, tree.find("xya").value);
 }
+
+function testComplete() {
+    tree.add("xyz", 123);
+    tree.add("abc", 321);
+
+    assertEquals("Exists result of finding exact thing", true, tree.find("x").exists);
+    assertEquals("Partial result of finding exact thing", true, tree.find("x").partial);
+    assertEquals("Requested result of finding exact thing", "x", tree.find("x").requested);
+    assertEquals("complete() result of finding exact thing", "xyz", tree.find("x").complete());
+}

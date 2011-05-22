@@ -510,7 +510,7 @@ Ejax.fn.getWorkingDirectory = function() {
     return "";
 };
 
-Ejax.fn.readParameter = function(prompt, content, callback) {
+Ejax.fn.readParameter = function(prompt, content, callback, autoCompleteFn) {
     if (this.screen.currentWindow == this.screen.minibufferWindow) {
         throw new Error("Cannot read a parameter from the minibuffer!");
     }
@@ -519,7 +519,8 @@ Ejax.fn.readParameter = function(prompt, content, callback) {
         lastWindow: this.screen.currentWindow,
         prompt: prompt,
         content: content,
-        callback: callback
+        callback: callback,
+        autoCompleteFn: autoCompleteFn
     }));
 
     this.screen.currentWindow = this.screen.minibufferWindow;
@@ -543,6 +544,7 @@ function MinibufferStatus(options) {
     this.prompt = options.prompt || "";
     this.content = options.content || "";
     this.callback = options.callback || function(result) {};
+    this.autoCompleteFn = options.autoCompleteFn;
 }
 
 MinibufferStatus.fn = MinibufferStatus.prototype;
@@ -586,4 +588,28 @@ MinibufferStatus.fn.deleteBackward = function() {
     this.content = this.content.remove(minibuffer.cursorX - this.prompt.length - 1, 1);
     this.update();
     minibuffer.moveBackward();
+};
+
+MinibufferStatus.fn.autoComplete = function() {
+    if (!this.tree && this.autoCompleteFn && this.autoCompleteFn.isFunction()) {
+        this.tree = new CompletionTree();
+        var completions = this.autoCompleteFn();
+
+        for (var i = 0; i < completions.length; i++) {
+            this.tree.add(completions[i], completions[i]);
+        }
+    }
+
+    if (this.tree) {
+        var result = this.tree.find(this.content);
+
+        if (result.exists && result.partial) {
+            this.content = result.complete();
+            this.update();
+            var minibuffer = ejax.screen.minibuffer;
+            minibuffer.setCursor(minibuffer.length(), minibuffer.cursorY);
+        }
+
+        return;
+    }
 };

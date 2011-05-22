@@ -249,5 +249,15 @@ Ejax.fn.executeCommand = function() {
         } else {
             self.screen.minibuffer.setBufferContent(fnName + " is undefined");
         }
+    }, function() {
+        var result = [];
+
+        for (var property in Ejax.fn) {
+            if (Ejax.fn[property] && Ejax.fn[property].isFunction()) {
+                result.push(property);
+            }
+        }
+
+        return result;
     });
 };

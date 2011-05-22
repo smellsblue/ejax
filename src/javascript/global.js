@@ -53,7 +53,7 @@ minibufferMode.bindings.type = function(key) {
         ejax.screen.resetCursor();
         status.callback(status.content);
     } else if (key == "\t") {
-        // TODO: tab completion
+        ejax.screen.minibuffer.status.autoComplete();
     } else {
         ejax.screen.minibuffer.status.insert(key);
     }

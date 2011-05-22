@@ -110,8 +110,9 @@ var cursesKeyMapping = {};
         cursesKeyMapping[ctrledAltedCode] = custom(codeValue, true, true, false);
     }
 
-    // Ctrl+M is the same code as enter, so these should go after
-    var exact = [13, 27, 32, 49, 50, 51, 52, 53, 54, 55, 56, 57];
+    // Ctrl+M is the same code as enter and Ctrl+I is the same as tab,
+    // so these should go after
+    var exact = [9, 13, 27, 32, 49, 50, 51, 52, 53, 54, 55, 56, 57];
 
     for (var i = 0; i < exact.length; i++) {
         cursesKeyMapping[exact[i]] = value(exact[i]);

@@ -434,7 +434,7 @@ function testExecuteCommand() {
     assertEquals("Screen row 22", " *scratch*    (Fundamental)-----------------------------------------------------", mockEjax.pixelRow(22));
     assertEquals("Screen row 23", "M-x                                                                             ", mockEjax.pixelRow(23));
 
-    // nextLine
+    // Testing running nextLine
     mockEjax.onKeyDown({ keyCode: 78, ctrl: false, alt: false, shift: false });
     mockEjax.onKeyDown({ keyCode: 69, ctrl: false, alt: false, shift: false });
     mockEjax.onKeyDown({ keyCode: 88, ctrl: false, alt: false, shift: false });
@@ -455,6 +455,7 @@ function testExecuteCommand() {
     assertEquals("X cursor after pressing enter", 0, currentX);
     assertEquals("Y cursor after pressing enter", 1, currentY);
 
+    // Testing calling a function that doesn't exist
     mockEjax.onKeyDown({ keyCode: 88, ctrl: false, alt: true, shift: false });
     mockEjax.onKeyDown({ keyCode: 78, ctrl: false, alt: false, shift: false });
     mockEjax.onKeyDown({ keyCode: 69, ctrl: false, alt: false, shift: false });
@@ -466,6 +467,7 @@ function testExecuteCommand() {
     assertEquals("X cursor after pressing enter", 0, currentX);
     assertEquals("Y cursor after pressing enter", 1, currentY);
 
+    // Testing calling a read parameter function from M-x
     mockEjax.onKeyDown({ keyCode: 88, ctrl: false, alt: true, shift: false });
     mockEjax.onKeyDown({ keyCode: 69, ctrl: false, alt: false, shift: false });
     mockEjax.onKeyDown({ keyCode: 88, ctrl: false, alt: false, shift: false });
@@ -485,8 +487,18 @@ function testExecuteCommand() {
     assertEquals("Max y value", 23, mockEjax.pixels.maxY);
     assertEquals("Screen row 22", " *scratch*    (Fundamental)-----------------------------------------------------", mockEjax.pixelRow(22));
     assertEquals("Screen row 23", "M-x                                                                             ", mockEjax.pixelRow(23));
+    mockEjax.onKeyDown({ keyCode: 78, ctrl: false, alt: false, shift: false });
     mockEjax.onKeyDown({ keyCode: 69, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 88, ctrl: false, alt: false, shift: false });
     assertEquals("Max y value", 23, mockEjax.pixels.maxY);
     assertEquals("Screen row 22", " *scratch*    (Fundamental)-----------------------------------------------------", mockEjax.pixelRow(22));
-    assertEquals("Screen row 23", "M-x e                                                                           ", mockEjax.pixelRow(23));
+    assertEquals("Screen row 23", "M-x nex                                                                         ", mockEjax.pixelRow(23));
+
+    // Testing auto completion
+    mockEjax.onKeyDown({ keyCode: 9, ctrl: false, alt: false, shift: false });
+    assertEquals("Max y value", 23, mockEjax.pixels.maxY);
+    assertEquals("Screen row 22", " *scratch*    (Fundamental)-----------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "M-x nextLine                                                                    ", mockEjax.pixelRow(23));
+    assertEquals("X cursor after pressing tab", 12, currentX);
+    assertEquals("Y cursor after pressing tab", 23, currentY);
 }
