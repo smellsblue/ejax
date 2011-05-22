@@ -18,8 +18,8 @@ function testLoadFileThenBufferName() {
         return new File(filename);
     };
 
-    mockEjax.ejax.readParameter = function(prompt, value, fn) {
-        fn("src/test/javascript/testFile.txt");
+    mockEjax.ejax.readParameter = function(options) {
+        options.callback("src/test/javascript/testFile.txt");
     };
 
     mockEjax.ejax.findFile();
@@ -34,8 +34,8 @@ function testSaveFile() {
         return new File(file.getAbsolutePath());
     };
 
-    mockEjax.ejax.readParameter = function(prompt, value, fn) {
-        fn(file.getAbsolutePath());
+    mockEjax.ejax.readParameter = function(options) {
+        options.callback(file.getAbsolutePath());
     };
 
     mockEjax.ejax.findFile();

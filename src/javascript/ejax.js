@@ -241,23 +241,28 @@ Ejax.fn.exit = function() {
 Ejax.fn.executeCommand = function() {
     var self = this;
 
-    this.readParameter("M-x ", "", function(fnName) {
-        var fn = self[fnName];
+    this.readParameter({
+        prompt: "M-x ",
+        value: "",
+        callback: function(fnName) {
+            var fn = self[fnName];
 
-        if (fn && fn.isFunction()) {
-            self[fnName]();
-        } else {
-            self.screen.minibuffer.setBufferContent(fnName + " is undefined");
-        }
-    }, function() {
-        var result = [];
-
-        for (var property in Ejax.fn) {
-            if (Ejax.fn[property] && Ejax.fn[property].isFunction()) {
-                result.push(property);
+            if (fn && fn.isFunction()) {
+                self[fnName]();
+            } else {
+                self.screen.minibuffer.setBufferContent(fnName + " is undefined");
             }
-        }
+        },
+        autoCompleteFn: function() {
+            var result = [];
 
-        return result;
+            for (var property in Ejax.fn) {
+                if (Ejax.fn[property] && Ejax.fn[property].isFunction()) {
+                    result.push(property);
+                }
+            }
+
+            return result;
+        }
     });
 };

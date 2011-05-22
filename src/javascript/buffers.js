@@ -485,11 +485,15 @@ Ejax.fn.findFile = function() {
     var io = this.io;
     var screen = this.screen;
 
-    this.readParameter("Find file: ", this.getWorkingDirectory(), function(filename) {
-        var file = io.file(filename);
-        var buffer = new Buffer(screen, { name: file.name(), file: file });
-        buffer.setBufferContent(file.contents());
-        screen.addBuffer(buffer);
+    this.readParameter({
+        prompt: "Find file: ",
+        value: this.getWorkingDirectory(),
+        callback: function(filename) {
+            var file = io.file(filename);
+            var buffer = new Buffer(screen, { name: file.name(), file: file });
+            buffer.setBufferContent(file.contents());
+            screen.addBuffer(buffer);
+        }
     });
 };
 
@@ -510,17 +514,17 @@ Ejax.fn.getWorkingDirectory = function() {
     return "";
 };
 
-Ejax.fn.readParameter = function(prompt, content, callback, autoCompleteFn) {
+Ejax.fn.readParameter = function(options) {
     if (this.screen.currentWindow == this.screen.minibufferWindow) {
         throw new Error("Cannot read a parameter from the minibuffer!");
     }
 
     this.screen.minibuffer.setMinibufferStatus(new MinibufferStatus({
         lastWindow: this.screen.currentWindow,
-        prompt: prompt,
-        content: content,
-        callback: callback,
-        autoCompleteFn: autoCompleteFn
+        prompt: options.prompt,
+        content: options.value,
+        callback: options.callback,
+        autoCompleteFn: options.autoCompleteFn
     }));
 
     this.screen.currentWindow = this.screen.minibufferWindow;

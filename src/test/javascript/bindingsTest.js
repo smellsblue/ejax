@@ -77,8 +77,8 @@ function testSaveFileBindings() {
         return new File(file.getAbsolutePath());
     };
 
-    mockEjax.ejax.readParameter = function(prompt, value, fn) {
-        fn(file.getAbsolutePath());
+    mockEjax.ejax.readParameter = function(options) {
+        options.callback(file.getAbsolutePath());
     };
 
     mockEjax.ejax.findFile();
