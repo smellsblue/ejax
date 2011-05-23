@@ -62,6 +62,7 @@ Screen.fn.postRedrawBuffer = function(buffer) {
 Screen.fn.resetCursor = function() {
     this.currentWindow.updatePage();
     this.ejax.io.setCursor(this.currentWindow.getCursorX(), this.currentWindow.getCursorY());
+    this.currentWindow.redrawStatus();
 };
 
 Screen.fn.changeBuffer = function(name) {

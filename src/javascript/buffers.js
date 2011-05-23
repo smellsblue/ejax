@@ -165,7 +165,7 @@ function Buffer(screen, options) {
 Buffer.fn = Buffer.prototype;
 
 Buffer.fn.getStatus = function() {
-    return " " + this.name + "    (" + this.mode.description + ")";
+    return " " + this.name + "    L" + (this.cursorY + 1) + " (" + this.mode.description + ")";
 };
 
 Buffer.fn.isLastLine = function(y) {
