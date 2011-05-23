@@ -36,6 +36,27 @@ BrowserEjax.getFileName = function(params) {
     return result.toString();
 };
 
+BrowserEjax.entries = function(params) {
+    var result = new java.lang.StringBuilder();
+    result.append('{ "result": [');
+    var entries = new File(params.filename).entries();
+
+    if (entries.length > 0) {
+        result.append('"');
+        result.append(js(entries[0]));
+        result.append('"');
+    }
+
+    for (var i = 1; i < entries.length; i++) {
+        result.append(', "');
+        result.append(js(entries[i]));
+        result.append('"');
+    }
+
+    result.append('] }');
+    return result.toString();
+};
+
 BrowserEjax.getFileContents = function(params) {
     var result = new java.lang.StringBuilder();
     result.append('{ "result": "');
@@ -48,6 +69,14 @@ BrowserEjax.saveFileContents = function(params) {
     new File(params.filename).save(params.contents);
     var result = new java.lang.StringBuilder();
     result.append('{ "result": "success" }');
+    return result.toString();
+};
+
+BrowserEjax.separator = function(params) {
+    var result = new java.lang.StringBuilder();
+    result.append('{ "result": "');
+    result.append(js(new String(java.io.File.separator)));
+    result.append('" }');
     return result.toString();
 };
 
@@ -72,8 +101,10 @@ BrowserEjax.main = function(args) {
     server.routes.to("/", function() { return BrowserEjax.template(BrowserEjax.fileContents("ejax.html"), { secret: server.secret }); });
     server.routes.to("/ejax-complete-min.js", function() { return BrowserEjax.fileContents("ejax-complete-min.js"); });
     server.routes.to("/file/name", BrowserEjax.getFileName);
+    server.routes.to("/file/entries", BrowserEjax.entries);
     server.routes.to("/file/contents", BrowserEjax.getFileContents);
     server.routes.to("/file/save", BrowserEjax.saveFileContents);
+    server.routes.to("/file/separator", BrowserEjax.separator);
     var url = "http://localhost:" + server.port + "/?s=" + server.secret;
     server.log("Starting url for ejax: " + url);
     java.lang.Runtime.getRuntime().exec(["xdg-open", url]);

@@ -35,16 +35,16 @@ var HtmlEjax;
         return this.ajax("name");
     };
 
+    AjaxFile.fn.entries = function() {
+        return this.ajax("entries");
+    };
+
     AjaxFile.fn.contents = function() {
         return this.ajax("contents");
     };
 
     AjaxFile.fn.save = function(contents) {
         this.ajax("save", { contents: contents });
-    };
-
-    AjaxFile.fn.entries = function() {
-        //TODO
     };
 
     HtmlEjax = function(element, secret) {
@@ -93,8 +93,21 @@ var HtmlEjax;
     };
 
     HtmlEjax.fn.separator = function() {
-        // TODO
-        return "/";
+        if (this.fileSeparator) {
+            return this.fileSeparator;
+        }
+
+        var result = $.ajax({
+            async: false,
+            data: { s: this.secret },
+            dataType: "json",
+            type: "GET",
+            url: "/file/separator"
+        });
+
+        var result = eval("[" + result.responseText + "]")[0].result;
+        this.fileSeparator = result;
+        return result;
     };
 
     HtmlEjax.fn.setPixel = function(c, x, y, options) {
