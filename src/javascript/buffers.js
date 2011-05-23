@@ -358,6 +358,48 @@ Ejax.fn.previousLine = function() {
     this.screen.currentWindow.buffer.previousLine();
 };
 
+Buffer.fn.gotoLine = function(line, rows) {
+    line = line - 1;
+
+    if (line > this.content.lastLine()) {
+        line = this.content.lastLine();
+    }
+
+    if (line < 0) {
+        line = 0;
+    }
+
+    if (line < this.startingLine || line > this.startingLine + rows) {
+        this.startingLine = line - Math.floor(rows / 2) + 1;
+
+        if (this.startingLine < 0) {
+            this.startingLine = 0;
+        }
+
+        this.postRedraw();
+    }
+
+    this.setCursor(0, line);
+};
+
+Ejax.fn.gotoLine = function() {
+    var self = this;
+
+    this.readParameter({
+        prompt: "Goto line: ",
+        callback: function(line) {
+            if (!/^\d+$/.test(line)) {
+                self.screen.minibuffer.setBufferContent("Expected int, got " + line);
+                return;
+            }
+
+            line = parseInt(line, 10);
+            var window = self.screen.currentWindow;
+            window.buffer.gotoLine(line, window.rows - 1);
+        }
+    });
+};
+
 Buffer.fn.insert = function(str) {
     var x = this.cursorX;
     var y = this.cursorY;

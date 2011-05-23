@@ -24,6 +24,7 @@ var fundamentalMode = new Mode("fundamental", "Fundamental", editingBindings);
 fundamentalMode.bindings.bind("M-x", function() { ejax.executeCommand(); });
 fundamentalMode.bindings.bind("M-<", function() { ejax.bufferStart(); });
 fundamentalMode.bindings.bind("M->", function() { ejax.bufferEnd(); });
+fundamentalMode.bindings.bind("M-gM-g", function() { ejax.gotoLine(); });
 fundamentalMode.bindings.bind("C-xC-f", function() { ejax.findFile(); });
 fundamentalMode.bindings.bind("C-xC-s", function() { ejax.saveBuffer(); });
 fundamentalMode.bindings.onFoundBinding = function(code) {

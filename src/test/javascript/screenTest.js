@@ -557,3 +557,90 @@ function testFindFileTabCompletion() {
     assertEquals("Screen row 22", " testFile.txt    L1 (Fundamental)-----------------------------------------------", mockEjax.pixelRow(22));
     assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
 }
+
+function testGotoLine() {
+    var content = "";
+
+    for (var i = 1; i < 100; i++) {
+        content += "" + i + "\n";
+    }
+
+    content += "100";
+
+    var assertContent = function(startValue, max, lineNumber) {
+        for (var i = 0; i < 21; i++) {
+            var line = "";
+
+            if (i + startValue <= max) {
+                line += (i + startValue);
+            }
+
+            while (line.length < 80) {
+                line += " ";
+            }
+
+            assertEquals("Screen row  " + i, line, mockEjax.pixelRow(i));
+        }
+
+        var expectedLine = " *scratch*    L" + lineNumber + " (Fundamental)";
+
+        while (expectedLine.length < 80) {
+            expectedLine += "-";
+        }
+
+        assertEquals("Screen row 22", expectedLine, mockEjax.pixelRow(22));
+        assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
+    };
+
+    mockEjax.ejax.setBufferContent(content);
+    mockEjax.ejax.screen.hardRedraw();
+    assertContent(1, 22, 1);
+    mockEjax.onKeyDown({ keyCode: 71, ctrl: false, alt: true, shift: false });
+    mockEjax.onKeyDown({ keyCode: 71, ctrl: false, alt: true, shift: false });
+    assertEquals("Screen row 22", " *scratch*    L1 (Fundamental)--------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "Goto line:                                                                      ", mockEjax.pixelRow(23));
+    mockEjax.onKeyDown({ keyCode: 50, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 50, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 13, ctrl: false, alt: false, shift: false });
+    assertContent(1, 22, 22);
+    mockEjax.onKeyDown({ keyCode: 71, ctrl: false, alt: true, shift: false });
+    mockEjax.onKeyDown({ keyCode: 71, ctrl: false, alt: true, shift: false });
+    mockEjax.onKeyDown({ keyCode: 49, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 58, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 58, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 13, ctrl: false, alt: false, shift: false });
+    assertContent(90, 100, 100);
+    mockEjax.onKeyDown({ keyCode: 71, ctrl: false, alt: true, shift: false });
+    mockEjax.onKeyDown({ keyCode: 71, ctrl: false, alt: true, shift: false });
+    mockEjax.onKeyDown({ keyCode: 57, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 58, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 13, ctrl: false, alt: false, shift: false });
+    assertContent(90, 100, 90);
+    mockEjax.onKeyDown({ keyCode: 71, ctrl: false, alt: true, shift: false });
+    mockEjax.onKeyDown({ keyCode: 71, ctrl: false, alt: true, shift: false });
+    mockEjax.onKeyDown({ keyCode: 58, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 13, ctrl: false, alt: false, shift: false });
+    assertContent(1, 22, 1);
+    mockEjax.onKeyDown({ keyCode: 71, ctrl: false, alt: true, shift: false });
+    mockEjax.onKeyDown({ keyCode: 71, ctrl: false, alt: true, shift: false });
+    mockEjax.onKeyDown({ keyCode: 49, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 58, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 58, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 58, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 13, ctrl: false, alt: false, shift: false });
+    assertContent(90, 100, 100);
+    mockEjax.onKeyDown({ keyCode: 71, ctrl: false, alt: true, shift: false });
+    mockEjax.onKeyDown({ keyCode: 71, ctrl: false, alt: true, shift: false });
+    mockEjax.onKeyDown({ keyCode: 56, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 57, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 13, ctrl: false, alt: false, shift: false });
+    assertContent(79, 100, 89);
+    mockEjax.onKeyDown({ keyCode: 71, ctrl: false, alt: true, shift: false });
+    mockEjax.onKeyDown({ keyCode: 71, ctrl: false, alt: true, shift: false });
+    mockEjax.onKeyDown({ keyCode: 65, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 66, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 67, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 13, ctrl: false, alt: false, shift: false });
+    assertEquals("Screen row 22", " *scratch*    L89 (Fundamental)-------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "Expected int, got abc                                                           ", mockEjax.pixelRow(23));
+}
