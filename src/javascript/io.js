@@ -10,6 +10,12 @@ IO.fn.separator = function() {
     }
 };
 
+IO.fn.shell = function(options) {
+    if (this.io.shell) {
+        return this.io.shell(options);
+    }
+};
+
 IO.fn.setPixels = function(str, x, y, options) {
     if (!options) {
         options = {};

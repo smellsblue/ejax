@@ -110,6 +110,10 @@ var HtmlEjax;
         return result;
     };
 
+    HtmlEjax.fn.shell = function(options) {
+        // TODO
+    };
+
     HtmlEjax.fn.setPixel = function(c, x, y, options) {
         if (escapables[c]) {
             c = escapables[c];

@@ -166,6 +166,31 @@ keyboard.standard.codeToShiftedKey = {
 Ejax.keyboard = keyboard.standard;
 
 Ejax.fn.keyDown = function(event) {
+    try {
+        this.processKeyDown(event);
+    } catch(e) {
+        var contents = "An error occurred.\n\n";
+
+        if (e.name) {
+            contents += "Error: " + e.name + "\n";
+        }
+
+        if (e.message) {
+            contents += e.message + "\n";
+        }
+
+        if (e.stack) {
+            contents += "\n" + e.stack + "\n";
+        }
+
+        var buffer = new Buffer(this.screen, { name: "*Error Information*" });
+        buffer.setBufferContent(contents);
+        this.screen.addBuffer(buffer);
+        this.screen.redraw();
+    }
+};
+
+Ejax.fn.processKeyDown = function(event) {
     var keyCode = event.keyCode;
     var ctrl = event.ctrl;
     var alt = event.alt;
@@ -265,4 +290,21 @@ Ejax.fn.executeCommand = function() {
             return result;
         }
     });
+};
+
+Ejax.fn.shell = function() {
+    var self = this;
+    var buffer = new Buffer(this.screen, { name: "*shell*", mode: shellMode });
+    buffer.shell = this.io.shell({
+        outputFn: function(str) {
+            buffer.insert(str);
+            self.screen.hardRedraw(buffer);
+        }
+    });
+
+    if (!buffer.shell) {
+        throw new Error("Shell not supported!");
+    }
+
+    this.screen.addBuffer(buffer);
 };

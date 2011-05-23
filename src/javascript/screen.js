@@ -31,9 +31,11 @@ Screen.fn.clear = function() {
     });
 };
 
-Screen.fn.hardRedraw = function() {
+Screen.fn.hardRedraw = function(buffer) {
     this.eachWindow(function(window) {
-        window.redraw();
+        if (!buffer || buffer == window.buffer) {
+            window.redraw();
+        }
     });
 };
 

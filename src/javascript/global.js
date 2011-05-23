@@ -44,18 +44,19 @@ var minibufferMode = new Mode("minibuffer", "MiniBuffer", editingBindings);
 minibufferMode.bindings.bind(["C-a", "HOME"], function() { ejax.screen.minibuffer.setCursor(ejax.screen.minibuffer.status.prompt.length, 0); });
 minibufferMode.bindings.bind(["C-d", "DEL"], function() { ejax.screen.minibuffer.status.deleteForward(); });
 minibufferMode.bindings.bind("BSP", function() { ejax.screen.minibuffer.status.deleteBackward(); });
-minibufferMode.bindings.type = function(key) {
-    if (key == "\n") {
-        ejax.screen.currentWindow = ejax.screen.minibuffer.status.lastWindow;
-        ejax.screen.minibuffer.content.set("");
-        var status = ejax.screen.minibuffer.status;
-        ejax.screen.minibuffer.status = null;
-        ejax.screen.minibufferWindow.postRedraw();
-        ejax.screen.resetCursor();
-        status.callback(status.content);
-    } else if (key == "\t") {
-        ejax.screen.minibuffer.status.autoComplete();
-    } else {
-        ejax.screen.minibuffer.status.insert(key);
-    }
-};
+minibufferMode.bindings.bind("TAB", function() { ejax.screen.minibuffer.status.autoComplete(); });
+minibufferMode.bindings.bind("RET", function() {
+    ejax.screen.currentWindow = ejax.screen.minibuffer.status.lastWindow;
+    ejax.screen.minibuffer.content.set("");
+    var status = ejax.screen.minibuffer.status;
+    ejax.screen.minibuffer.status = null;
+    ejax.screen.minibufferWindow.postRedraw();
+    ejax.screen.resetCursor();
+    status.callback(status.content);
+});
+minibufferMode.bindings.type = function(key) { ejax.screen.minibuffer.status.insert(key); };
+
+var shellMode = new Mode("shell", "Shell", fundamentalMode.bindings);
+shellMode.bindings.bind("TAB", function() { /* TODO */ });
+shellMode.bindings.bind("RET", function() { ejax.screen.currentWindow.buffer.shell.sendCommand(); });
+shellMode.bindings.type = function(key) { ejax.screen.currentWindow.buffer.shell.commandContent += key; };
