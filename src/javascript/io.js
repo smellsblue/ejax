@@ -4,6 +4,12 @@ function IO(io) {
 
 IO.fn = IO.prototype;
 
+IO.fn.separator = function() {
+    if (this.io.separator) {
+        return this.io.separator();
+    }
+};
+
 IO.fn.setPixels = function(str, x, y, options) {
     if (!options) {
         options = {};

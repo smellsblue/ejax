@@ -43,6 +43,10 @@ var HtmlEjax;
         this.ajax("save", { contents: contents });
     };
 
+    AjaxFile.fn.entries = function() {
+        //TODO
+    };
+
     HtmlEjax = function(element, secret) {
         this.secret = secret;
         this.element = element;
@@ -86,6 +90,11 @@ var HtmlEjax;
         "&": "&amp;",
         "<": "&lt;",
         ">": "&gt;"
+    };
+
+    HtmlEjax.fn.separator = function() {
+        // TODO
+        return "/";
     };
 
     HtmlEjax.fn.setPixel = function(c, x, y, options) {

@@ -24,6 +24,10 @@ function MockEjax(options) {
 
 MockEjax.fn = MockEjax.prototype;
 
+MockEjax.fn.separator = function() {
+    return new String(java.io.File.separator);
+};
+
 MockEjax.fn.setPixel = function(c, x, y, options) {
 };
 

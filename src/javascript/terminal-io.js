@@ -131,6 +131,10 @@ function TerminalEjax() {
 
 TerminalEjax.fn = TerminalEjax.prototype;
 
+TerminalEjax.fn.separator = function() {
+    return java.io.File.separator;
+};
+
 TerminalEjax.fn.setPixel = function(c, x, y, options) {
     var attributes = [];
 

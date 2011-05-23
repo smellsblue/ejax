@@ -51,3 +51,24 @@ function testComplete() {
     assertEquals("Requested result of finding exact thing", "x", tree.find("x").requested);
     assertEquals("complete() result of finding exact thing", "xyz", tree.find("x").complete());
 }
+
+function testCompleteWithMultiplePaths() {
+    tree.add("java", "java");
+    tree.add("javascript", "javascript");
+
+    assertEquals("Exists result of finding exact thing", true, tree.find("j").exists);
+    assertEquals("Partial result of finding exact thing", true, tree.find("j").partial);
+    assertEquals("Requested result of finding exact thing", "j", tree.find("j").requested);
+    assertEquals("complete() result of finding exact thing", "java", tree.find("j").complete());
+    assertEquals("complete() result of finding exact thing", "javascript", tree.find("javas").complete());
+}
+
+function testCompleteWithMultipleDifferentPaths() {
+    tree.add("src/test/", "src/test/");
+    tree.add("src/javascript/", "src/javascript/");
+    tree.add("src/native/", "src/native/");
+    tree.add("src/java/", "src/java/");
+
+    assertEquals("complete() result of finding exact thing", "src/java", tree.find("src/j").complete());
+    assertEquals("complete() result of finding exact thing", "src/javascript/", tree.find("src/javas").complete());
+}

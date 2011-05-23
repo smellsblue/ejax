@@ -34,15 +34,14 @@ CompletionNode.fn.add = function(tokens, value) {
         token = token.toString();
     }
 
-    if (tokens.length == 0) {
-        this.node[token] = { value: value };
-        this.keys.push(token);
-        return;
-    }
-
-    if (!this.node[token] || this.node[token].constructor != CompletionNode) {
+    if (!this.node[token]) {
         this.node[token] = new CompletionNode();
         this.keys.push(token);
+    }
+
+    if (tokens.length == 0) {
+        this.node[token].value = { value: value };
+        return;
     }
 
     this.node[token].add(tokens, value);
@@ -50,7 +49,16 @@ CompletionNode.fn.add = function(tokens, value) {
 
 CompletionNode.fn.find = function(requested, tokens) {
     if (tokens.length == 0) {
-        return new CompletionResult(requested);
+        var result = new CompletionResult(requested, this);
+        result.exists = true;
+        result.partial = true;
+
+        if (this.value) {
+            result.partial = false;
+            result.value = this.value.value;
+        }
+
+        return result;
     }
 
     var token = tokens.shift();
@@ -60,26 +68,7 @@ CompletionNode.fn.find = function(requested, tokens) {
         return new CompletionResult(requested);
     }
 
-    if (node.constructor == CompletionNode) {
-        if (tokens.length == 0) {
-            var result = new CompletionResult(requested, node);
-            result.exists = true;
-            result.partial = true;
-            return result;
-        }
-
-        return node.find(requested, tokens);
-    }
-
-    if (tokens.length != 0) {
-        return new CompletionResult(requested);
-    }
-
-    var result = new CompletionResult(requested);
-    result.exists = true;
-    result.partial = false;
-    result.value = node.value;
-    return result;
+    return node.find(requested, tokens);
 };
 
 function CompletionResult(requested, node) {
@@ -100,7 +89,7 @@ CompletionResult.fn.complete = function() {
     var node = this.node;
     var result = this.requested;
 
-    while (node.constructor == CompletionNode && node.keys.length == 1) {
+    while (node.keys.length == 1 && !node.value) {
         var token = node.keys[0];
 
         if (token.toString && token.toString.isFunction()) {

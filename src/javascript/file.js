@@ -29,6 +29,27 @@ File.fn.isFile = function() {
     return this.getJFile().isFile();
 };
 
+File.fn.entries = function() {
+    if (this.isDirectory()) {
+        var result = [];
+        var files = this.getJFile().listFiles();
+
+        for (var i = 0; i < files.length; i++) {
+            var name = files[i].getName();
+
+            if (files[i].isDirectory()) {
+                name = name + java.io.File.separator;
+            }
+
+            result.push(new String(name));
+        }
+
+        return result;
+    }
+
+    return [];
+};
+
 File.fn.contents = function() {
     if (!this.exists()) {
         return "";

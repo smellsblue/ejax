@@ -502,3 +502,46 @@ function testExecuteCommand() {
     assertEquals("X cursor after pressing tab", 12, currentX);
     assertEquals("Y cursor after pressing tab", 23, currentY);
 }
+
+function testFindFileTabCompletion() {
+    var currentX, currentY, loadedFilename;
+    mockEjax.setCursor = function(x, y) {
+        currentX = x;
+        currentY = y;
+    };
+    mockEjax.file = function(filename) {
+        return new File(filename);
+    };
+    mockEjax.ejax.screen.hardRedraw();
+    mockEjax.onKeyDown({ keyCode: 88, ctrl: true, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 70, ctrl: true, alt: false, shift: false });
+    assertEquals("Screen row 22", " *scratch*    (Fundamental)-----------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "Find file:                                                                      ", mockEjax.pixelRow(23));
+    mockEjax.onKeyDown({ keyCode: 83, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 9, ctrl: false, alt: false, shift: false });
+    assertEquals("Screen row 22", " *scratch*    (Fundamental)-----------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "Find file: src/                                                                 ", mockEjax.pixelRow(23));
+    mockEjax.onKeyDown({ keyCode: 84, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 9, ctrl: false, alt: false, shift: false });
+    assertEquals("Screen row 22", " *scratch*    (Fundamental)-----------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "Find file: src/test/                                                            ", mockEjax.pixelRow(23));
+    mockEjax.onKeyDown({ keyCode: 74, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 9, ctrl: false, alt: false, shift: false });
+    assertEquals("Screen row 22", " *scratch*    (Fundamental)-----------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "Find file: src/test/java                                                        ", mockEjax.pixelRow(23));
+    mockEjax.onKeyDown({ keyCode: 83, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 9, ctrl: false, alt: false, shift: false });
+    assertEquals("Screen row 22", " *scratch*    (Fundamental)-----------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "Find file: src/test/javascript/                                                 ", mockEjax.pixelRow(23));
+    mockEjax.onKeyDown({ keyCode: 84, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 9, ctrl: false, alt: false, shift: false });
+    assertEquals("Screen row 22", " *scratch*    (Fundamental)-----------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "Find file: src/test/javascript/test                                             ", mockEjax.pixelRow(23));
+    mockEjax.onKeyDown({ keyCode: 70, ctrl: false, alt: false, shift: true });
+    mockEjax.onKeyDown({ keyCode: 9, ctrl: false, alt: false, shift: false });
+    assertEquals("Screen row 22", " *scratch*    (Fundamental)-----------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "Find file: src/test/javascript/testFile.txt                                     ", mockEjax.pixelRow(23));
+    mockEjax.onKeyDown({ keyCode: 13, ctrl: false, alt: false, shift: false });
+    assertEquals("Screen row 22", " testFile.txt    (Fundamental)--------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
+}

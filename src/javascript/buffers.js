@@ -493,6 +493,26 @@ Ejax.fn.findFile = function() {
             var buffer = new Buffer(screen, { name: file.name(), file: file });
             buffer.setBufferContent(file.contents());
             screen.addBuffer(buffer);
+        },
+        contextAutoCompleteFn: function(value) {
+            var path = ".";
+            var prefix = "";
+            var index = value.lastIndexOf(io.separator());
+
+            if (index >= 0) {
+                path = value.substring(0, index + 1);
+                prefix = path;
+            }
+
+            var result = [];
+            var current = io.file(path);
+            var files = current.entries();
+
+            for (var i = 0; i < files.length; i++) {
+                result.push(prefix + files[i]);
+            }
+
+            return result;
         }
     });
 };
@@ -524,6 +544,7 @@ Ejax.fn.readParameter = function(options) {
         prompt: options.prompt,
         content: options.value,
         callback: options.callback,
+        contextAutoCompleteFn: options.contextAutoCompleteFn,
         autoCompleteFn: options.autoCompleteFn
     }));
 
@@ -549,6 +570,7 @@ function MinibufferStatus(options) {
     this.content = options.content || "";
     this.callback = options.callback || function(result) {};
     this.autoCompleteFn = options.autoCompleteFn;
+    this.contextAutoCompleteFn = options.contextAutoCompleteFn;
 }
 
 MinibufferStatus.fn = MinibufferStatus.prototype;
@@ -595,17 +617,29 @@ MinibufferStatus.fn.deleteBackward = function() {
 };
 
 MinibufferStatus.fn.autoComplete = function() {
-    if (!this.tree && this.autoCompleteFn && this.autoCompleteFn.isFunction()) {
+    var tree = this.tree;
+
+    if (!tree && this.autoCompleteFn) {
         this.tree = new CompletionTree();
+        tree = this.tree;
         var completions = this.autoCompleteFn();
 
         for (var i = 0; i < completions.length; i++) {
-            this.tree.add(completions[i], completions[i]);
+            tree.add(completions[i], completions[i]);
         }
     }
 
-    if (this.tree) {
-        var result = this.tree.find(this.content);
+    if (!tree && this.contextAutoCompleteFn) {
+        tree = new CompletionTree();
+        var completions = this.contextAutoCompleteFn(this.content);
+
+        for (var i = 0; i < completions.length; i++) {
+            tree.add(completions[i], completions[i]);
+        }
+    }
+
+    if (tree) {
+        var result = tree.find(this.content);
 
         if (result.exists && result.partial) {
             this.content = result.complete();
