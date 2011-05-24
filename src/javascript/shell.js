@@ -1,7 +1,14 @@
 function Shell(options) {
     this.shellCommand = options.shellCommand || Shell.shellCommand;
     this.outputFn = options.outputFn;
-    this.process = new java.lang.ProcessBuilder(this.shellCommand).redirectErrorStream(true).start();
+    var builder = new java.lang.ProcessBuilder(this.shellCommand).redirectErrorStream(true);
+    if (options.columns) {
+        builder.environment().put("COLUMNS", "" + options.columns);
+    }
+    if (options.rows) {
+        builder.environment().put("LINES", "" + options.rows);
+    }
+    this.process = builder.start();
     this.input = new java.io.PrintWriter(this.process.getOutputStream());
     this.outputThread = this.threadFor(this.process.getInputStream());
     var self = this;
@@ -15,7 +22,7 @@ Shell.shellCommand = ["/bin/bash", "-s"];
 
 Shell.fn = Shell.prototype;
 
-Shell.fn.sendCommand = function(str) {
+Shell.fn.sendCommand = function() {
     this.send(this.commandContent + "\n");
     this.commandContent = "";
 };

@@ -320,3 +320,60 @@ function testGotoEndOfLineWithNewlines() {
     assertEquals("Buffer X position after second lineStart", 0, mockEjax.ejax.screen.currentWindow.buffer.cursorX);
     assertEquals("Buffer Y position after second lineStart", 1, mockEjax.ejax.screen.currentWindow.buffer.cursorY);
 }
+
+function testAppendNoNewlinesEndOfBuffer() {
+    mockEjax.ejax.screen.currentWindow.buffer.append("abc");
+    assertEquals("Buffer content after empty append", "abc", mockEjax.ejax.getBufferContent());
+    assertEquals("Buffer X position after first append", 3, mockEjax.ejax.screen.currentWindow.buffer.cursorX);
+    assertEquals("Buffer Y position after first append", 0, mockEjax.ejax.screen.currentWindow.buffer.cursorY);
+    mockEjax.ejax.screen.currentWindow.buffer.append("xyz");
+    assertEquals("Buffer content after non-empty append", "abcxyz", mockEjax.ejax.getBufferContent());
+    assertEquals("Buffer X position after second append", 6, mockEjax.ejax.screen.currentWindow.buffer.cursorX);
+    assertEquals("Buffer Y position after second append", 0, mockEjax.ejax.screen.currentWindow.buffer.cursorY);
+}
+
+function testAppendWithNewlinesEndOfBuffer() {
+    mockEjax.ejax.screen.currentWindow.buffer.append("abc\n123");
+    assertEquals("Buffer content after empty append", "abc\n123", mockEjax.ejax.getBufferContent());
+    assertEquals("Buffer X position after first append", 3, mockEjax.ejax.screen.currentWindow.buffer.cursorX);
+    assertEquals("Buffer Y position after first append", 1, mockEjax.ejax.screen.currentWindow.buffer.cursorY);
+    mockEjax.ejax.screen.currentWindow.buffer.append("xyz\n321");
+    assertEquals("Buffer content after non-empty append", "abc\n123xyz\n321", mockEjax.ejax.getBufferContent());
+    assertEquals("Buffer X position after second append", 3, mockEjax.ejax.screen.currentWindow.buffer.cursorX);
+    assertEquals("Buffer Y position after second append", 2, mockEjax.ejax.screen.currentWindow.buffer.cursorY);
+}
+
+function testAppendNoNewlinesBeginningOfBuffer() {
+    mockEjax.ejax.setBufferContent("def");
+    mockEjax.ejax.screen.currentWindow.buffer.append("abc");
+    assertEquals("Buffer content after empty append", "defabc", mockEjax.ejax.getBufferContent());
+    assertEquals("Buffer X position after first append", 0, mockEjax.ejax.screen.currentWindow.buffer.cursorX);
+    assertEquals("Buffer Y position after first append", 0, mockEjax.ejax.screen.currentWindow.buffer.cursorY);
+    mockEjax.ejax.screen.currentWindow.buffer.append("xyz");
+    assertEquals("Buffer content after non-empty append", "defabcxyz", mockEjax.ejax.getBufferContent());
+    assertEquals("Buffer X position after second append", 0, mockEjax.ejax.screen.currentWindow.buffer.cursorX);
+    assertEquals("Buffer Y position after second append", 0, mockEjax.ejax.screen.currentWindow.buffer.cursorY);
+}
+
+function testAppendWithNewlinesBeginningOfBuffer() {
+    mockEjax.ejax.setBufferContent("def");
+    mockEjax.ejax.screen.currentWindow.buffer.append("abc\n123");
+    assertEquals("Buffer content after empty append", "defabc\n123", mockEjax.ejax.getBufferContent());
+    assertEquals("Buffer X position after first append", 0, mockEjax.ejax.screen.currentWindow.buffer.cursorX);
+    assertEquals("Buffer Y position after first append", 0, mockEjax.ejax.screen.currentWindow.buffer.cursorY);
+    mockEjax.ejax.screen.currentWindow.buffer.append("xyz\n321");
+    assertEquals("Buffer content after non-empty append", "defabc\n123xyz\n321", mockEjax.ejax.getBufferContent());
+    assertEquals("Buffer X position after second append", 0, mockEjax.ejax.screen.currentWindow.buffer.cursorX);
+    assertEquals("Buffer Y position after second append", 0, mockEjax.ejax.screen.currentWindow.buffer.cursorY);
+}
+
+function testAppendWithSeveralNewlinesEndOfBuffer() {
+    mockEjax.ejax.screen.currentWindow.buffer.append("abc\n123\nxyz\n321");
+    assertEquals("Buffer content after empty append", "abc\n123\nxyz\n321", mockEjax.ejax.getBufferContent());
+    assertEquals("Buffer X position after first append", 3, mockEjax.ejax.screen.currentWindow.buffer.cursorX);
+    assertEquals("Buffer Y position after first append", 3, mockEjax.ejax.screen.currentWindow.buffer.cursorY);
+    mockEjax.ejax.screen.currentWindow.buffer.append("def\n456\nuvw\n654");
+    assertEquals("Buffer content after non-empty append", "abc\n123\nxyz\n321def\n456\nuvw\n654", mockEjax.ejax.getBufferContent());
+    assertEquals("Buffer X position after second append", 3, mockEjax.ejax.screen.currentWindow.buffer.cursorX);
+    assertEquals("Buffer Y position after second append", 6, mockEjax.ejax.screen.currentWindow.buffer.cursorY);
+}

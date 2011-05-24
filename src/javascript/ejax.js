@@ -294,11 +294,11 @@ Ejax.fn.executeCommand = function() {
 
 Ejax.fn.shell = function() {
     var self = this;
-    var buffer = new Buffer(this.screen, { name: "*shell*", mode: shellMode });
+    var buffer = new Buffer(this.screen, { name: "*shell*", mode: shellMode, columns: this.screen.columns, rows: this.screen.rows - 1 });
     buffer.shell = this.io.shell({
         outputFn: function(str) {
-            buffer.insert(str);
-            self.screen.hardRedraw(buffer);
+            buffer.append(str);
+            buffer.postRedraw();
         }
     });
 

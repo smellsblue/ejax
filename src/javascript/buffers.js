@@ -89,12 +89,12 @@ BufferContent.fn.insert = function(str, x, y) {
 
     this.lines[y] = this.lines[y].insert(toInsert.shift(), x);
 
-    if (toInsert.length > 1 && toInsert[toInsert.length - 1].lastIndexOf("\n") < 0 && this.lines.length > y) {
+    if (toInsert.length >= 1 && toInsert[toInsert.length - 1].lastIndexOf("\n") < 0 && this.lines.length > y) {
         this.lines[y + 1] = this.lines[y + 1].insert(toInsert.splice(toInsert.length - 1, 1)[0], 0);
     }
 
     toInsert.splice(0, 0, y + 1, 0);
-    this.lines.splice.apply(toInsert);
+    this.lines.splice.apply(this.lines, toInsert);
     this.cache.length += str.length;
     this.postRedraw();
 };
@@ -398,6 +398,18 @@ Ejax.fn.gotoLine = function() {
             window.buffer.gotoLine(line, window.rows - 1);
         }
     });
+};
+
+Buffer.fn.append = function(str) {
+    var lastLine = this.content.lastLine();
+    var lastLineLength = this.content.getLine(lastLine).length;
+    var cursorAtEnd = this.cursorY == lastLine && this.cursorX == lastLineLength;
+    this.content.insert(str, lastLineLength, lastLine);
+
+    if (cursorAtEnd) {
+        lastLine = this.content.lastLine();
+        this.setCursor(this.content.getLine(lastLine).length, lastLine);
+    }
 };
 
 Buffer.fn.insert = function(str) {
