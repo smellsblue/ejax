@@ -4,6 +4,12 @@ function IO(io) {
 
 IO.fn = IO.prototype;
 
+IO.fn.addJob = function(fn) {
+    if (this.io.addJob) {
+        return this.io.addJob(fn);
+    }
+};
+
 IO.fn.separator = function() {
     if (this.io.separator) {
         return this.io.separator();

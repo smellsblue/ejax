@@ -117,6 +117,18 @@ public class Curses {
     public native static int read();
     public native static int unread(int c);
 
+    public static int read(int timeout) {
+        timeout(timeout);
+        int value = read();
+        timeout(-1);
+
+        if (value >= 0) {
+            return value;
+        }
+
+        return -1;
+    }
+
     public static boolean available() {
         timeout(0);
         int value = read();

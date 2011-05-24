@@ -121,6 +121,7 @@ var cursesKeyMapping = {};
 })();
 
 function TerminalEjax() {
+    this.jobs = new java.util.concurrent.ConcurrentLinkedQueue();
     this.cursor = { x: 0, y: 0 };
     this.setCursor(this.cursor.x, this.cursor.y);
     this.rows = curses.rows();
@@ -130,6 +131,25 @@ function TerminalEjax() {
 }
 
 TerminalEjax.fn = TerminalEjax.prototype;
+
+TerminalEjax.fn.processJobs = function() {
+    var fn = this.jobs.poll();
+    var processed = false;
+
+    while (fn != null) {
+        fn();
+        processed = true;
+        fn = this.jobs.poll();
+    }
+
+    if (processed) {
+        this.instance.screen.redraw();
+    }
+};
+
+TerminalEjax.fn.addJob = function(fn) {
+    this.jobs.add(fn);
+};
 
 TerminalEjax.fn.separator = function() {
     return java.io.File.separator;
@@ -289,10 +309,15 @@ TerminalEjax.run = function(args) {
 
     TerminalEjax.cursesSetup();
     var termEjax = new TerminalEjax();
-    var c = curses.read();
-    var size = 0;
 
-    while (termEjax.running && c != -1) {
+    while (termEjax.running) {
+        var c = curses.read(50);
+        termEjax.processJobs();
+
+        if (c < 0) {
+            continue;
+        }
+
         var code = c;
         var codes = [c];
 
@@ -326,7 +351,5 @@ TerminalEjax.run = function(args) {
         if (!termEjax.running) {
             break;
         }
-
-        c = curses.read();
     }
 };

@@ -92,6 +92,11 @@ var HtmlEjax;
         ">": "&gt;"
     };
 
+    HtmlEjax.fn.addJob = function(fn) {
+        fn();
+        this.screen.redraw();
+    };
+
     HtmlEjax.fn.separator = function() {
         if (this.fileSeparator) {
             return this.fileSeparator;
