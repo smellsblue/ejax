@@ -58,5 +58,11 @@ minibufferMode.bindings.type = function(key) { ejax.screen.minibuffer.status.ins
 
 var shellMode = new Mode("shell", "Shell", fundamentalMode.bindings);
 shellMode.bindings.bind("TAB", function() { /* TODO */ });
-shellMode.bindings.bind("RET", function() { ejax.screen.currentWindow.buffer.shell.sendCommand(); });
-shellMode.bindings.type = function(key) { ejax.screen.currentWindow.buffer.shell.commandContent += key; };
+shellMode.bindings.bind("RET", function() {
+    ejax.screen.currentWindow.buffer.append("\n");
+    ejax.screen.currentWindow.buffer.shell.sendCommand();
+});
+shellMode.bindings.type = function(key) {
+    ejax.screen.currentWindow.buffer.shell.commandContent += key;
+    ejax.screen.currentWindow.buffer.append(key);
+};
