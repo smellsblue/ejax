@@ -20,6 +20,7 @@
   <property name="native.src.files" location="${native.src}/ejaxnative.c"/>
   <property name="native.build.object" location="${native.build}/ejaxnative.o"/>
   <property name="native.build.shared.object" location="${native.build}/libejaxnative.so"/>
+  <property name="native.shell" location="${native.src}/ejax" />
   <property name="javascript.src" location="${base.src}/javascript"/>
   <property name="javascript.test.src" location="${base.src}/test/javascript"/>
   <property name="javascript.dest" value="${base.build}/html"/>
@@ -176,5 +177,27 @@
         <include name="*Test.js"/>
       </fileset>
     </runit>
+  </target>
+
+  <target name="install" depends="dist">
+    <exec executable="sudo" failonerror="true">
+      <arg line="cp ${native.shell} /usr/bin/ejax"/>
+    </exec>
+
+    <exec executable="sudo" failonerror="true">
+      <arg line="chmod 755 /usr/bin/ejax"/>
+    </exec>
+
+    <exec executable="sudo" failonerror="true">
+      <arg line="mkdir /usr/share/ejax"/>
+    </exec>
+
+    <exec executable="sudo" failonerror="true">
+      <arg line="cp ${java.jar} /usr/share/ejax/ejax.jar"/>
+    </exec>
+
+    <exec executable="sudo" failonerror="true">
+      <arg line="chmod 755 /usr/share/ejax/ejax.jar"/>
+    </exec>
   </target>
 </project>
