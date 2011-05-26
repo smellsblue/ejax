@@ -644,3 +644,47 @@ function testGotoLine() {
     assertEquals("Screen row 22", " *scratch*    L89 (Fundamental)-------------------------------------------------", mockEjax.pixelRow(22));
     assertEquals("Screen row 23", "Expected int, got abc                                                           ", mockEjax.pixelRow(23));
 }
+
+function testChangeBuffer() {
+    mockEjax.ejax.setBufferContent("abc");
+    mockEjax.ejax.screen.hardRedraw();
+    mockEjax.onKeyDown({ keyCode: 88, ctrl: true, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 66, ctrl: false, alt: false, shift: false });
+    assertEquals("Screen row  0", "abc                                                                             ", mockEjax.pixelRow(0));
+    assertEquals("Screen row 22", " *scratch*    L1 (Fundamental)--------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "Switch to buffer (default *scratch*):                                           ", mockEjax.pixelRow(23));
+    mockEjax.onKeyDown({ keyCode: 65, ctrl: false, alt: false, shift: false });
+    assertEquals("Screen row 23", "Switch to buffer (default *scratch*): a                                         ", mockEjax.pixelRow(23));
+    mockEjax.onKeyDown({ keyCode: 13, ctrl: false, alt: false, shift: false });
+    assertEquals("Screen row  0", "                                                                                ", mockEjax.pixelRow(0));
+    assertEquals("Screen row 22", " a    L1 (Fundamental)----------------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
+    mockEjax.ejax.setBufferContent("xyz");
+    mockEjax.onKeyDown({ keyCode: 88, ctrl: true, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 66, ctrl: false, alt: false, shift: false });
+    assertEquals("Screen row 23", "Switch to buffer (default *scratch*):                                           ", mockEjax.pixelRow(23));
+    mockEjax.onKeyDown({ keyCode: 66, ctrl: false, alt: false, shift: false });
+    assertEquals("Screen row 23", "Switch to buffer (default *scratch*): b                                         ", mockEjax.pixelRow(23));
+    mockEjax.onKeyDown({ keyCode: 13, ctrl: false, alt: false, shift: false });
+    assertEquals("Screen row  0", "                                                                                ", mockEjax.pixelRow(0));
+    assertEquals("Screen row 22", " b    L1 (Fundamental)----------------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
+    mockEjax.onKeyDown({ keyCode: 88, ctrl: true, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 66, ctrl: false, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 56, ctrl: false, alt: false, shift: true });
+    mockEjax.onKeyDown({ keyCode: 9, ctrl: false, alt: false, shift: false });
+    assertEquals("Screen row 22", " b    L1 (Fundamental)----------------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "Switch to buffer (default a): *scratch*                                         ", mockEjax.pixelRow(23));
+    mockEjax.onKeyDown({ keyCode: 13, ctrl: false, alt: false, shift: false });
+    assertEquals("Screen row  0", "abc                                                                             ", mockEjax.pixelRow(0));
+    assertEquals("Screen row 22", " *scratch*    L1 (Fundamental)--------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
+    mockEjax.onKeyDown({ keyCode: 88, ctrl: true, alt: false, shift: false });
+    mockEjax.onKeyDown({ keyCode: 66, ctrl: false, alt: false, shift: false });
+    assertEquals("Screen row 22", " *scratch*    L1 (Fundamental)--------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "Switch to buffer (default b):                                                   ", mockEjax.pixelRow(23));
+    mockEjax.onKeyDown({ keyCode: 13, ctrl: false, alt: false, shift: false });
+    assertEquals("Screen row  0", "                                                                                ", mockEjax.pixelRow(0));
+    assertEquals("Screen row 22", " b    L1 (Fundamental)----------------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
+}

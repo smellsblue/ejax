@@ -546,7 +546,7 @@ Ejax.fn.findFile = function() {
             var file = io.file(filename);
             var buffer = new Buffer(screen, { name: file.name(), file: file });
             buffer.setBufferContent(file.contents());
-            screen.addBuffer(buffer);
+            screen.addAndChangeBuffer(buffer);
         },
         contextFn: function(value) {
             var path = "";
@@ -589,6 +589,25 @@ Buffer.fn.saveBuffer = function() {
 
 Ejax.fn.saveBuffer = function() {
     this.screen.currentWindow.buffer.saveBuffer();
+};
+
+Ejax.fn.changeBuffer = function() {
+    var screen = this.screen;
+    var nextName = screen.nextAvailableBuffer().name;
+
+    this.readParameter({
+        prompt: "Switch to buffer (default " + nextName + "): ",
+        callback: function(buffer) {
+            if (buffer == "") {
+                buffer = nextName;
+            }
+
+            screen.changeBuffer(screen.getOrCreateBuffer(buffer));
+        },
+        autoCompleteFn: function() {
+            return screen.getBufferNames();
+        }
+    });
 };
 
 Ejax.fn.getWorkingDirectory = function() {

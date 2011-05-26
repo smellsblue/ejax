@@ -27,6 +27,7 @@ fundamentalMode.bindings.bind("M->", function() { ejax.bufferEnd(); });
 fundamentalMode.bindings.bind("M-gM-g", function() { ejax.gotoLine(); });
 fundamentalMode.bindings.bind("C-xC-f", function() { ejax.findFile(); });
 fundamentalMode.bindings.bind("C-xC-s", function() { ejax.saveBuffer(); });
+fundamentalMode.bindings.bind("C-xb", function() { ejax.changeBuffer(); });
 fundamentalMode.bindings.onFoundBinding = function(code) {
     logger.debug("Found function for key combo '" + code + "'");
     ejax.screen.minibuffer.setBufferContent("");

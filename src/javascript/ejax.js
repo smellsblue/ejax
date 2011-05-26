@@ -183,9 +183,10 @@ Ejax.fn.keyDown = function(event) {
             contents += "\n" + e.stack + "\n";
         }
 
-        var buffer = new Buffer(this.screen, { name: "*Error Information*" });
+        var buffer = this.screen.getOrCreateBuffer("*Error Information*");
+        this.screen.setAvailableWindowBuffer(buffer);
         buffer.setBufferContent(contents);
-        this.screen.addBuffer(buffer);
+        buffer.setCursor(0, 0);
         this.screen.redraw();
     }
 };
@@ -268,7 +269,6 @@ Ejax.fn.executeCommand = function() {
 
     this.readParameter({
         prompt: "M-x ",
-        value: "",
         callback: function(fnName) {
             var fn = self[fnName];
 
@@ -308,5 +308,5 @@ Ejax.fn.shell = function() {
         throw new Error("Shell not supported!");
     }
 
-    this.screen.addBuffer(buffer);
+    this.screen.addAndChangeBuffer(buffer);
 };
