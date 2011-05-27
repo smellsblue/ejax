@@ -13,6 +13,13 @@ function testBufferContentLength() {
     assertEquals("Length of buffer content 'abc\n123\nxyz'", 11, new BufferContent(mockBuffer, "abc\n123\nxyz").length());
 }
 
+function testBufferContentLength() {
+    assertEquals("Length of buffer content ''", 0, new BufferContent(mockBuffer, "").length());
+    assertEquals("Length of buffer content 'abc'", 3, new BufferContent(mockBuffer, "abc").length());
+    assertEquals("Length of buffer content 'abc\n'", 4, new BufferContent(mockBuffer, "abc\n").length());
+    assertEquals("Length of buffer content 'abc\n123\nxyz'", 11, new BufferContent(mockBuffer, "abc\n123\nxyz").length());
+}
+
 function testGet() {
     assertEquals("Content for ''", "", new BufferContent(mockBuffer, "").get());
     assertEquals("Content for 'abc'", "abc", new BufferContent(mockBuffer, "abc").get());
@@ -167,4 +174,169 @@ function testRemoveWithNewlines() {
     assertArrayEquals("Array result index 9", ["abc\n", "123\n", "xz"], removeAndGetLines(1, 2));
     assertEquals("Result index 10", "abc\n123\nxy", removeAndGet(2, 2));
     assertArrayEquals("Array result index 10", ["abc\n", "123\n", "xy"], removeAndGetLines(2, 2));
+}
+
+function testDeleteLine() {
+    var bufferContent = new BufferContent(mockBuffer, "abc\n123\nxyz\n\ndef");
+    bufferContent.deleteLine(1);
+    assertEquals("Content after first delete", "abc\nxyz\n\ndef", bufferContent.get());
+    assertEquals("Length after first delete", 12, bufferContent.length());
+    bufferContent.deleteLine(10);
+    assertEquals("Content after delete out of range", "abc\nxyz\n\ndef", bufferContent.get());
+    assertEquals("Length after first delete", 12, bufferContent.length());
+    bufferContent.deleteLine(3);
+    assertEquals("Content after second delete", "abc\nxyz\n\n", bufferContent.get());
+    assertEquals("Length after second delete", 9, bufferContent.length());
+    bufferContent.deleteLine(3);
+    assertEquals("Content after third delete", "abc\nxyz\n\n", bufferContent.get());
+    assertEquals("Length after third delete", 9, bufferContent.length());
+    bufferContent.deleteLine(1);
+    assertEquals("Content after third delete", "abc\n\n", bufferContent.get());
+    assertEquals("Length after third delete", 5, bufferContent.length());
+    bufferContent.deleteLine(0);
+    assertEquals("Content after third delete", "\n", bufferContent.get());
+    assertEquals("Length after third delete", 1, bufferContent.length());
+    bufferContent.deleteLine(0);
+    assertEquals("Content after third delete", "", bufferContent.get());
+    assertEquals("Length after third delete", 0, bufferContent.length());
+}
+
+function testParameterModeMarker() {
+    var bufferContent = new BufferContent(mockBuffer, "");
+    bufferContent.parameterMode = true;
+    assertEquals("Buffer Content Parameter X", 0, bufferContent.getParameterX());
+    assertEquals("Buffer Content Parameter Y", 0, bufferContent.getParameterY());
+    bufferContent.set("abc\n123\nxyz");
+    assertEquals("Buffer Content Parameter X", 3, bufferContent.getParameterX());
+    assertEquals("Buffer Content Parameter Y", 2, bufferContent.getParameterY());
+}
+
+function testParameterModeGetAndSetParameter() {
+    var bufferContent = new BufferContent(mockBuffer, "abc\n123: ");
+    bufferContent.parameterMode = true;
+    assertEquals("Parameter content before set", "", bufferContent.getParameter());
+    bufferContent.setParameter("xyz");
+    assertEquals("Parameter content after first set", "xyz", bufferContent.getParameter());
+    assertEquals("Content after first set", "abc\n123: xyz", bufferContent.get());
+    assertArrayEquals("Content lines after first set", ["abc\n", "123: xyz"], bufferContent.lines);
+    assertEquals("Length after first set", 12, bufferContent.length());
+    assertEquals("Buffer Content Parameter X after first set", 5, bufferContent.getParameterX());
+    assertEquals("Buffer Content Parameter Y after first set", 1, bufferContent.getParameterY());
+    bufferContent.setParameter("321");
+    assertEquals("Parameter content after second set", "321", bufferContent.getParameter());
+    assertEquals("Content after second set", "abc\n123: 321", bufferContent.get());
+    assertArrayEquals("Content lines after second set", ["abc\n", "123: 321"], bufferContent.lines);
+    assertEquals("Length after second set", 12, bufferContent.length());
+    assertEquals("Buffer Content Parameter X after second set", 5, bufferContent.getParameterX());
+    assertEquals("Buffer Content Parameter Y after second set", 1, bufferContent.getParameterY());
+    bufferContent.setParameter("def\n321");
+    assertEquals("Parameter content after second set", "def\n321", bufferContent.getParameter());
+    assertEquals("Content after second set", "abc\n123: def\n321", bufferContent.get());
+    assertArrayEquals("Content lines after second set", ["abc\n", "123: def\n", "321"], bufferContent.lines);
+    assertEquals("Length after second set", 16, bufferContent.length());
+    assertEquals("Buffer Content Parameter X after second set", 5, bufferContent.getParameterX());
+    assertEquals("Buffer Content Parameter Y after second set", 1, bufferContent.getParameterY());
+}
+
+function testCanEditInContentZoneInParameterMode() {
+    var bufferContent = new BufferContent(mockBuffer, "");
+    bufferContent.parameterMode = true;
+    bufferContent.set("abc\n123\nxyz: ");
+    bufferContent.setParameter("def\n321");
+    assertEquals("canEdit(0, 0)", false, bufferContent.canEdit(0, 0));
+    assertEquals("canEdit(3, 0)", false, bufferContent.canEdit(3, 0));
+    assertEquals("canEdit(0, 1)", false, bufferContent.canEdit(0, 1));
+    assertEquals("canEdit(3, 1)", false, bufferContent.canEdit(3, 1));
+    assertEquals("canEdit(0, 2)", false, bufferContent.canEdit(0, 2));
+    assertEquals("canEdit(1, 2)", false, bufferContent.canEdit(1, 2));
+    assertEquals("canEdit(4, 2)", false, bufferContent.canEdit(4, 2));
+}
+
+function testCanEditInParameterZoneInParameterMode() {
+    var bufferContent = new BufferContent(mockBuffer, "");
+    bufferContent.parameterMode = true;
+    bufferContent.set("abc\n123\nxyz: ");
+    bufferContent.setParameter("def\n321");
+    assertEquals("canEdit(5, 2)", true, bufferContent.canEdit(5, 2));
+    assertEquals("canEdit(6, 2)", true, bufferContent.canEdit(6, 2));
+    assertEquals("canEdit(7, 2)", true, bufferContent.canEdit(7, 2));
+    assertEquals("canEdit(8, 2)", true, bufferContent.canEdit(8, 2));
+    assertEquals("canEdit(0, 3)", true, bufferContent.canEdit(0, 3));
+    assertEquals("canEdit(2, 3)", true, bufferContent.canEdit(2, 3));
+    assertEquals("canEdit(3, 3)", true, bufferContent.canEdit(3, 3));
+}
+
+function ignore_testAppendInParameterModeNoParameter() {
+    var bufferContent = new BufferContent(mockBuffer, "");
+    bufferContent.parameterMode = true;
+    bufferContent.set("abc\n123");
+    bufferContent.append("xyz");
+    assertEquals("Parameter content after first append", "", bufferContent.getParameter());
+    assertEquals("Content after first append", "abc\n123xyz", bufferContent.get());
+    assertArrayEquals("Content lines after first append", ["abc\n", "123xyz"], bufferContent.lines);
+    assertEquals("Length after first append", 10, bufferContent.length());
+    assertEquals("Buffer Content Parameter X after first append", 6, bufferContent.getParameterX());
+    assertEquals("Buffer Content Parameter Y after first append", 1, bufferContent.getParameterY());
+    bufferContent.append("def\n321");
+    assertEquals("Parameter content after second append", "", bufferContent.getParameter());
+    assertEquals("Content after second append", "abc\n123xyzdef\n321", bufferContent.get());
+    assertArrayEquals("Content lines after second append", ["abc\n", "123xyzdef\n", "321"], bufferContent.lines);
+    assertEquals("Length after second append", 17, bufferContent.length());
+    assertEquals("Buffer Content Parameter X after second append", 3, bufferContent.getParameterX());
+    assertEquals("Buffer Content Parameter Y after second append", 2, bufferContent.getParameterY());
+}
+
+function ignore_testAppendInParameterModeWithParameter() {
+    var bufferContent = new BufferContent(mockBuffer, "");
+    bufferContent.parameterMode = true;
+    bufferContent.set("abc\n123");
+    bufferContent.setParameter("param");
+    bufferContent.append("xyz");
+    assertEquals("Parameter content after first append", "param", bufferContent.getParameter());
+    assertEquals("Content after first append", "abc\n123xyzparam", bufferContent.get());
+    assertArrayEquals("Content lines after first append", ["abc\n", "123xyzparam"], bufferContent.lines);
+    assertEquals("Length after first append", 15, bufferContent.length());
+    assertEquals("Buffer Content Parameter X after first append", 6, bufferContent.getParameterX());
+    assertEquals("Buffer Content Parameter Y after first append", 1, bufferContent.getParameterY());
+    bufferContent.append("def\n321");
+    assertEquals("Parameter content after second append", "param", bufferContent.getParameter());
+    assertEquals("Content after second append", "abc\n123xyzdef\n321param", bufferContent.get());
+    assertArrayEquals("Content lines after second append", ["abc\n", "123xyzdef\n", "321param"], bufferContent.lines);
+    assertEquals("Length after second append", 22, bufferContent.length());
+    assertEquals("Buffer Content Parameter X after second append", 3, bufferContent.getParameterX());
+    assertEquals("Buffer Content Parameter Y after second append", 2, bufferContent.getParameterY());
+}
+
+function testAppendInParameterModeWithParameterWithNewlines() {
+    var bufferContent = new BufferContent(mockBuffer, "");
+    bufferContent.parameterMode = true;
+    bufferContent.set("abc\n123");
+    bufferContent.setParameter("param\nvalue");
+    bufferContent.append("xyz");
+    assertEquals("Parameter content after first append", "param\nvalue", bufferContent.getParameter());
+    assertEquals("Content after first append", "abc\n123xyzparam\nvalue", bufferContent.get());
+    assertArrayEquals("Content lines after first append", ["abc\n", "123xyzparam\nvalue"], bufferContent.lines);
+    assertEquals("Length after first append", 21, bufferContent.length());
+    assertEquals("Buffer Content Parameter X after first append", 6, bufferContent.getParameterX());
+    assertEquals("Buffer Content Parameter Y after first append", 1, bufferContent.getParameterY());
+    bufferContent.append("def\n321");
+    assertEquals("Parameter content after second append", "param\nvalue", bufferContent.getParameter());
+    assertEquals("Content after second append", "abc\n123xyzdef\n321param\nvalue", bufferContent.get());
+    assertArrayEquals("Content lines after second append", ["abc\n", "123xyzdef\n", "321param\nvalue"], bufferContent.lines);
+    assertEquals("Length after second append", 28, bufferContent.length());
+    assertEquals("Buffer Content Parameter X after second append", 3, bufferContent.getParameterX());
+    assertEquals("Buffer Content Parameter Y after second append", 2, bufferContent.getParameterY());
+}
+
+function testAppendInNormalMode() {
+    var bufferContent = new BufferContent(mockBuffer, "");
+    bufferContent.set("abc\n123");
+    bufferContent.append("xyz");
+    assertEquals("Content after first append", "abc\n123xyz", bufferContent.get());
+    assertArrayEquals("Content lines after first append", ["abc\n", "123xyz"], bufferContent.lines);
+    assertEquals("Length after first append", 10, bufferContent.length());
+    bufferContent.append("def\n321");
+    assertEquals("Content after second append", "abc\n123xyzdef\n321", bufferContent.get());
+    assertArrayEquals("Content lines after second append", ["abc\n", "123xyzdef\n", "321"], bufferContent.lines);
+    assertEquals("Length after second append", 17, bufferContent.length());
 }

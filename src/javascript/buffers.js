@@ -1,5 +1,7 @@
 function BufferContent(buffer, content) {
     this.buffer = buffer;
+    this.parameterX = 0;
+    this.parameterY = 0;
     this.set(content);
 }
 
@@ -11,6 +13,22 @@ BufferContent.fn.getX = function(index) {
 
 BufferContent.fn.getY = function(index) {
     return this.lineFrom(index).index;
+};
+
+BufferContent.fn.getParameterX = function() {
+    if (!this.parameterMode) {
+        throw new Error("Cannot retrieve parameterX for non parameter mode buffer.");
+    }
+
+    return this.parameterX;
+};
+
+BufferContent.fn.getParameterY = function() {
+    if (!this.parameterMode) {
+        throw new Error("Cannot retrieve parameterY for non parameter mode buffer.");
+    }
+
+    return this.parameterY;
 };
 
 BufferContent.fn.lastLine = function() {
@@ -77,6 +95,45 @@ BufferContent.fn.postRedraw = function() {
     this.buffer.postRedraw();
 };
 
+BufferContent.fn.canEdit = function(x, y) {
+    if (!this.parameterMode) {
+        return true;
+    }
+
+    if (y < this.parameterY) {
+        return false;
+    }
+
+    if (y > this.parameterY) {
+        return true;
+    }
+
+    return x >= this.parameterX;
+};
+
+BufferContent.fn.append = function(value) {
+    var x, y;
+
+    if (this.parameterMode) {
+        x = this.parameterX;
+        y = this.parameterY;
+        var index = value.lastIndexOf("\n");
+
+        if (index < 0) {
+            this.parameterX += value.length;
+        } else {
+            this.parameterX = value.length - index - 1;
+        }
+
+        this.parameterY += value.count("\n");
+    } else {
+        x = this.lines[this.lastLine()].length;
+        y = this.lastLine();
+    }
+
+    this.insert(value, x, y);
+};
+
 BufferContent.fn.insert = function(str, x, y) {
     var toInsert = str.inclusiveSplit("\n");
 
@@ -133,6 +190,14 @@ BufferContent.fn.eachLine = function(arg1, arg2) {
     }
 };
 
+BufferContent.fn.deleteLine = function(index) {
+    if (index < 0 || index > this.lastLine()) {
+        return;
+    }
+
+    this.remove(0, index, this.lines[index].length);
+};
+
 BufferContent.fn.set = function(content) {
     this.lines = content.inclusiveSplit("\n");
     var cache = { length: 0 };
@@ -142,11 +207,47 @@ BufferContent.fn.set = function(content) {
         cache.length += line.length;
     });
 
+    this.parameterX = this.lines[this.lines.length - 1].length;
+    this.parameterY = this.lines.length - 1;
     this.postRedraw();
 };
 
 BufferContent.fn.get = function() {
     return this.lines.join("");
+};
+
+BufferContent.fn.setParameter = function(value) {
+    if (!this.parameterMode) {
+        throw new Error("Cannot set parameter for non parameter mode buffer.");
+    }
+
+    var parameterLength = this.lines[this.parameterY].length - this.parameterX;
+
+    for (var i = this.parameterY + 1; i < this.lines.length; i++) {
+        parameterLength += this.lines[i].length;
+    }
+
+    this.remove(this.parameterX, this.parameterY, parameterLength)
+    this.insert(value, this.parameterX, this.parameterY)
+};
+
+BufferContent.fn.getParameter = function() {
+    if (!this.parameterMode) {
+        throw new Error("Cannot retrieve parameter for non parameter mode buffer.");
+    }
+
+    var result = [];
+    var line = this.lines[this.parameterY];
+
+    if (this.parameterX < line.length) {
+        result.push(line.substring(this.parameterX, line.length));
+    }
+
+    for (var i = this.parameterY + 1; i < this.lines.length; i++) {
+        result.push(this.lines[i]);
+    }
+
+    return result.join("");
 };
 
 function Buffer(screen, options) {
