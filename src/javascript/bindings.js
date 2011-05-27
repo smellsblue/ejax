@@ -133,7 +133,7 @@ function parseBinding(code) {
         }
 
         if (found) {
-            break;
+            continue;
         }
 
         for (var i = 0; i < Token.invalidKeys.length; i++) {
