@@ -692,3 +692,7 @@ function testCopyPaste() {
     assertEquals("X cursor after second paste", 0, currentX);
     assertEquals("Y cursor after second paste", 4, currentY);
 }
+
+function ignore_testKillBuffer() {
+    assertEquals("Screen row 23", "Kill buffer (default *scratch*):                                                 ", mockEjax.pixelRow(23));
+}

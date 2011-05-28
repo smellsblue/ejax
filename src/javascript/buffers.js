@@ -577,7 +577,6 @@ Buffer.fn.append = function(str) {
     }
 
     this.setCursor(x, y);
-    //this.setCursor(this.content.getLine(lastLine).length, lastLine);
 };
 
 Buffer.fn.insert = function(str) {
@@ -664,7 +663,7 @@ Ejax.fn.mark = function() {
 
 Buffer.fn.copyRegion = function() {
     var result = this.content.copyRegion(this.markX, this.markY, this.cursorX, this.cursorY);
-    if (result == null) {
+    if (Object.isNullOrUndefined(result)) {
         this.screen.ejax.ringBell();
         return;
     }
@@ -677,6 +676,11 @@ Ejax.fn.copyRegion = function() {
 };
 
 Buffer.fn.yank = function() {
+    if (Object.isNullOrUndefined(this.screen.ejax.yanked)) {
+        this.screen.ejax.ringBell();
+        return;
+    }
+
     this.insert(this.screen.ejax.yanked);
 };
 
