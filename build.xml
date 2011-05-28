@@ -189,7 +189,7 @@
     </exec>
 
     <exec executable="sudo" failonerror="true">
-      <arg line="mkdir /usr/share/ejax"/>
+      <arg line="mkdir -p /usr/share/ejax"/>
     </exec>
 
     <exec executable="sudo" failonerror="true">
