@@ -112,12 +112,17 @@ var cursesKeyMapping = {};
 
     // Ctrl+M is the same code as enter and Ctrl+I is the same as tab,
     // so these should go after
-    var exact = [9, 13, 27, 32, 49, 50, 51, 52, 53, 54, 55, 56, 57];
+    var exact = [9, 13, 27, 49, 50, 51, 52, 53, 54, 55, 56, 57];
 
     for (var i = 0; i < exact.length; i++) {
         cursesKeyMapping[exact[i]] = value(exact[i]);
         cursesKeyMapping["27-" + exact[i]] = custom(exact[i], false, true, false);
     }
+
+    // Space
+    cursesKeyMapping[32] = value(32);
+    cursesKeyMapping[0] = custom(32, true, false, false);
+    cursesKeyMapping["27-32"] = custom(32, true, true, false);
 })();
 
 function TerminalEjax() {
