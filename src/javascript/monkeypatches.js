@@ -21,6 +21,10 @@ String.prototype.startsWith = function(value) {
     return this.indexOf(value) == 0;
 };
 
+String.prototype.endsWith = function(value) {
+    return this.lastIndexOf(value) == this.length - value.length;
+};
+
 String.prototype.count = function(value) {
     var result = 0;
     var index = this.indexOf(value);

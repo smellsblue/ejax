@@ -294,7 +294,7 @@ Ejax.fn.executeCommand = function() {
 
 Ejax.fn.shell = function() {
     var io = this.io;
-    var buffer = new Buffer(this.screen, { name: "*shell*", mode: shellMode, columns: this.screen.columns, rows: this.screen.rows - 1 });
+    var buffer = new Buffer(this.screen, { name: "*shell*", mode: shellMode, columns: this.screen.columns, rows: this.screen.rows - 1, parameterMode: true });
     buffer.shell = this.io.shell({
         outputFn: function(str) {
             io.addJob(function() {

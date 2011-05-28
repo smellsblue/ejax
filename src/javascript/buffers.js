@@ -256,7 +256,7 @@ function Buffer(screen, options) {
     this.name = options.name;
     this.file = options.file;
     this.minibuffer = options.minibuffer;
-    this.content = new BufferContent(this, "", this.minibuffer);
+    this.content = new BufferContent(this, "", this.minibuffer || options.parameterMode);
     this.startingLine = 0;
     this.startingColumn = 0;
     this.cursorX = 0;

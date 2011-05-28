@@ -15,17 +15,11 @@ function Shell(options) {
     java.lang.Runtime.getRuntime().addShutdownHook(new java.lang.Thread(function() {
         self.process.destroy();
     }));
-    this.commandContent = "";
 }
 
 Shell.shellCommand = ["/bin/bash", "-s"];
 
 Shell.fn = Shell.prototype;
-
-Shell.fn.sendCommand = function() {
-    this.send(this.commandContent + "\n");
-    this.commandContent = "";
-};
 
 Shell.fn.send = function(str) {
     this.input.print(str);
