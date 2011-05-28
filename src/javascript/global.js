@@ -19,6 +19,7 @@ editingBindings.bind(["C-e", "END"], function() { ejax.lineEnd(); });
 editingBindings.bind(["C-d", "DEL"], function() { ejax.deleteForward(); });
 editingBindings.bind("C-SPC", function() { ejax.mark(); });
 editingBindings.bind("M-w", function() { ejax.copyRegion(); });
+editingBindings.bind("C-w", function() { ejax.killRegion(); });
 editingBindings.bind("C-y", function() { ejax.yank(); });
 editingBindings.bind("BSP", function() { ejax.deleteBackward(); });
 editingBindings.type = function(key) { ejax.insert(key); };

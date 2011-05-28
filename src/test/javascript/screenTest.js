@@ -693,6 +693,29 @@ function testCopyPaste() {
     assertEquals("Y cursor after second paste", 4, currentY);
 }
 
+function testKillPaste() {
+    var currentX, currentY;
+    mockEjax.setCursor = function(x, y) {
+        currentX = x;
+        currentY = y;
+    };
+    mockEjax.ejax.setBufferContent("abc");
+    mockEjax.ejax.screen.hardRedraw();
+    assertEquals("Screen row  0", "abc                                                                             ", mockEjax.pixelRow(0));
+    mockEjax.fireKeyDowns("C-aC-SPCC-eC-wC-yC-y");
+    assertEquals("Screen row  0", "abcabc                                                                          ", mockEjax.pixelRow(0));
+    assertEquals("X cursor after first paste", 6, currentX);
+    assertEquals("Y cursor after first paste", 0, currentY);
+    mockEjax.fireKeyDowns("RETdefRETC-SPCM-<C-wC-yC-y");
+    assertEquals("Screen row  0", "abcabc                                                                          ", mockEjax.pixelRow(0));
+    assertEquals("Screen row  1", "def                                                                             ", mockEjax.pixelRow(1));
+    assertEquals("Screen row  2", "abcabc                                                                          ", mockEjax.pixelRow(2));
+    assertEquals("Screen row  3", "def                                                                             ", mockEjax.pixelRow(3));
+    assertEquals("Screen row  4", "                                                                                ", mockEjax.pixelRow(4));
+    assertEquals("X cursor after second paste", 0, currentX);
+    assertEquals("Y cursor after second paste", 4, currentY);
+}
+
 function ignore_testKillBuffer() {
     assertEquals("Screen row 23", "Kill buffer (default *scratch*):                                                 ", mockEjax.pixelRow(23));
 }

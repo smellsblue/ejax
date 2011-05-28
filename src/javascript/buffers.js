@@ -675,6 +675,25 @@ Ejax.fn.copyRegion = function() {
     this.screen.currentWindow.buffer.copyRegion();
 };
 
+Buffer.fn.killRegion = function() {
+    var result = this.content.copyRegion(this.markX, this.markY, this.cursorX, this.cursorY);
+    if (Object.isNullOrUndefined(result)) {
+        this.screen.ejax.ringBell();
+        return;
+    }
+
+    if (this.cursorY > this.markY || (this.cursorY == this.markY && this.cursorX > this.markX)) {
+        this.setCursor(this.markX, this.markY);
+    }
+
+    this.content.remove(this.cursorX, this.cursorY, result.length);
+    this.screen.ejax.yanked = result;
+};
+
+Ejax.fn.killRegion = function() {
+    this.screen.currentWindow.buffer.killRegion();
+};
+
 Buffer.fn.yank = function() {
     if (Object.isNullOrUndefined(this.screen.ejax.yanked)) {
         this.screen.ejax.ringBell();
