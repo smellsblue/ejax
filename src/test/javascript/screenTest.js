@@ -642,3 +642,30 @@ function testMinibufferEditingAndNavigation() {
     assertEquals("Y cursor after RIGHT", 23, currentY);
     assertEquals("Max y value", 23, mockEjax.pixels.maxY);
 }
+
+function testParameterBufferAppending() {
+    var currentX, currentY;
+    mockEjax.setCursor = function(x, y) {
+        currentX = x;
+        currentY = y;
+    };
+    mockEjax.ejax.screen.currentWindow.buffer.content.parameterMode = true;
+    mockEjax.ejax.screen.currentWindow.buffer.content.set("abc");
+    mockEjax.ejax.screen.currentWindow.buffer.content.setParameter("123");
+    mockEjax.ejax.setCursor(4, 0);
+    mockEjax.ejax.screen.hardRedraw();
+    assertEquals("Screen row  0", "abc123                                                                          ", mockEjax.pixelRow(0));
+    mockEjax.ejax.screen.currentWindow.buffer.append("def");
+    mockEjax.ejax.screen.redraw();
+    assertEquals("Screen row  0", "abcdef123                                                                       ", mockEjax.pixelRow(0));
+    assertEquals("X cursor after first append", 7, currentX);
+    assertEquals("Y cursor after first append", 0, currentY);
+    mockEjax.ejax.screen.currentWindow.buffer.append("\nxyz\nhello\n");
+    mockEjax.ejax.screen.redraw();
+    assertEquals("Screen row  0", "abcdef                                                                          ", mockEjax.pixelRow(0));
+    assertEquals("Screen row  1", "xyz                                                                             ", mockEjax.pixelRow(1));
+    assertEquals("Screen row  2", "hello                                                                           ", mockEjax.pixelRow(2));
+    assertEquals("Screen row  3", "123                                                                             ", mockEjax.pixelRow(3));
+    assertEquals("X cursor after second append", 1, currentX);
+    assertEquals("Y cursor after second append", 3, currentY);
+}

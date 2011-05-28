@@ -501,15 +501,38 @@ Ejax.fn.gotoLine = function() {
 };
 
 Buffer.fn.append = function(str) {
-    var lastLine = this.content.lastLine();
-    var lastLineLength = this.content.getLine(lastLine).length;
-    var cursorAtEnd = this.cursorY == lastLine && this.cursorX == lastLineLength;
-    this.content.insert(str, lastLineLength, lastLine);
+    var lastY = this.content.lastLine();
+    var lastX = this.content.getLine(lastY).length;
 
-    if (cursorAtEnd) {
-        lastLine = this.content.lastLine();
-        this.setCursor(this.content.getLine(lastLine).length, lastLine);
+    if (this.content.parameterMode) {
+        lastX = this.content.getParameterX();
+        lastY = this.content.getParameterY();
     }
+
+    var cursorAtEnd = this.cursorY > lastY || (this.cursorY == lastY && this.cursorX >= lastX);
+    this.content.append(str);
+
+    if (!cursorAtEnd) {
+        return;
+    }
+
+    var x, y;
+    var newlineCount = str.count("\n");
+
+    if (this.cursorY > lastY) {
+        x = this.cursorX;
+        y = this.cursorY + newlineCount;
+    } else if (newlineCount > 0) {
+        var remainingX = str.length - str.lastIndexOf("\n") - 1;
+        x = remainingX + this.cursorX - lastX;
+        y = this.cursorY + newlineCount;
+    } else {
+        x = this.cursorX + str.length;
+        y = this.cursorY;
+    }
+
+    this.setCursor(x, y);
+    //this.setCursor(this.content.getLine(lastLine).length, lastLine);
 };
 
 Buffer.fn.insert = function(str) {

@@ -64,5 +64,6 @@ shellMode.bindings.bind("RET", function() {
     }
 
     ejax.screen.currentWindow.buffer.content.setParameter("");
+    ejax.screen.currentWindow.buffer.append(parameter);
     ejax.screen.currentWindow.buffer.shell.send(parameter);
 });
