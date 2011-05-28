@@ -8,6 +8,51 @@ function BufferContent(buffer, content, parameterMode) {
 
 BufferContent.fn = BufferContent.prototype;
 
+BufferContent.fn.inRange = function(x, y) {
+    if (x < 0 || y < 0 || y > this.lastLine()) {
+        return false;
+    }
+
+    if (y == this.lastLine()) {
+        return x <= this.lines[y].length;
+    }
+
+    return x < this.lines[y].length;
+};
+
+BufferContent.fn.copyRegion = function(fromX, fromY, toX, toY) {
+    if (Object.isNullOrUndefined(fromX) || Object.isNullOrUndefined(fromY) || Object.isNullOrUndefined(toX) || Object.isNullOrUndefined(toY)) {
+        return null;
+    }
+
+    if (!this.inRange(fromX, fromY) || !this.inRange(toX, toY)) {
+        return null;
+    }
+
+    if (fromY > toY || (fromY == toY && fromX > toX)) {
+        var temp = fromX;
+        fromX = toX;
+        toX = temp;
+        temp = fromY;
+        fromY = toY;
+        toY = temp;
+    }
+
+    if (fromY == toY) {
+        return this.lines[fromY].substring(fromX, toX);
+    }
+
+    var line = this.lines[fromY];
+    var result = [line.substring(fromX, line.length)];
+
+    for (var y = fromY + 1; y < toY; y++) {
+        result.push(this.lines[y]);
+    }
+
+    result.push(this.lines[toY].substring(0, toX));
+    return result.join("");
+};
+
 BufferContent.fn.getX = function(index) {
     return this.lineFrom(index).lineIndex;
 };
@@ -606,6 +651,37 @@ Buffer.fn.deleteBackward = function() {
 
 Ejax.fn.deleteBackward = function() {
     this.screen.currentWindow.buffer.deleteBackward();
+};
+
+Buffer.fn.mark = function() {
+    this.markX = this.cursorX;
+    this.markY = this.cursorY;
+};
+
+Ejax.fn.mark = function() {
+    this.screen.currentWindow.buffer.mark();
+};
+
+Buffer.fn.copyRegion = function() {
+    var result = this.content.copyRegion(this.markX, this.markY, this.cursorX, this.cursorY);
+    if (result == null) {
+        this.screen.ejax.ringBell();
+        return;
+    }
+
+    this.screen.ejax.yanked = result;
+};
+
+Ejax.fn.copyRegion = function() {
+    this.screen.currentWindow.buffer.copyRegion();
+};
+
+Buffer.fn.yank = function() {
+    this.insert(this.screen.ejax.yanked);
+};
+
+Ejax.fn.yank = function() {
+    this.screen.currentWindow.buffer.yank();
 };
 
 Buffer.fn.lineStart = function() {

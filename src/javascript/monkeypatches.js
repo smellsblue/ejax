@@ -1,3 +1,7 @@
+Object.isNullOrUndefined = function(obj) {
+    return obj === null || obj === undefined;
+};
+
 Array.prototype.contains = function(value) {
     return this.indexOf(value) >= 0;
 };
