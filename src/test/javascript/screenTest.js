@@ -134,10 +134,10 @@ function testReadingParameterToLoadFile() {
         return new File("src/test/javascript/testFile.txt");
     };
     mockEjax.ejax.setBufferContent("abc\n123\nxyz\n\ndef\n\n456\n");
+    mockEjax.ejax.screen.hardRedraw();
     mockEjax.fireKeyDowns("C-xC-f");
     assertEquals("X cursor after C-xC-f", 11, currentX);
     assertEquals("Y cursor after C-xC-f", 23, currentY);
-    mockEjax.ejax.screen.hardRedraw();
     assertEquals("Max y value", 23, mockEjax.pixels.maxY);
     assertEquals("Screen row 22", " *scratch*    L1 (Fundamental)--------------------------------------------------", mockEjax.pixelRow(22));
     assertEquals("Screen row 23", "Find file:                                                                      ", mockEjax.pixelRow(23));
@@ -418,10 +418,10 @@ function testExecuteCommand() {
         currentY = y;
     };
     mockEjax.ejax.setBufferContent("abc\n");
+    mockEjax.ejax.screen.hardRedraw();
     mockEjax.fireKeyDowns("M-x");
     assertEquals("X cursor after M-x", 4, currentX);
     assertEquals("Y cursor after M-x", 23, currentY);
-    mockEjax.ejax.screen.hardRedraw();
     assertEquals("Max y value", 23, mockEjax.pixels.maxY);
     assertEquals("Screen row 22", " *scratch*    L1 (Fundamental)--------------------------------------------------", mockEjax.pixelRow(22));
     assertEquals("Screen row 23", "M-x                                                                             ", mockEjax.pixelRow(23));
@@ -597,4 +597,48 @@ function testChangeBuffer() {
     assertEquals("Screen row  0", "                                                                                ", mockEjax.pixelRow(0));
     assertEquals("Screen row 22", " b    L1 (Fundamental)----------------------------------------------------------", mockEjax.pixelRow(22));
     assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
+}
+
+function testMinibufferEditingAndNavigation() {
+    var currentX, currentY;
+    mockEjax.setCursor = function(x, y) {
+        currentX = x;
+        currentY = y;
+    };
+    mockEjax.ejax.screen.hardRedraw();
+    mockEjax.fireKeyDowns("M-xabc");
+    assertEquals("Screen row 23", "M-x abc                                                                         ", mockEjax.pixelRow(23));
+    assertEquals("X cursor after M-x", 7, currentX);
+    assertEquals("Y cursor after M-x", 23, currentY);
+    assertEquals("Max y value", 23, mockEjax.pixels.maxY);
+    mockEjax.fireKeyDowns("C-a");
+    assertEquals("Screen row 23", "M-x abc                                                                         ", mockEjax.pixelRow(23));
+    assertEquals("X cursor after C-a", 4, currentX);
+    assertEquals("Y cursor after C-a", 23, currentY);
+    assertEquals("Max y value", 23, mockEjax.pixels.maxY);
+    mockEjax.fireKeyDowns("LEFTdBSPDEL");
+    assertEquals("Screen row 23", "M-x abc                                                                         ", mockEjax.pixelRow(23));
+    assertEquals("X cursor after LEFTd", 3, currentX);
+    assertEquals("Y cursor after LEFTd", 23, currentY);
+    assertEquals("Max y value", 23, mockEjax.pixels.maxY);
+    mockEjax.fireKeyDowns("C-a");
+    assertEquals("Screen row 23", "M-x abc                                                                         ", mockEjax.pixelRow(23));
+    assertEquals("X cursor after second C-a", 0, currentX);
+    assertEquals("Y cursor after second C-a", 23, currentY);
+    assertEquals("Max y value", 23, mockEjax.pixels.maxY);
+    mockEjax.fireKeyDowns("C-e");
+    assertEquals("Screen row 23", "M-x abc                                                                         ", mockEjax.pixelRow(23));
+    assertEquals("X cursor after C-e", 7, currentX);
+    assertEquals("Y cursor after C-e", 23, currentY);
+    assertEquals("Max y value", 23, mockEjax.pixels.maxY);
+    mockEjax.fireKeyDowns("LEFT");
+    assertEquals("Screen row 23", "M-x abc                                                                         ", mockEjax.pixelRow(23));
+    assertEquals("X cursor after LEFT", 6, currentX);
+    assertEquals("Y cursor after LEFT", 23, currentY);
+    assertEquals("Max y value", 23, mockEjax.pixels.maxY);
+    mockEjax.fireKeyDowns("RIGHT");
+    assertEquals("Screen row 23", "M-x abc                                                                         ", mockEjax.pixelRow(23));
+    assertEquals("X cursor after RIGHT", 7, currentX);
+    assertEquals("Y cursor after RIGHT", 23, currentY);
+    assertEquals("Max y value", 23, mockEjax.pixels.maxY);
 }

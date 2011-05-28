@@ -42,20 +42,17 @@ fundamentalMode.bindings.onPartialBinding = function(code) {
 };
 
 var minibufferMode = new Mode("minibuffer", "MiniBuffer", editingBindings);
-minibufferMode.bindings.bind(["C-a", "HOME"], function() { ejax.screen.minibuffer.setCursor(ejax.screen.minibuffer.status.prompt.length, 0); });
-minibufferMode.bindings.bind(["C-d", "DEL"], function() { ejax.screen.minibuffer.status.deleteForward(); });
-minibufferMode.bindings.bind("BSP", function() { ejax.screen.minibuffer.status.deleteBackward(); });
 minibufferMode.bindings.bind("TAB", function() { ejax.screen.minibuffer.status.autoComplete(); });
 minibufferMode.bindings.bind("RET", function() {
     ejax.screen.currentWindow = ejax.screen.minibuffer.status.lastWindow;
+    var parameter = ejax.screen.minibuffer.content.getParameter();
     ejax.screen.minibuffer.content.set("");
     var status = ejax.screen.minibuffer.status;
     ejax.screen.minibuffer.status = null;
     ejax.screen.minibufferWindow.postRedraw();
     ejax.screen.resetCursor();
-    status.callback(status.content);
+    status.callback(parameter);
 });
-minibufferMode.bindings.type = function(key) { ejax.screen.minibuffer.status.insert(key); };
 
 var shellMode = new Mode("shell", "Shell", fundamentalMode.bindings);
 shellMode.bindings.bind("TAB", function() { /* TODO */ });

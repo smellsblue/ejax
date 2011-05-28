@@ -1,5 +1,6 @@
-function BufferContent(buffer, content) {
+function BufferContent(buffer, content, parameterMode) {
     this.buffer = buffer;
+    this.parameterMode = parameterMode;
     this.parameterX = 0;
     this.parameterY = 0;
     this.set(content);
@@ -255,7 +256,7 @@ function Buffer(screen, options) {
     this.name = options.name;
     this.file = options.file;
     this.minibuffer = options.minibuffer;
-    this.content = new BufferContent(this, "");
+    this.content = new BufferContent(this, "", this.minibuffer);
     this.startingLine = 0;
     this.startingColumn = 0;
     this.cursorX = 0;
@@ -358,19 +359,17 @@ Ejax.fn.setCursor = function(x, y) {
 
 Buffer.fn.moveForward = function() {
     var lineLength = this.content.getLine(this.cursorY).length;
-    var x = this.cursorX;
+    var x = this.cursorX + 1;
     var y = this.cursorY;
 
-    if (x + 1 >= lineLength) {
-        if (y == this.content.lastLine()) {
+    if (y == this.content.lastLine()) {
+        if (x > lineLength) {
             this.screen.ejax.ringBell();
             return;
         }
-
+    } else if (x >= lineLength) {
         x = 0;
         y++;
-    } else {
-        x++;
     }
 
     this.setCursor(x, y);
@@ -517,6 +516,11 @@ Buffer.fn.insert = function(str) {
     var x = this.cursorX;
     var y = this.cursorY;
 
+    if (!this.content.canEdit(x, y)) {
+        this.screen.ejax.ringBell();
+        return;
+    }
+
     y += str.count("\n");
     var lastNewline = str.lastIndexOf("\n");
 
@@ -535,6 +539,11 @@ Ejax.fn.insert = function(str) {
 };
 
 Buffer.fn.deleteForward = function() {
+    if (!this.content.canEdit(this.cursorX, this.cursorY)) {
+        this.screen.ejax.ringBell();
+        return;
+    }
+
     if (this.cursorY == this.content.lastLine() && this.cursorX >= this.content.getLine(this.cursorY).length) {
         this.screen.ejax.ringBell();
         return;
@@ -563,6 +572,11 @@ Buffer.fn.deleteBackward = function() {
         x--;
     }
 
+    if (!this.content.canEdit(x, y)) {
+        this.screen.ejax.ringBell();
+        return;
+    }
+
     this.moveBackward();
     this.content.remove(x, y, 1);
 };
@@ -572,6 +586,11 @@ Ejax.fn.deleteBackward = function() {
 };
 
 Buffer.fn.lineStart = function() {
+    if (this.content.parameterMode && this.cursorY == this.content.getParameterY() && this.cursorX >= this.content.getParameterX()) {
+        this.setCursor(this.content.getParameterX(), this.cursorY);
+        return;
+    }
+
     this.setCursor(0, this.cursorY);
 };
 
@@ -721,10 +740,11 @@ Ejax.fn.readParameter = function(options) {
         throw new Error("Cannot read a parameter from the minibuffer!");
     }
 
+    this.screen.minibuffer.content.set(options.prompt || "");
+    this.screen.minibuffer.content.setParameter(options.value || "");
+
     this.screen.minibuffer.setMinibufferStatus(new MinibufferStatus({
         lastWindow: this.screen.currentWindow,
-        prompt: options.prompt,
-        content: options.value,
         callback: options.callback,
         contextFn: options.contextFn,
         contextAutoCompleteFn: options.contextAutoCompleteFn,
@@ -744,13 +764,10 @@ Buffer.fn.setMinibufferStatus = function(status) {
 
     status.minibuffer = this;
     this.status = status;
-    status.update();
 };
 
 function MinibufferStatus(options) {
     this.lastWindow = options.lastWindow;
-    this.prompt = options.prompt || "";
-    this.content = options.content || "";
     this.callback = options.callback || function(result) {};
     this.autoCompleteFn = options.autoCompleteFn;
     this.contextFn = options.contextFn;
@@ -760,48 +777,8 @@ function MinibufferStatus(options) {
 
 MinibufferStatus.fn = MinibufferStatus.prototype;
 
-MinibufferStatus.fn.update = function() {
-    this.minibuffer.setBufferContent(this.prompt + this.content);
-};
-
-MinibufferStatus.fn.insert = function(str) {
-    var minibuffer = ejax.screen.minibuffer;
-    if (minibuffer.cursorX < this.prompt.length) {
-        ejax.ringBell();
-        return;
-    }
-
-    this.content = this.content.insert(str, minibuffer.cursorX - this.prompt.length);
-    this.update();
-    minibuffer.setCursor(minibuffer.cursorX + str.length, minibuffer.cursorY);
-};
-
-MinibufferStatus.fn.deleteForward = function() {
-    var minibuffer = ejax.screen.minibuffer;
-
-    if (minibuffer.cursorX < this.prompt.length || minibuffer.cursorX >= minibuffer.content.length()) {
-        ejax.ringBell();
-        return;
-    }
-
-    this.content = this.content.remove(minibuffer.cursorX - this.prompt.length, 1);
-    this.update();
-};
-
-MinibufferStatus.fn.deleteBackward = function() {
-    var minibuffer = ejax.screen.minibuffer;
-
-    if (minibuffer.cursorX <= this.prompt.length) {
-        ejax.ringBell();
-        return;
-    }
-
-    this.content = this.content.remove(minibuffer.cursorX - this.prompt.length - 1, 1);
-    this.update();
-    minibuffer.moveBackward();
-};
-
 MinibufferStatus.fn.autoComplete = function() {
+    var content = this.minibuffer.content;
     var tree = this.tree;
 
     if (!tree && this.autoCompleteFn) {
@@ -815,7 +792,7 @@ MinibufferStatus.fn.autoComplete = function() {
     }
 
     if (!tree && this.contextFn && this.contextAutoCompleteFn) {
-        var context = this.contextFn(this.content);
+        var context = this.contextFn(content.getParameter());
         tree = this.contextTrees[context];
 
         if (!tree) {
@@ -831,13 +808,11 @@ MinibufferStatus.fn.autoComplete = function() {
     }
 
     if (tree) {
-        var result = tree.find(this.content);
+        var result = tree.find(content.getParameter());
 
         if (result.exists && result.partial) {
-            this.content = result.complete();
-            this.update();
-            var minibuffer = ejax.screen.minibuffer;
-            minibuffer.setCursor(minibuffer.length(), minibuffer.cursorY);
+            content.setParameter(result.complete());
+            this.minibuffer.setCursor(content.getLine(content.lastLine()).length, content.lastLine());
         }
 
         return;

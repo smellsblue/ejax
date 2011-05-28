@@ -266,7 +266,7 @@ function testCanEditInParameterZoneInParameterMode() {
     assertEquals("canEdit(3, 3)", true, bufferContent.canEdit(3, 3));
 }
 
-function ignore_testAppendInParameterModeNoParameter() {
+function testAppendInParameterModeNoParameter() {
     var bufferContent = new BufferContent(mockBuffer, "");
     bufferContent.parameterMode = true;
     bufferContent.set("abc\n123");
@@ -286,7 +286,7 @@ function ignore_testAppendInParameterModeNoParameter() {
     assertEquals("Buffer Content Parameter Y after second append", 2, bufferContent.getParameterY());
 }
 
-function ignore_testAppendInParameterModeWithParameter() {
+function testAppendInParameterModeWithParameter() {
     var bufferContent = new BufferContent(mockBuffer, "");
     bufferContent.parameterMode = true;
     bufferContent.set("abc\n123");
@@ -315,14 +315,14 @@ function testAppendInParameterModeWithParameterWithNewlines() {
     bufferContent.append("xyz");
     assertEquals("Parameter content after first append", "param\nvalue", bufferContent.getParameter());
     assertEquals("Content after first append", "abc\n123xyzparam\nvalue", bufferContent.get());
-    assertArrayEquals("Content lines after first append", ["abc\n", "123xyzparam\nvalue"], bufferContent.lines);
+    assertArrayEquals("Content lines after first append", ["abc\n", "123xyzparam\n", "value"], bufferContent.lines);
     assertEquals("Length after first append", 21, bufferContent.length());
     assertEquals("Buffer Content Parameter X after first append", 6, bufferContent.getParameterX());
     assertEquals("Buffer Content Parameter Y after first append", 1, bufferContent.getParameterY());
     bufferContent.append("def\n321");
     assertEquals("Parameter content after second append", "param\nvalue", bufferContent.getParameter());
     assertEquals("Content after second append", "abc\n123xyzdef\n321param\nvalue", bufferContent.get());
-    assertArrayEquals("Content lines after second append", ["abc\n", "123xyzdef\n", "321param\nvalue"], bufferContent.lines);
+    assertArrayEquals("Content lines after second append", ["abc\n", "123xyzdef\n", "321param\n", "value"], bufferContent.lines);
     assertEquals("Length after second append", 28, bufferContent.length());
     assertEquals("Buffer Content Parameter X after second append", 3, bufferContent.getParameterX());
     assertEquals("Buffer Content Parameter Y after second append", 2, bufferContent.getParameterY());
