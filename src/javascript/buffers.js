@@ -615,6 +615,29 @@ Buffer.fn.mark = function() {
     this.markY = this.cursorY;
 };
 
+Buffer.fn.evalRegion = function() {
+    var toEval = this.content.copyRegion(this.markX, this.markY, this.cursorX, this.cursorY);
+
+    if (Object.isNullOrUndefined(toEval)) {
+        this.screen.ejax.ringBell();
+        return;
+    }
+
+    var result = eval(toEval);
+
+    if (Object.isNullOrUndefined(result)) {
+        return;
+    }
+
+    var content = "";
+    content += "Result type: " + typeof(result) + "\n";
+    content += "Result:\n";
+    content += result;
+    var buffer = new Buffer(this.screen, { name: "*Eval Results*" });
+    buffer.setBufferContent(content);
+    this.screen.addAndChangeBuffer(buffer);
+};
+
 Buffer.fn.copyRegion = function() {
     var result = this.content.copyRegion(this.markX, this.markY, this.cursorX, this.cursorY);
     if (Object.isNullOrUndefined(result)) {

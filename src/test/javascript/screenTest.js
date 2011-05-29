@@ -790,3 +790,27 @@ function testHelp() {
     assertEquals("Screen row  5", "the program, because it exists solely in a test.                                ", mockEjax.pixelRow(5));
     assertEquals("Screen row  6", "                                                                                ", mockEjax.pixelRow(6));
 }
+
+function testEvalRegion() {
+    var currentX, currentY;
+    mockEjax.setCursor = function(x, y) {
+        currentX = x;
+        currentY = y;
+    };
+    mockEjax.ejax.screen.hardRedraw();
+    mockEjax.fireKeyDowns("C-SPCejax.lineStart()C-xC-e");
+    assertEquals("Screen row  0", "ejax.lineStart()                                                                ", mockEjax.pixelRow(0));
+    assertEquals("Screen row 22", " *scratch*    L1 (Fundamental)--------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("X cursor after eval", 0, currentX);
+    assertEquals("Y cursor after eval", 0, currentY);
+    mockEjax.fireKeyDowns("C-SPC123SPC+SPC321C-xC-e");
+    assertEquals("Screen row  0", "Result type: number                                                             ", mockEjax.pixelRow(0));
+    assertEquals("Screen row  1", "Result:                                                                         ", mockEjax.pixelRow(1));
+    assertEquals("Screen row  2", "444                                                                             ", mockEjax.pixelRow(2));
+    assertEquals("Screen row 22", " *Eval Results*    L1 (Fundamental)---------------------------------------------", mockEjax.pixelRow(22));
+    mockEjax.fireKeyDowns("C-SPC'abc'SPC+SPC321C-xC-e");
+    assertEquals("Screen row  0", "Result type: string                                                             ", mockEjax.pixelRow(0));
+    assertEquals("Screen row  1", "Result:                                                                         ", mockEjax.pixelRow(1));
+    assertEquals("Screen row  2", "abc321                                                                          ", mockEjax.pixelRow(2));
+    assertEquals("Screen row 22", " *Eval Results*<2>    L1 (Fundamental)------------------------------------------", mockEjax.pixelRow(22));
+}

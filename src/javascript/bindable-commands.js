@@ -398,8 +398,15 @@ Ejax.bindable({
     }
 });
 
+Ejax.bindable({
+    name: "evalRegion",
+    description: "Evaluate the code from the last marked position to the current cursor position.  If the results are not undefined or null, they will be presented in a new buffer.",
+    fn: function() {
+        this.screen.currentWindow.buffer.evalRegion();
+    }
+});
+
 // Ideas for functions to implement
-// - executeRegion: execute from the mark to the current value
 // - quit: quit the current parameter being processed
 // - forward/backwardWord: move by words
 // - pageUp/pageDown: self explanatory
