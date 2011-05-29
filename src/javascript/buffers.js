@@ -420,10 +420,6 @@ Buffer.fn.moveForward = function() {
     this.setCursor(x, y);
 };
 
-Ejax.fn.moveForward = function() {
-    this.screen.currentWindow.buffer.moveForward();
-};
-
 Buffer.fn.moveBackward = function() {
     var x = this.cursorX;
     var y = this.cursorY;
@@ -441,10 +437,6 @@ Buffer.fn.moveBackward = function() {
     }
 
     this.setCursor(x, y);
-};
-
-Ejax.fn.moveBackward = function() {
-    this.screen.currentWindow.buffer.moveBackward();
 };
 
 Buffer.fn.nextLine = function() {
@@ -472,10 +464,6 @@ Buffer.fn.nextLine = function() {
     this.setCursor(x, y);
 };
 
-Ejax.fn.nextLine = function() {
-    this.screen.currentWindow.buffer.nextLine();
-};
-
 Buffer.fn.previousLine = function() {
     var x = this.cursorX;
     var y = this.cursorY;
@@ -497,10 +485,6 @@ Buffer.fn.previousLine = function() {
     }
 
     this.setCursor(x, y);
-};
-
-Ejax.fn.previousLine = function() {
-    this.screen.currentWindow.buffer.previousLine();
 };
 
 Buffer.fn.gotoLine = function(line, rows) {
@@ -525,24 +509,6 @@ Buffer.fn.gotoLine = function(line, rows) {
     }
 
     this.setCursor(0, line);
-};
-
-Ejax.fn.gotoLine = function() {
-    var self = this;
-
-    this.readParameter({
-        prompt: "Goto line: ",
-        callback: function(line) {
-            if (!/^\d+$/.test(line)) {
-                self.screen.minibuffer.setBufferContent("Expected int, got " + line);
-                return;
-            }
-
-            line = parseInt(line, 10);
-            var window = self.screen.currentWindow;
-            window.buffer.gotoLine(line, window.rows - 1);
-        }
-    });
 };
 
 Buffer.fn.append = function(str) {
@@ -605,12 +571,6 @@ Ejax.fn.insert = function(str) {
     this.screen.currentWindow.buffer.insert(str);
 };
 
-Ejax.fn.insertSelf = function() {
-    if (!Object.isNullOrUndefined(this.lastKey)) {
-        this.screen.currentWindow.buffer.insert(this.lastKey);
-    }
-};
-
 Buffer.fn.deleteForward = function() {
     if (!this.content.canEdit(this.cursorX, this.cursorY)) {
         this.screen.ejax.ringBell();
@@ -623,10 +583,6 @@ Buffer.fn.deleteForward = function() {
     }
 
     this.content.remove(this.cursorX, this.cursorY, 1);
-};
-
-Ejax.fn.deleteForward = function() {
-    this.screen.currentWindow.buffer.deleteForward();
 };
 
 Buffer.fn.deleteBackward = function() {
@@ -654,17 +610,9 @@ Buffer.fn.deleteBackward = function() {
     this.content.remove(x, y, 1);
 };
 
-Ejax.fn.deleteBackward = function() {
-    this.screen.currentWindow.buffer.deleteBackward();
-};
-
 Buffer.fn.mark = function() {
     this.markX = this.cursorX;
     this.markY = this.cursorY;
-};
-
-Ejax.fn.mark = function() {
-    this.screen.currentWindow.buffer.mark();
 };
 
 Buffer.fn.copyRegion = function() {
@@ -675,10 +623,6 @@ Buffer.fn.copyRegion = function() {
     }
 
     this.screen.ejax.yanked = result;
-};
-
-Ejax.fn.copyRegion = function() {
-    this.screen.currentWindow.buffer.copyRegion();
 };
 
 Buffer.fn.killRegion = function() {
@@ -696,10 +640,6 @@ Buffer.fn.killRegion = function() {
     this.screen.ejax.yanked = result;
 };
 
-Ejax.fn.killRegion = function() {
-    this.screen.currentWindow.buffer.killRegion();
-};
-
 Buffer.fn.yank = function() {
     if (Object.isNullOrUndefined(this.screen.ejax.yanked)) {
         this.screen.ejax.ringBell();
@@ -707,10 +647,6 @@ Buffer.fn.yank = function() {
     }
 
     this.insert(this.screen.ejax.yanked);
-};
-
-Ejax.fn.yank = function() {
-    this.screen.currentWindow.buffer.yank();
 };
 
 Buffer.fn.lineStart = function() {
@@ -722,10 +658,6 @@ Buffer.fn.lineStart = function() {
     this.setCursor(0, this.cursorY);
 };
 
-Ejax.fn.lineStart = function() {
-    this.screen.currentWindow.buffer.lineStart();
-};
-
 Buffer.fn.lineEnd = function() {
     if (this.cursorY == this.content.lastLine()) {
         this.setCursor(this.content.getLine(this.cursorY).length, this.cursorY);
@@ -734,18 +666,10 @@ Buffer.fn.lineEnd = function() {
     }
 };
 
-Ejax.fn.lineEnd = function() {
-    this.screen.currentWindow.buffer.lineEnd();
-};
-
 Buffer.fn.bufferStart = function() {
     this.startingLine = 0;
     this.setCursor(0, 0);
     this.postRedraw();
-};
-
-Ejax.fn.bufferStart = function() {
-    this.screen.currentWindow.buffer.bufferStart();
 };
 
 Buffer.fn.bufferEnd = function(rows) {
@@ -757,10 +681,6 @@ Buffer.fn.bufferEnd = function(rows) {
 
     this.setCursor(this.content.getLine(this.content.lastLine()).length, this.content.lastLine());
     this.postRedraw();
-};
-
-Ejax.fn.bufferEnd = function() {
-    this.screen.currentWindow.buffer.bufferEnd(this.screen.currentWindow.rows - 1);
 };
 
 Ejax.fn.isBufferVisible = function(buffer) {
@@ -783,98 +703,12 @@ Ejax.fn.getBufferContent = function() {
     return this.screen.currentWindow.buffer.content.get();
 };
 
-Ejax.fn.findFile = function() {
-    var io = this.io;
-    var screen = this.screen;
-
-    this.readParameter({
-        prompt: "Find file: ",
-        value: this.getWorkingDirectory(),
-        callback: function(filename) {
-            var file = io.file(filename);
-            var buffer = new Buffer(screen, { name: file.name(), file: file });
-            buffer.setBufferContent(file.contents());
-            screen.addAndChangeBuffer(buffer);
-        },
-        contextFn: function(value) {
-            var path = "";
-            var index = value.lastIndexOf(io.separator());
-
-            if (index >= 0) {
-                path = value.substring(0, index + 1);
-            }
-
-            return path;
-        },
-        contextAutoCompleteFn: function(path) {
-            var current;
-            var result = [];
-
-            if (path == "") {
-                current = io.file(".");
-            } else {
-                current = io.file(path);
-            }
-
-            var files = current.entries();
-
-            for (var i = 0; i < files.length; i++) {
-                result.push(path + files[i]);
-            }
-
-            return result;
-        }
-    });
-};
-
 Buffer.fn.saveBuffer = function() {
     if (!this.file) {
         throw new Error("Saving a non-file buffer is not yet supported!");
     }
 
     this.file.save(this.content.get());
-};
-
-Ejax.fn.saveBuffer = function() {
-    this.screen.currentWindow.buffer.saveBuffer();
-};
-
-Ejax.fn.changeBuffer = function() {
-    var screen = this.screen;
-    var nextName = screen.nextAvailableBuffer().name;
-
-    this.readParameter({
-        prompt: "Switch to buffer (default " + nextName + "): ",
-        callback: function(buffer) {
-            if (buffer == "") {
-                buffer = nextName;
-            }
-
-            screen.changeBuffer(screen.getOrCreateBuffer(buffer));
-        },
-        autoCompleteFn: function() {
-            return screen.getBufferNames();
-        }
-    });
-};
-
-Ejax.fn.killBuffer = function() {
-    var screen = this.screen;
-    var name = screen.currentWindow.buffer.name;
-
-    this.readParameter({
-        prompt: "Kill buffer (default " + name + "): ",
-        callback: function(buffer) {
-            if (buffer == "") {
-                buffer = name;
-            }
-
-            screen.killBuffer(screen.getBuffer(buffer));
-        },
-        autoCompleteFn: function() {
-            return screen.getBufferNames();
-        }
-    });
 };
 
 Ejax.fn.getWorkingDirectory = function() {
@@ -911,24 +745,6 @@ Buffer.fn.setMinibufferStatus = function(status) {
 
     status.minibuffer = this;
     this.status = status;
-};
-
-Ejax.fn.autoComplete = function() {
-    // TODO: Support shell mode auto completing.
-    if (this.screen.currentWindow.buffer.minibuffer) {
-        this.screen.currentWindow.buffer.status.autoComplete();
-    }
-};
-
-Ejax.fn.parameterFinished = function() {
-    this.screen.currentWindow = this.screen.minibuffer.status.lastWindow;
-    var parameter = this.screen.minibuffer.content.getParameter();
-    this.screen.minibuffer.content.set("");
-    var status = this.screen.minibuffer.status;
-    this.screen.minibuffer.status = null;
-    this.screen.minibufferWindow.postRedraw();
-    this.screen.resetCursor();
-    status.callback(parameter);
 };
 
 function MinibufferStatus(options) {
