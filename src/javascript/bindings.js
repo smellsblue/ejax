@@ -54,6 +54,9 @@ Bindings.fn.process = function(tokens) {
  * complete binding.
  */
 Ejax.fn.processBinding = function(code) {
+    this.lastCode = code;
+    this.lastToken = null;
+    this.lastKey = null;
     var modeBindings = this.screen.currentWindow.buffer.mode.bindings;
     var result = overrideBindings.process(code);
 
@@ -70,14 +73,16 @@ Ejax.fn.processBinding = function(code) {
     var tokens = parseBinding(code);
 
     if (tokens.length == 1 && tokens[0].isPrintable()) {
+        this.lastToken = tokens[0];
         var key = tokens[0].getPrintKey();
+        this.lastKey = key;
 
         if (overrideBindings.type) {
-            return function() { overrideBindings.type(key); };
+            return overrideBindings.type;
         }
 
         if (modeBindings.type) {
-            return function() { modeBindings.type(key); };
+            return modeBindings.type;
         }
     }
 

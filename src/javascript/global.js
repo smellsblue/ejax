@@ -22,7 +22,7 @@ editingBindings.bind("M-w", function() { ejax.copyRegion(); });
 editingBindings.bind("C-w", function() { ejax.killRegion(); });
 editingBindings.bind("C-y", function() { ejax.yank(); });
 editingBindings.bind("BSP", function() { ejax.deleteBackward(); });
-editingBindings.type = function(key) { ejax.insert(key); };
+editingBindings.type = function() { ejax.insertSelf(); };
 
 var fundamentalMode = new Mode("fundamental", "Fundamental", editingBindings);
 fundamentalMode.bindings.bind("M-x", function() { ejax.executeCommand(); });

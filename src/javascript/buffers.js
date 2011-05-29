@@ -605,6 +605,12 @@ Ejax.fn.insert = function(str) {
     this.screen.currentWindow.buffer.insert(str);
 };
 
+Ejax.fn.insertSelf = function() {
+    if (!Object.isNullOrUndefined(this.lastKey)) {
+        this.screen.currentWindow.buffer.insert(this.lastKey);
+    }
+};
+
 Buffer.fn.deleteForward = function() {
     if (!this.content.canEdit(this.cursorX, this.cursorY)) {
         this.screen.ejax.ringBell();
