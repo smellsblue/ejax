@@ -894,6 +894,24 @@ Buffer.fn.setMinibufferStatus = function(status) {
     this.status = status;
 };
 
+Ejax.fn.autoComplete = function() {
+    // TODO: Support shell mode auto completing.
+    if (this.screen.currentWindow.buffer.minibuffer) {
+        this.screen.currentWindow.buffer.status.autoComplete();
+    }
+};
+
+Ejax.fn.parameterFinished = function() {
+    this.screen.currentWindow = this.screen.minibuffer.status.lastWindow;
+    var parameter = this.screen.minibuffer.content.getParameter();
+    this.screen.minibuffer.content.set("");
+    var status = this.screen.minibuffer.status;
+    this.screen.minibuffer.status = null;
+    this.screen.minibufferWindow.postRedraw();
+    this.screen.resetCursor();
+    status.callback(parameter);
+};
+
 function MinibufferStatus(options) {
     this.lastWindow = options.lastWindow;
     this.callback = options.callback || function(result) {};

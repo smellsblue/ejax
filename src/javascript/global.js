@@ -46,28 +46,9 @@ fundamentalMode.bindings.onPartialBinding = function(code) {
 };
 
 var minibufferMode = new Mode("minibuffer", "MiniBuffer", editingBindings);
-minibufferMode.bindings.bind("TAB", function() { ejax.screen.minibuffer.status.autoComplete(); });
-minibufferMode.bindings.bind("RET", function() {
-    ejax.screen.currentWindow = ejax.screen.minibuffer.status.lastWindow;
-    var parameter = ejax.screen.minibuffer.content.getParameter();
-    ejax.screen.minibuffer.content.set("");
-    var status = ejax.screen.minibuffer.status;
-    ejax.screen.minibuffer.status = null;
-    ejax.screen.minibufferWindow.postRedraw();
-    ejax.screen.resetCursor();
-    status.callback(parameter);
-});
+minibufferMode.bindings.bind("TAB", "autoComplete");
+minibufferMode.bindings.bind("RET", "parameterFinished");
 
 var shellMode = new Mode("shell", "Shell", fundamentalMode.bindings);
-shellMode.bindings.bind("TAB", function() { /* TODO */ });
-shellMode.bindings.bind("RET", function() {
-    var parameter = ejax.screen.currentWindow.buffer.content.getParameter();
-
-    if (!parameter.endsWith("\n")) {
-            parameter += "\n";
-    }
-
-    ejax.screen.currentWindow.buffer.content.setParameter("");
-    ejax.screen.currentWindow.buffer.append(parameter);
-    ejax.screen.currentWindow.buffer.shell.send(parameter);
-});
+shellMode.bindings.bind("TAB", "autoComplete");
+shellMode.bindings.bind("RET", "sendShellCommand");

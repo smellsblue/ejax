@@ -179,6 +179,18 @@ Ejax.fn.keyDown = function(event) {
             contents += e.message + "\n";
         }
 
+        if (e.fileName) {
+            var lineNumber = e.lineNumber;
+
+            if (Object.isNullOrUndefined(e.lineNumber)) {
+                lineNumber = "unknown line";
+            } else {
+                lineNumber = "line #" + lineNumber;
+            }
+
+            contents += "  From: " + e.fileName + " (" + lineNumber + ")\n";
+        }
+
         if (e.stack) {
             contents += "\n" + e.stack + "\n";
         }
@@ -313,4 +325,16 @@ Ejax.fn.shell = function() {
     }
 
     this.screen.addAndChangeBuffer(buffer);
+};
+
+Ejax.fn.sendShellCommand = function() {
+    var parameter = this.screen.currentWindow.buffer.content.getParameter();
+
+    if (!parameter.endsWith("\n")) {
+            parameter += "\n";
+    }
+
+    this.screen.currentWindow.buffer.content.setParameter("");
+    this.screen.currentWindow.buffer.append(parameter);
+    this.screen.currentWindow.buffer.shell.send(parameter);
 };
