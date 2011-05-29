@@ -7,31 +7,31 @@
 var overrideBindings = new Bindings();
 
 var coreBindings = new Bindings();
-coreBindings.bind("C-xC-c", function() { ejax.exit(); });
+coreBindings.bind("C-xC-c", "exit");
 
 var editingBindings = new Bindings(coreBindings);
-editingBindings.bind(["C-f", "RIGHT"], function() { ejax.moveForward(); });
-editingBindings.bind(["C-b", "LEFT"], function() { ejax.moveBackward(); });
-editingBindings.bind(["C-n", "DOWN"], function() { ejax.nextLine(); });
-editingBindings.bind(["C-p", "UP"], function() { ejax.previousLine(); });
-editingBindings.bind(["C-a", "HOME"], function() { ejax.lineStart(); });
-editingBindings.bind(["C-e", "END"], function() { ejax.lineEnd(); });
-editingBindings.bind(["C-d", "DEL"], function() { ejax.deleteForward(); });
-editingBindings.bind("C-SPC", function() { ejax.mark(); });
-editingBindings.bind("M-w", function() { ejax.copyRegion(); });
-editingBindings.bind("C-w", function() { ejax.killRegion(); });
-editingBindings.bind("C-y", function() { ejax.yank(); });
-editingBindings.bind("BSP", function() { ejax.deleteBackward(); });
-editingBindings.type = function() { ejax.insertSelf(); };
+editingBindings.bind(["C-f", "RIGHT"], "moveForward");
+editingBindings.bind(["C-b", "LEFT"], "moveBackward");
+editingBindings.bind(["C-n", "DOWN"], "nextLine");
+editingBindings.bind(["C-p", "UP"], "previousLine");
+editingBindings.bind(["C-a", "HOME"], "lineStart");
+editingBindings.bind(["C-e", "END"], "lineEnd");
+editingBindings.bind(["C-d", "DEL"], "deleteForward");
+editingBindings.bind("C-SPC", "mark");
+editingBindings.bind("M-w", "copyRegion");
+editingBindings.bind("C-w", "killRegion");
+editingBindings.bind("C-y", "yank");
+editingBindings.bind("BSP", "deleteBackward");
+editingBindings.type = "insertSelf";
 
 var fundamentalMode = new Mode("fundamental", "Fundamental", editingBindings);
-fundamentalMode.bindings.bind("M-x", function() { ejax.executeCommand(); });
-fundamentalMode.bindings.bind("M-<", function() { ejax.bufferStart(); });
-fundamentalMode.bindings.bind("M->", function() { ejax.bufferEnd(); });
-fundamentalMode.bindings.bind("M-gM-g", function() { ejax.gotoLine(); });
-fundamentalMode.bindings.bind("C-xC-f", function() { ejax.findFile(); });
-fundamentalMode.bindings.bind("C-xC-s", function() { ejax.saveBuffer(); });
-fundamentalMode.bindings.bind("C-xb", function() { ejax.changeBuffer(); });
+fundamentalMode.bindings.bind("M-x", "executeCommand");
+fundamentalMode.bindings.bind("M-<", "bufferStart");
+fundamentalMode.bindings.bind("M->", "bufferEnd");
+fundamentalMode.bindings.bind("M-gM-g", "gotoLine");
+fundamentalMode.bindings.bind("C-xC-f", "findFile");
+fundamentalMode.bindings.bind("C-xC-s", "saveBuffer");
+fundamentalMode.bindings.bind("C-xb", "changeBuffer");
 fundamentalMode.bindings.onFoundBinding = function(code) {
     logger.debug("Found function for key combo '" + code + "'");
     ejax.screen.minibuffer.setBufferContent("");

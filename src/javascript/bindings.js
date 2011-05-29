@@ -30,15 +30,22 @@ Bindings.fn.bind = function(codes, fn) {
 };
 
 /**
- * Returns "partial" if the tokens are an incomplete part of a
- * binding, null if there is no binding, and the function bound if it
- * is a complete binding.
+ * Constant to represent a partial binding.  This cannot be a string
+ * or a function, otherwise key processing will try to execute it as a
+ * function.
+ */
+Bindings.PARTIAL = {};
+
+/**
+ * Returns Bindings.PARTIAL if the tokens are an incomplete part of a
+ * binding, null if there is no binding, and the function or string
+ * bound if it is a complete binding.
  */
 Bindings.fn.process = function(tokens) {
     var result = this.tree.find(tokens);
 
     if (result.exists && result.partial) {
-        return "partial";
+        return Bindings.PARTIAL;
     }
 
     if (result.exists) {

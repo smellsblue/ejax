@@ -225,14 +225,18 @@ Ejax.fn.processKeyDown = function(event) {
     var modeBindings = this.screen.currentWindow.buffer.mode.bindings;
     var result = this.processBinding(this.keyCache);
 
-    if (result && result.isFunction()) {
+    if (result && (result.isFunction() || result.isString())) {
         if (overrideBindings.onFoundBinding) {
             overrideBindings.onFoundBinding(this.keyCache);
         } else if (modeBindings.onFoundBinding) {
             modeBindings.onFoundBinding(this.keyCache);
         }
         this.keyCache = null;
-        result();
+        if (result.isFunction()) {
+            result();
+        } else {
+            this[result]();
+        }
     } else if (!result) {
         if (overrideBindings.onMissedBinding) {
             overrideBindings.onMissedBinding(this.keyCache);
