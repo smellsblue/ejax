@@ -1,4 +1,5 @@
 function Shell(options) {
+    this.running = true;
     this.shellCommand = options.shellCommand || Shell.shellCommand;
     this.outputFn = options.outputFn;
     var builder = new java.lang.ProcessBuilder(this.shellCommand).redirectErrorStream(true);
@@ -18,8 +19,14 @@ function Shell(options) {
 }
 
 Shell.shellCommand = ["/bin/bash", "-s"];
+Shell.READ_SLEEP_TIME = 20;
 
 Shell.fn = Shell.prototype;
+
+Shell.fn.terminate = function() {
+    this.running = false;
+    this.process.destroy();
+};
 
 Shell.fn.send = function(str) {
     this.input.print(str);
@@ -31,7 +38,12 @@ Shell.fn.threadFor = function(stream) {
     stream = new java.io.BufferedInputStream(stream);
 
     var thread = new java.lang.Thread(function() {
-        while (true) {
+        while (self.running) {
+            if (stream.available() <= 0) {
+                java.lang.Thread.sleep(Shell.READ_SLEEP_TIME);
+                continue;
+            }
+
             var b = stream.read();
 
             if (b < 0) {

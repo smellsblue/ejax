@@ -32,6 +32,7 @@ fundamentalMode.bindings.bind("M-gM-g", "gotoLine");
 fundamentalMode.bindings.bind("C-xC-f", "findFile");
 fundamentalMode.bindings.bind("C-xC-s", "saveBuffer");
 fundamentalMode.bindings.bind("C-xb", "changeBuffer");
+fundamentalMode.bindings.bind("C-xk", "killBuffer");
 fundamentalMode.bindings.onFoundBinding = function(code) {
     logger.debug("Found function for key combo '" + code + "'");
     ejax.screen.minibuffer.setBufferContent("");

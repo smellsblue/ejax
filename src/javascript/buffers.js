@@ -858,6 +858,25 @@ Ejax.fn.changeBuffer = function() {
     });
 };
 
+Ejax.fn.killBuffer = function() {
+    var screen = this.screen;
+    var name = screen.currentWindow.buffer.name;
+
+    this.readParameter({
+        prompt: "Kill buffer (default " + name + "): ",
+        callback: function(buffer) {
+            if (buffer == "") {
+                buffer = name;
+            }
+
+            screen.killBuffer(screen.getBuffer(buffer));
+        },
+        autoCompleteFn: function() {
+            return screen.getBufferNames();
+        }
+    });
+};
+
 Ejax.fn.getWorkingDirectory = function() {
     // TODO
     return "";

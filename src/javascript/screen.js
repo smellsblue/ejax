@@ -21,12 +21,20 @@ function Screen(ejax, rows, columns) {
 Screen.fn = Screen.prototype;
 
 Screen.fn.addBuffer = function(buffer) {
-    if (this.buffers[buffer.name]) {
-        throw new Error("Buffer '" + buffer.name + "' already exits");
-    }
-
     if (buffer.minibuffer) {
         throw new Error("Cannot add minibuffer");
+    }
+
+    var originalName = buffer.name;
+    var next = 2;
+
+    while (this.buffers[buffer.name]) {
+        buffer.name = originalName + "<" + next + ">";
+        next++;
+    }
+
+    if (this.buffers[buffer.name]) {
+        throw new Error("Buffer '" + buffer.name + "' already exits");
     }
 
     this.buffers[buffer.name] = buffer;
@@ -93,6 +101,10 @@ Screen.fn.resetCursor = function() {
     this.currentWindow.redrawStatus();
 };
 
+Screen.fn.getBuffer = function(name) {
+    return this.buffers[name];
+};
+
 Screen.fn.getOrCreateBuffer = function(name) {
     if (this.buffers[name]) {
         return this.buffers[name];
@@ -120,16 +132,50 @@ Screen.fn.setWindowBuffer = function(window, buffer) {
     if (window.buffer) {
         var index = this.recentBuffers.indexOf(window.buffer);
 
-        if (index < 0) {
-            throw new Error("Tried to set window buffer that doesn't exist!");
+        // The buffer won't exist if we are killing the buffer
+        if (index >= 0) {
+            this.recentBuffers.splice(index, 1);
+            this.recentBuffers.splice(0, 0, window.buffer);
         }
-
-        this.recentBuffers.splice(index, 1);
-        this.recentBuffers.splice(0, 0, window.buffer);
     }
 
     window.buffer = buffer;
     window.postRedraw();
+};
+
+Screen.fn.killBuffer = function(buffer) {
+    if (!buffer) {
+        return;
+    }
+
+    if (buffer.minibuffer) {
+        throw new Error("Cannot kill the minibuffer!");
+    }
+
+    this.buffers[buffer.name] = null;
+    var index = this.recentBuffers.indexOf(buffer);
+
+    if (index >= 0) {
+        this.recentBuffers.splice(index, 1);
+    }
+
+    if (this.recentBuffers.length == 0) {
+        this.addBuffer(new Buffer(this, { name: "*scratch*" }));
+    }
+
+    var self = this;
+
+    this.eachWindow(function(window) {
+        if (window.buffer == buffer) {
+            self.setWindowBuffer(window, self.nextAvailableBuffer());
+        }
+    });
+
+    if (buffer.shell) {
+        buffer.shell.terminate();
+    }
+
+    this.resetCursor();
 };
 
 Screen.fn.changeBuffer = function(buffer) {
@@ -146,7 +192,6 @@ Screen.fn.changeBuffer = function(buffer) {
 };
 
 Screen.fn.addAndChangeBuffer = function(buffer) {
-    // TODO: worry about existing buffer name
     this.addBuffer(buffer);
     this.changeBuffer(buffer);
 };

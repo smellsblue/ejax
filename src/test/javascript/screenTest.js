@@ -716,6 +716,45 @@ function testKillPaste() {
     assertEquals("Y cursor after second paste", 4, currentY);
 }
 
-function ignore_testKillBuffer() {
-    assertEquals("Screen row 23", "Kill buffer (default *scratch*):                                                 ", mockEjax.pixelRow(23));
+function testKillBuffer() {
+    var currentX, currentY;
+    mockEjax.setCursor = function(x, y) {
+        currentX = x;
+        currentY = y;
+    };
+    mockEjax.ejax.screen.hardRedraw();
+    mockEjax.fireKeyDowns("abc");
+    mockEjax.fireKeyDowns("C-xbtestRETdef");
+    mockEjax.fireKeyDowns("C-xbtest2RET123");
+    mockEjax.fireKeyDowns("C-xk");
+    assertEquals("Screen row  0", "123                                                                             ", mockEjax.pixelRow(0));
+    assertEquals("Screen row 22", " test2    L1 (Fundamental)------------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "Kill buffer (default test2):                                                    ", mockEjax.pixelRow(23));
+    mockEjax.fireKeyDowns("RET");
+    assertEquals("Screen row  0", "def                                                                             ", mockEjax.pixelRow(0));
+    assertEquals("Screen row 22", " test    L1 (Fundamental)-------------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
+    mockEjax.fireKeyDowns("C-xbtest2RET");
+    assertEquals("Screen row  0", "                                                                                ", mockEjax.pixelRow(0));
+    assertEquals("Screen row 22", " test2    L1 (Fundamental)------------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
+    mockEjax.fireKeyDowns("C-xktTAB");
+    assertEquals("Screen row  0", "                                                                                ", mockEjax.pixelRow(0));
+    assertEquals("Screen row 22", " test2    L1 (Fundamental)------------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "Kill buffer (default test2): test                                               ", mockEjax.pixelRow(23));
+    mockEjax.fireKeyDowns("RET");
+    assertEquals("Screen row  0", "                                                                                ", mockEjax.pixelRow(0));
+    assertEquals("Screen row 22", " test2    L1 (Fundamental)------------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
+    mockEjax.fireKeyDowns("C-xkRET");
+    assertEquals("Screen row  0", "abc                                                                             ", mockEjax.pixelRow(0));
+    assertEquals("Screen row 22", " *scratch*    L1 (Fundamental)--------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
+    mockEjax.fireKeyDowns("C-xkRET");
+    assertEquals("Screen row  0", "                                                                                ", mockEjax.pixelRow(0));
+    assertEquals("Screen row 22", " *scratch*    L1 (Fundamental)--------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
+    mockEjax.fireKeyDowns("abcC-xkRET");
+    assertEquals("X cursor after second paste", 0, currentX);
+    assertEquals("Y cursor after second paste", 0, currentY);
 }
