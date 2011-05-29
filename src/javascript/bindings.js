@@ -55,6 +55,41 @@ Bindings.fn.process = function(tokens) {
     return null;
 };
 
+Bindings.fn.getBindingsForFn = function(fn) {
+    var result = [];
+
+    for (var i = 0; i < this.bindings.length; i++) {
+        var binding = this.bindings[i];
+
+        if (binding.fn == fn) {
+            result.push.apply(result, binding.codes);
+        }
+    }
+
+    return result;
+};
+
+Ejax.fn.getBindingsForFn = function(fn) {
+    var result = overrideBindings.getBindingsForFn(fn);
+    var modeBindings = this.screen.currentWindow.buffer.mode.bindings.getBindingsForFn(fn);
+
+    for (var i = 0; i < modeBindings.length; i++) {
+        var code = modeBindings[i];
+
+        if (!overrideBindings.process(code) && !result.contains(code)) {
+            result.push(code);
+        }
+    }
+
+    if (overrideBindings.type == fn) {
+        result.push("type text");
+    } else if (this.screen.currentWindow.buffer.mode.bindings.type == fn) {
+        result.push("type text");
+    }
+
+    return result;
+};
+
 /**
  * Returns "partial" if the code is an incomplete part of a binding,
  * null if there is no binding, and the function bound if it is a
@@ -67,6 +102,8 @@ Ejax.fn.processBinding = function(code) {
     var modeBindings = this.screen.currentWindow.buffer.mode.bindings;
     var result = overrideBindings.process(code);
 
+    // Any result warrants a valid binding, because otherwise a long
+    // override would be overshadowed by a small mode binding.
     if (result) {
         return result;
     }

@@ -269,3 +269,31 @@ Ejax.fn.processKeyDown = function(event) {
     // on perhaps, though then we have to deal with concurrency.
     this.screen.redraw();
 };
+
+Ejax.fn.showHelpFor = function(fnName) {
+    var fn = this[fnName];
+
+    if (!fn || !fn.bindable) {
+        return;
+    }
+
+    var boundTo = this.getBindingsForFn(fnName);
+
+    if (boundTo.length == 0) {
+        boundTo = "nothing";
+    } else {
+        boundTo = boundTo.join(", ");
+    }
+
+    var contents = "";
+    contents += fnName + "\n";
+    contents += "\n";
+    contents += "Currently bound to: " + boundTo + "\n";
+    contents += "\n";
+    contents += fn.description + "\n";
+
+    var buffer = this.screen.getOrCreateBuffer("*Help*");
+    this.screen.setAvailableWindowBuffer(buffer);
+    buffer.setBufferContent(contents);
+    buffer.setCursor(0, 0);
+};

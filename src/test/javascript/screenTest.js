@@ -758,3 +758,35 @@ function testKillBuffer() {
     assertEquals("X cursor after second paste", 0, currentX);
     assertEquals("Y cursor after second paste", 0, currentY);
 }
+
+function testHelp() {
+    Ejax.bindable({
+        name: "fakeTestFn",
+        description: "This is purely a test function.  It should not exist in a running instance of the program, because it exists solely in a test.",
+        fn: function() {}
+    });
+    mockEjax.ejax.screen.hardRedraw();
+    mockEjax.fireKeyDowns("C-hf");
+    assertEquals("Screen row 23", "Describe function:                                                              ", mockEjax.pixelRow(23));
+    mockEjax.fireKeyDowns("fakeTestFTAB");
+    assertEquals("Screen row 23", "Describe function: fakeTestFn                                                   ", mockEjax.pixelRow(23));
+    mockEjax.fireKeyDowns("RET");
+    assertEquals("Screen row  0", "fakeTestFn                                                                      ", mockEjax.pixelRow(0));
+    assertEquals("Screen row  1", "                                                                                ", mockEjax.pixelRow(1));
+    assertEquals("Screen row  2", "Currently bound to: nothing                                                     ", mockEjax.pixelRow(2));
+    assertEquals("Screen row  3", "                                                                                ", mockEjax.pixelRow(3));
+    assertEquals("Screen row  4", "This is purely a test function.  It should not exist in a running instance of   ", mockEjax.pixelRow(4));
+    assertEquals("Screen row  5", "the program, because it exists solely in a test.                                ", mockEjax.pixelRow(5));
+    assertEquals("Screen row  6", "                                                                                ", mockEjax.pixelRow(6));
+    assertEquals("Screen row 22", " *Help*    L1 (Fundamental)-----------------------------------------------------", mockEjax.pixelRow(22));
+    assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
+    fundamentalMode.bindings.bind("C-M-y", "fakeTestFn");
+    mockEjax.fireKeyDowns("C-hffakeTestFnRET");
+    assertEquals("Screen row  0", "fakeTestFn                                                                      ", mockEjax.pixelRow(0));
+    assertEquals("Screen row  1", "                                                                                ", mockEjax.pixelRow(1));
+    assertEquals("Screen row  2", "Currently bound to: C-M-y                                                       ", mockEjax.pixelRow(2));
+    assertEquals("Screen row  3", "                                                                                ", mockEjax.pixelRow(3));
+    assertEquals("Screen row  4", "This is purely a test function.  It should not exist in a running instance of   ", mockEjax.pixelRow(4));
+    assertEquals("Screen row  5", "the program, because it exists solely in a test.                                ", mockEjax.pixelRow(5));
+    assertEquals("Screen row  6", "                                                                                ", mockEjax.pixelRow(6));
+}

@@ -1,4 +1,7 @@
 Ejax.bindable = function(options) {
+    options.fn.bindable = true;
+    options.fn.description = options.description || "There is no help information for this function.";
+    options.fn.description = Format.byWord(options.fn.description, { columns: 79 });
     Ejax.fn[options.name] = options.fn;
 };
 
@@ -28,7 +31,7 @@ Ejax.bindable({
             callback: function(fnName) {
                 var fn = self[fnName];
 
-                if (fn && fn.isFunction()) {
+                if (fn && fn.bindable && fn.isFunction()) {
                     self[fnName]();
                 } else {
                     self.screen.minibuffer.setBufferContent(fnName + " is undefined");
@@ -38,7 +41,7 @@ Ejax.bindable({
                 var result = [];
 
                 for (var property in Ejax.fn) {
-                    if (Ejax.fn[property] && Ejax.fn[property].isFunction()) {
+                    if (Ejax.fn[property] && Ejax.fn[property].bindable) {
                         result.push(property);
                     }
                 }
@@ -335,3 +338,40 @@ Ejax.bindable({
         status.callback(parameter);
     }
 });
+
+Ejax.bindable({
+    name: "helpForFunction",
+    fn: function() {
+        var self = this;
+
+        this.readParameter({
+            prompt: "Describe function: ",
+            callback: function(fnName) {
+                var fn = self[fnName];
+
+                if (fn && fn.bindable && fn.isFunction()) {
+                    self.showHelpFor(fnName);
+                } else {
+                    self.screen.minibuffer.setBufferContent(fnName + " is undefined");
+                }
+            },
+            autoCompleteFn: function() {
+                var result = [];
+
+                for (var property in Ejax.fn) {
+                    if (Ejax.fn[property] && Ejax.fn[property].bindable) {
+                        result.push(property);
+                    }
+                }
+
+                return result;
+            }
+        });
+    }
+});
+
+// Ideas for functions to implement
+// - executeRegion: execute from the mark to the current value
+// - quit: quit the current parameter being processed
+// - forward/backwardWord: move by words
+// - pageUp/pageDown: self explanatory
