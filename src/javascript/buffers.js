@@ -487,6 +487,33 @@ Buffer.fn.previousLine = function() {
     this.setCursor(x, y);
 };
 
+Buffer.fn.pageDown = function(rows) {
+    if (this.startingLine + rows - 1 > this.content.lastLine()) {
+        this.screen.ejax.ringBell();
+        return;
+    }
+
+    this.startingLine += rows - 1;
+    this.postRedraw();
+    this.setCursor(0, this.startingLine);
+};
+
+Buffer.fn.pageUp = function(rows) {
+    if (this.startingLine == 0) {
+        this.screen.ejax.ringBell();
+        return;
+    }
+
+    this.startingLine -= rows - 1;
+
+    if (this.startingLine < 0) {
+        this.startingLine = 0;
+    }
+
+    this.postRedraw();
+    this.setCursor(0, this.startingLine + rows - 2);
+};
+
 Buffer.fn.gotoLine = function(line, rows) {
     line = line - 1;
 

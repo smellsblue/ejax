@@ -149,3 +149,11 @@ EjaxWindow.fn.redrawStatus = function() {
 
     this.screen.ejax.io.setPixels(status, this.x, this.rows - 1, { invert: true });
 };
+
+EjaxWindow.fn.pageDown = function() {
+    this.buffer.pageDown(this.rows - 1);
+};
+
+EjaxWindow.fn.pageUp = function() {
+    this.buffer.pageUp(this.rows - 1);
+};

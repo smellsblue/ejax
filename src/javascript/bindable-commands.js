@@ -127,6 +127,22 @@ Ejax.bindable({
 });
 
 Ejax.bindable({
+    name: "pageDown",
+    description: "Scroll the window down by a visible page.",
+    fn: function() {
+        this.screen.currentWindow.pageDown();
+    }
+});
+
+Ejax.bindable({
+    name: "pageUp",
+    description: "Scroll the window up by a visible page.",
+    fn: function() {
+        this.screen.currentWindow.pageUp();
+    }
+});
+
+Ejax.bindable({
     name: "gotoLine",
     description: "Go to a specific line, read as a parameter.  If the line is not currently visible, the buffer will be centered on that line.  If the line is less than the first line, it will be changed to the first line.  Likewise, if the line is greater than the last line, it will be changed to the last line.",
     fn: function() {
@@ -424,7 +440,6 @@ Ejax.bindable({
 
 // Ideas for functions to implement
 // - forward/backwardWord: move by words
-// - pageUp/pageDown: self explanatory
 // - jsRepl: create a javascript repl buffer, like a mix of shell-mode and irb
 // - startRecord/stopRecord/playMacro: record and play keyboard macros
 // - interactiveSearch: search interactively

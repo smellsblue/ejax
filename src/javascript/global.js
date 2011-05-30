@@ -36,6 +36,8 @@ fundamentalMode.bindings.bind("C-xb", "changeBuffer");
 fundamentalMode.bindings.bind("C-xk", "killBuffer");
 fundamentalMode.bindings.bind("C-hf", "helpForFunction");
 fundamentalMode.bindings.bind("C-xC-e", "evalRegion");
+fundamentalMode.bindings.bind(["C-v", "PGDWN"], "pageDown");
+fundamentalMode.bindings.bind(["M-v", "PGUP"], "pageUp");
 fundamentalMode.bindings.onFoundBinding = function(code) {
     logger.debug("Found function for key combo '" + code + "'");
     this.screen.minibuffer.setBufferContent("");

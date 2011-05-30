@@ -838,3 +838,66 @@ function testQuitCommand() {
     mockEjax.fireKeyDowns("C-g");
     assertEquals("Screen row 23", "Quit                                                                            ", mockEjax.pixelRow(23));
 }
+
+function testPageUpAndDown() {
+    var content = "";
+
+    for (var i = 1; i < 100; i++) {
+        content += "" + i + "\n";
+    }
+
+    content += "100";
+
+    var assertContent = function(startValue, max, lineNumber) {
+        for (var i = 0; i < 21; i++) {
+            var line = "";
+
+            if (i + startValue <= max) {
+                line += (i + startValue);
+            }
+
+            while (line.length < 80) {
+                line += " ";
+            }
+
+            assertEquals("Screen row  " + i, line, mockEjax.pixelRow(i));
+        }
+
+        var expectedLine = " *scratch*    L" + lineNumber + " (Fundamental)";
+
+        while (expectedLine.length < 80) {
+            expectedLine += "-";
+        }
+
+        assertEquals("Screen row 22", expectedLine, mockEjax.pixelRow(22));
+        assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
+    };
+
+    mockEjax.ejax.setBufferContent(content);
+    mockEjax.ejax.screen.hardRedraw();
+    assertContent(1, 22, 1);
+    mockEjax.fireKeyDowns("C-v");
+    assertContent(22, 43, 22);
+    mockEjax.fireKeyDowns("DOWNDOWN");
+    assertContent(22, 43, 24);
+    mockEjax.fireKeyDowns("C-v");
+    assertContent(43, 64, 43);
+    mockEjax.fireKeyDowns("PGDWN");
+    assertContent(64, 85, 64);
+    mockEjax.fireKeyDowns("C-v");
+    assertContent(85, 100, 85);
+    mockEjax.fireKeyDowns("C-v");
+    assertContent(85, 100, 85);
+    mockEjax.fireKeyDowns("M-v");
+    assertContent(64, 85, 84);
+    mockEjax.fireKeyDowns("PGUP");
+    assertContent(43, 64, 63);
+    mockEjax.fireKeyDowns("UPUP");
+    assertContent(43, 64, 61);
+    mockEjax.fireKeyDowns("M-v");
+    assertContent(22, 43, 42);
+    mockEjax.fireKeyDowns("M-v");
+    assertContent(1, 22, 21);
+    mockEjax.fireKeyDowns("M-v");
+    assertContent(1, 22, 21);
+}
