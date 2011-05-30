@@ -814,3 +814,27 @@ function testEvalRegion() {
     assertEquals("Screen row  2", "abc321                                                                          ", mockEjax.pixelRow(2));
     assertEquals("Screen row 22", " *Eval Results*<2>    L1 (Fundamental)------------------------------------------", mockEjax.pixelRow(22));
 }
+
+function testQuitCommand() {
+    var currentX, currentY;
+    mockEjax.setCursor = function(x, y) {
+        currentX = x;
+        currentY = y;
+    };
+    mockEjax.ejax.screen.hardRedraw();
+    mockEjax.fireKeyDowns("C-xC-fC-g");
+    assertEquals("Screen row  0", "                                                                                ", mockEjax.pixelRow(0));
+    assertEquals("Screen row 23", "Quit                                                                            ", mockEjax.pixelRow(23));
+    assertEquals("X cursor after eval", 0, currentX);
+    assertEquals("Y cursor after eval", 0, currentY);
+    mockEjax.fireKeyDowns("UP");
+    assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
+    mockEjax.fireKeyDowns("M-xC-g");
+    assertEquals("Screen row 23", "Quit                                                                            ", mockEjax.pixelRow(23));
+    assertEquals("X cursor after eval", 0, currentX);
+    assertEquals("Y cursor after eval", 0, currentY);
+    mockEjax.fireKeyDowns("UP");
+    assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
+    mockEjax.fireKeyDowns("C-g");
+    assertEquals("Screen row 23", "Quit                                                                            ", mockEjax.pixelRow(23));
+}

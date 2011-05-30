@@ -367,6 +367,22 @@ Ejax.bindable({
 });
 
 Ejax.bindable({
+    name: "quitCommand",
+    description: "Cancel the current command being run.  This typically cancels retrieving a parameter for a currently running command.",
+    fn: function() {
+        if (this.screen.currentWindow.buffer.minibuffer) {
+            this.screen.currentWindow = this.screen.minibuffer.status.lastWindow;
+            this.screen.minibuffer.content.set("Quit");
+            this.screen.minibuffer.status = null;
+            this.screen.minibufferWindow.postRedraw();
+            this.screen.resetCursor();
+        } else {
+            this.screen.minibuffer.content.set("Quit");
+        }
+    }
+});
+
+Ejax.bindable({
     name: "helpForFunction",
     description: "Get help for a function.  The function name is read as a parameter and can be tab completed.",
     fn: function() {
@@ -407,6 +423,8 @@ Ejax.bindable({
 });
 
 // Ideas for functions to implement
-// - quit: quit the current parameter being processed
 // - forward/backwardWord: move by words
 // - pageUp/pageDown: self explanatory
+// - jsRepl: create a javascript repl buffer, like a mix of shell-mode and irb
+// - startRecord/stopRecord/playMacro: record and play keyboard macros
+// - interactiveSearch: search interactively

@@ -22,6 +22,7 @@ editingBindings.bind("M-w", "copyRegion");
 editingBindings.bind("C-w", "killRegion");
 editingBindings.bind("C-y", "yank");
 editingBindings.bind("BSP", "deleteBackward");
+editingBindings.bind("C-g", "quitCommand");
 editingBindings.type = "insertSelf";
 
 var fundamentalMode = new Mode("fundamental", "Fundamental", editingBindings);
