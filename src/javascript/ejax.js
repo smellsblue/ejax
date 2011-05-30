@@ -297,3 +297,7 @@ Ejax.fn.showHelpFor = function(fnName) {
     buffer.setBufferContent(contents);
     buffer.setCursor(0, 0);
 };
+
+Ejax.fn.sendMessage = function(message) {
+    this.screen.minibuffer.setBufferContent(message);
+};

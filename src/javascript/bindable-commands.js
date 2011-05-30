@@ -37,7 +37,7 @@ Ejax.bindable({
                 if (fn && fn.bindable && fn.isFunction()) {
                     self[fnName]();
                 } else {
-                    self.screen.minibuffer.setBufferContent(fnName + " is undefined");
+                    self.sendMessage(fnName + " is undefined");
                 }
             },
             autoCompleteFn: function() {
@@ -136,7 +136,7 @@ Ejax.bindable({
             prompt: "Goto line: ",
             callback: function(line) {
                 if (!/^\d+$/.test(line)) {
-                    self.screen.minibuffer.setBufferContent("Expected int, got " + line);
+                    self.sendMessage("Expected int, got " + line);
                     return;
                 }
 
@@ -372,12 +372,12 @@ Ejax.bindable({
     fn: function() {
         if (this.screen.currentWindow.buffer.minibuffer) {
             this.screen.currentWindow = this.screen.minibuffer.status.lastWindow;
-            this.screen.minibuffer.content.set("Quit");
+            this.sendMessage("Quit");
             this.screen.minibuffer.status = null;
             this.screen.minibufferWindow.postRedraw();
             this.screen.resetCursor();
         } else {
-            this.screen.minibuffer.content.set("Quit");
+            this.sendMessage("Quit");
         }
     }
 });
@@ -396,7 +396,7 @@ Ejax.bindable({
                 if (fn && fn.bindable && fn.isFunction()) {
                     self.showHelpFor(fnName);
                 } else {
-                    self.screen.minibuffer.setBufferContent(fnName + " is undefined");
+                    self.sendMessage(fnName + " is undefined");
                 }
             },
             autoCompleteFn: function() {

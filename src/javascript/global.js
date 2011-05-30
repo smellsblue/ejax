@@ -42,7 +42,7 @@ fundamentalMode.bindings.onFoundBinding = function(code) {
 };
 fundamentalMode.bindings.onMissedBinding = function(code) {
     logger.debug("No match for key combo '" + code + "'");
-    ejax.screen.minibuffer.setBufferContent(code + " is undefined");
+    ejax.sendMessage(code + " is undefined");
 };
 fundamentalMode.bindings.onPartialBinding = function(code) {
     logger.debug("Partial match for key combo '" + code + "'");
