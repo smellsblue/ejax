@@ -38,15 +38,15 @@ fundamentalMode.bindings.bind("C-hf", "helpForFunction");
 fundamentalMode.bindings.bind("C-xC-e", "evalRegion");
 fundamentalMode.bindings.onFoundBinding = function(code) {
     logger.debug("Found function for key combo '" + code + "'");
-    ejax.screen.minibuffer.setBufferContent("");
+    this.screen.minibuffer.setBufferContent("");
 };
 fundamentalMode.bindings.onMissedBinding = function(code) {
     logger.debug("No match for key combo '" + code + "'");
-    ejax.sendMessage(code + " is undefined");
+    this.sendMessage(code + " is undefined");
 };
 fundamentalMode.bindings.onPartialBinding = function(code) {
     logger.debug("Partial match for key combo '" + code + "'");
-    ejax.screen.minibuffer.setBufferContent(code + "-");
+    this.screen.minibuffer.setBufferContent(code + "-");
 };
 
 var minibufferMode = new Mode("minibuffer", "MiniBuffer", editingBindings);

@@ -239,9 +239,9 @@ Ejax.fn.processKeyDown = function(event) {
 
     if (result && (result.isFunction() || result.isString())) {
         if (overrideBindings.onFoundBinding) {
-            overrideBindings.onFoundBinding(this.keyCache);
+            overrideBindings.onFoundBinding.call(this, this.keyCache);
         } else if (modeBindings.onFoundBinding) {
-            modeBindings.onFoundBinding(this.keyCache);
+            modeBindings.onFoundBinding.call(this, this.keyCache);
         }
         this.keyCache = null;
         if (result.isFunction()) {
@@ -251,16 +251,16 @@ Ejax.fn.processKeyDown = function(event) {
         }
     } else if (!result) {
         if (overrideBindings.onMissedBinding) {
-            overrideBindings.onMissedBinding(this.keyCache);
+            overrideBindings.onMissedBinding.call(this, this.keyCache);
         } else if (modeBindings.onMissedBinding) {
-            modeBindings.onMissedBinding(this.keyCache);
+            modeBindings.onMissedBinding.call(this, this.keyCache);
         }
         this.keyCache = null;
     } else {
         if (overrideBindings.onPartialBinding) {
-            overrideBindings.onPartialBinding(this.keyCache);
+            overrideBindings.onPartialBinding.call(this, this.keyCache);
         } else if (modeBindings.onPartialBinding) {
-            modeBindings.onPartialBinding(this.keyCache);
+            modeBindings.onPartialBinding.call(this, this.keyCache);
         }
     }
 
