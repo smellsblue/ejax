@@ -498,6 +498,26 @@ Ejax.bindable({
     }
 });
 
+Ejax.bindable({
+    name: "nameMacro",
+    description: "Name the last keyboard macro so it can be executed via executeCommand (which is bound to M-x).",
+    fn: function() {
+        var macro = this.lastSavedMacro;
+        this.readParameter({
+            prompt: "Name for last macro: ",
+            callback: function(fnName) {
+                Ejax.bindable({
+                    name: fnName,
+                    description: "This is a macro bound to this name dynamically.  You should know this!",
+                    fn: function() {
+                        this.run(macro);
+                    }
+                });
+            }
+        });
+    }
+});
+
 (function() {
     var createMacroBindable = function(num) {
         Ejax.bindable({
@@ -525,6 +545,26 @@ Ejax.bindable({
             description: "Insert the JavaScript macro definition for the macro recorded in slot " + num + ".",
             fn: function() {
                 this.screen.currentWindow.buffer.insertMacro(this.slottedMacros[num]);
+            }
+        });
+
+        Ejax.bindable({
+            name: "nameMacro" + num,
+            description: "Name the keyboard macro recorded in slot " + num + " so it can be executed via executeCommand (which is bound to M-x).",
+            fn: function() {
+                var macro = this.slottedMacros[num];
+                this.readParameter({
+                    prompt: "Name for macro " + num + ": ",
+                    callback: function(fnName) {
+                        Ejax.bindable({
+                            name: fnName,
+                            description: "This is a macro bound to this name dynamically.  You should know this!",
+                            fn: function() {
+                                this.run(macro);
+                            }
+                        });
+                    }
+                });
             }
         });
     };

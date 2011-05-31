@@ -102,3 +102,21 @@ function testInsertAndExecuteMacro() {
     mockEjax.fireKeyDowns("F3RETabcF4C-SPCM-xinsertMacroRETC-xC-e");
     assertEquals("Screen row  2", "abc                                                                             ", mockEjax.pixelRow(2));
 }
+
+function testNameMacro() {
+    mockEjax.ejax.screen.hardRedraw();
+    mockEjax.fireKeyDowns("F3abcF4M-xnameMacroRETcallAbcRETM-xcallAbcRET");
+    assertEquals("Screen row  0", "abcabc                                                                          ", mockEjax.pixelRow(0));
+}
+
+function testNameMacroAfterCreatingNewMacro() {
+    mockEjax.ejax.screen.hardRedraw();
+    mockEjax.fireKeyDowns("F3abcF4M-xnameMacroRETcallAbcRETF3123F4M-xcallAbcRET");
+    assertEquals("Screen row  0", "abc123abc                                                                       ", mockEjax.pixelRow(0));
+}
+
+function testNameSlottedMacro() {
+    mockEjax.ejax.screen.hardRedraw();
+    mockEjax.fireKeyDowns("F3abcC-2F3123F4M-xnameMacro2RETcallAbcRETM-xcallAbcRET");
+    assertEquals("Screen row  0", "abc123abc                                                                       ", mockEjax.pixelRow(0));
+}
