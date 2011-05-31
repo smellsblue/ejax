@@ -442,6 +442,7 @@ Ejax.fn.processKeyDown = function(event) {
             modeBindings.onMissedBinding.call(this, this.keyCache);
         }
         this.keyCache = null;
+        this.bell();
     } else {
         if (overrideBindings.onPartialBinding) {
             overrideBindings.onPartialBinding.call(this, this.keyCache);
@@ -453,7 +454,9 @@ Ejax.fn.processKeyDown = function(event) {
     // After keyboard processing, we can safely redraw just
     // once... this could go into some kind of interval function later
     // on perhaps, though then we have to deal with concurrency.
-    this.screen.redraw();
+    if (!this.suspendRedrawing) {
+        this.screen.redraw();
+    }
 };
 
 Ejax.fn.showHelpFor = function(fnName) {
@@ -494,12 +497,23 @@ Ejax.fn.startMacro = function() {
 };
 
 Ejax.fn.stopMacro = function() {
+    if (!this.recordingMacro) {
+        this.sendMessage("Not defining a macro.");
+        return;
+    }
+
     this.lastSavedMacro = this.recordingMacroValue;
+    this.cancelMacro();
+};
+
+Ejax.fn.cancelMacro = function() {
     this.recordingMacro = false;
     this.recordingMacroValue = null;
 };
 
 Ejax.fn.executeMacro = function() {
+    this.suspendRedrawing = true;
+
     for (var i = 0; i < this.lastSavedMacro.length; i++) {
         var tokens = parseBinding(this.lastSavedMacro[i]);
 
@@ -508,4 +522,12 @@ Ejax.fn.executeMacro = function() {
             this.keyDown(keyboard.standard.tokenToEvent(token));
         }
     }
+
+    this.suspendRedrawing = false;
+    this.screen.redraw();
+};
+
+Ejax.fn.bell = function() {
+    this.cancelMacro();
+    this.io.beep();
 };

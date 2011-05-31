@@ -9,9 +9,7 @@ Ejax.bindable({
     name: "ringBell",
     description: "Ring the bell and cancel certain commands.",
     fn: function() {
-        // TODO: This function should ring the bell if possible, and then
-        // cancel some actions like creating a keyboard macro.
-        this.io.beep();
+        this.bell();
     }
 });
 
@@ -400,8 +398,10 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "quitCommand",
-    description: "Cancel the current command being run.  This typically cancels retrieving a parameter for a currently running command.",
+    description: "Cancel the current command being run.  This typically cancels retrieving a parameter for a currently running command.  It will also cancel the recording of a macro.",
     fn: function() {
+        this.cancelMacro();
+
         if (this.screen.currentWindow.buffer.minibuffer) {
             this.screen.currentWindow = this.screen.minibuffer.status.lastWindow;
             this.sendMessage("Quit");
@@ -493,6 +493,7 @@ Ejax.bindable({
 // Ideas for functions to implement
 // - C-1 - C-0: end and bind macro to C-1 - C-0... C-1 - C-0 when not recording executes it
 // - M-1 - M-0: store the last created macro to C-1 - C-0
+// - outputMacro: output the last or a numbered macro
 // - deleteForward/BackwardWord: delete the word in front or back of the cursor
 // - jsRepl: create a javascript repl buffer, like a mix of shell-mode and irb
 // - interactiveSearch: search interactively

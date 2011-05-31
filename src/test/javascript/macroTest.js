@@ -51,10 +51,19 @@ function testBeginEndRunMacro() {
 }
 
 function testBeginRingBellForInvalidCommandEndRunMacro() {
+    mockEjax.ejax.screen.hardRedraw();
+    mockEjax.fireKeyDowns("C-x(acLEFTbRIGHTC-x)C-x(123C-xC-hC-x)C-xe");
+    assertEquals("Screen row  0", "abc123abc                                                                       ", mockEjax.pixelRow(0));
 }
 
 function testBeginRingBellFromCommandEndRunMacro() {
+    mockEjax.ejax.screen.hardRedraw();
+    mockEjax.fireKeyDowns("C-x(acLEFTbRIGHTC-x)C-x(123C-aLEFTC-x)C-eC-xe");
+    assertEquals("Screen row  0", "abc123abc                                                                       ", mockEjax.pixelRow(0));
 }
 
 function testBeginQuitCommandEndRunMacro() {
+    mockEjax.ejax.screen.hardRedraw();
+    mockEjax.fireKeyDowns("C-x(acLEFTbRIGHTC-x)C-x(123C-gC-x)C-xe");
+    assertEquals("Screen row  0", "abc123abc                                                                       ", mockEjax.pixelRow(0));
 }
