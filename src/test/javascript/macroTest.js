@@ -67,3 +67,13 @@ function testBeginQuitCommandEndRunMacro() {
     mockEjax.fireKeyDowns("C-x(acLEFTbRIGHTC-x)C-x(123C-gC-x)C-xe");
     assertEquals("Screen row  0", "abc123abc                                                                       ", mockEjax.pixelRow(0));
 }
+
+function testSlottedMacros() {
+    mockEjax.ejax.screen.hardRedraw();
+    mockEjax.fireKeyDowns("F3abcC-1F3123C-2");
+    assertEquals("Screen row  0", "abc123                                                                          ", mockEjax.pixelRow(0));
+    mockEjax.fireKeyDowns("C-1C-2C-1C-2");
+    assertEquals("Screen row  0", "abc123abc123abc123                                                              ", mockEjax.pixelRow(0));
+    mockEjax.fireKeyDowns("F3xyzF4C-1C-2M-3C-1C-2C-3");
+    assertEquals("Screen row  0", "abc123abc123abc123xyzabc123abc123xyz                                            ", mockEjax.pixelRow(0));
+}

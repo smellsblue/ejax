@@ -44,6 +44,10 @@ fundamentalMode.bindings.bind(["C-x(", "F3"], "beginMacro");
 fundamentalMode.bindings.bind("C-x)", "endMacro");
 fundamentalMode.bindings.bind("C-xe", "runMacro");
 fundamentalMode.bindings.bind("F4", "endOrRunMacro");
+for (var i = 0; i < 10; i++) {
+    fundamentalMode.bindings.bind("C-" + i, "endOrRunMacro" + i);
+    fundamentalMode.bindings.bind("M-" + i, "storeToMacro" + i);
+}
 fundamentalMode.bindings.onFoundBinding = function(code) {
     logger.debug("Found function for key combo '" + code + "'");
     this.screen.minibuffer.setBufferContent("");

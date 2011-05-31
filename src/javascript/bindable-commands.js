@@ -490,11 +490,38 @@ Ejax.bindable({
     }
 });
 
+(function() {
+    var createMacroBindable = function(num) {
+        Ejax.bindable({
+            name: "endOrRunMacro" + num,
+            description: "If a macro is being recorded, end it and store it in slot " + num + ".  If not, run the last recorded macro in slot " + num + ".  If the bell is rung while executing the macro, the macro will be cancelled at that point.",
+            fn: function() {
+                if (this.recordingMacro) {
+                    this.endMacroInSlot(num);
+                } else {
+                    this.runMacroInSlot(num);
+                }
+            }
+        });
+
+        Ejax.bindable({
+            name: "storeToMacro" + num,
+            description: "Save the last recorded macro in slot " + num + ".",
+            fn: function() {
+                this.saveLastMacroTo(num);
+            }
+        });
+    };
+
+    for (var i = 0; i < 10; i++) {
+        createMacroBindable(i);
+    }
+})();
+
 // Ideas for functions to implement
-// - C-1 - C-0: end and bind macro to C-1 - C-0... C-1 - C-0 when not recording executes it
-// - M-1 - M-0: store the last created macro to C-1 - C-0
 // - outputMacro: output the last or a numbered macro
 // - deleteForward/BackwardWord: delete the word in front or back of the cursor
 // - jsRepl: create a javascript repl buffer, like a mix of shell-mode and irb
 // - interactiveSearch: search interactively
 // - rectangle commands: rectangle kill, yank, insert
+// - C-k equivalent: kill line, delete newline if end of line

@@ -1,6 +1,7 @@
 var ejax = null;
 
 function Ejax(rows, columns, io) {
+    this.slottedMacros = {};
     this.io = new IO(io);
     this.screen = new Screen(this, rows, columns);
     this.keyCache = null;
@@ -442,7 +443,7 @@ Ejax.fn.processKeyDown = function(event) {
             modeBindings.onMissedBinding.call(this, this.keyCache);
         }
         this.keyCache = null;
-        this.bell();
+        this.ringBell();
     } else {
         if (overrideBindings.onPartialBinding) {
             overrideBindings.onPartialBinding.call(this, this.keyCache);
@@ -494,6 +495,7 @@ Ejax.fn.sendMessage = function(message) {
 Ejax.fn.startMacro = function() {
     this.recordingMacro = true;
     this.recordingMacroValue = [];
+    this.sendMessage("Recording macro.");
 };
 
 Ejax.fn.stopMacro = function() {
@@ -504,6 +506,7 @@ Ejax.fn.stopMacro = function() {
 
     this.lastSavedMacro = this.recordingMacroValue;
     this.cancelMacro();
+    this.sendMessage("Finished recording macro.");
 };
 
 Ejax.fn.cancelMacro = function() {
@@ -512,10 +515,20 @@ Ejax.fn.cancelMacro = function() {
 };
 
 Ejax.fn.executeMacro = function() {
+    this.executeMacroValue(this.lastSavedMacro);
+};
+
+Ejax.fn.executeMacroValue = function(value) {
+    if (!value) {
+        this.sendMessage("No macro to run.");
+        this.ringBell();
+        return;
+    }
+
     this.suspendRedrawing = true;
 
-    for (var i = 0; i < this.lastSavedMacro.length; i++) {
-        var tokens = parseBinding(this.lastSavedMacro[i]);
+    for (var i = 0; i < value.length; i++) {
+        var tokens = parseBinding(value[i]);
 
         for (var j = 0; j < tokens.length; j++) {
             var token = tokens[j];
@@ -525,6 +538,20 @@ Ejax.fn.executeMacro = function() {
 
     this.suspendRedrawing = false;
     this.screen.redraw();
+};
+
+Ejax.fn.endMacroInSlot = function(slot) {
+    this.stopMacro();
+    this.saveLastMacroTo(slot);
+};
+
+Ejax.fn.runMacroInSlot = function(slot) {
+    this.executeMacroValue(this.slottedMacros[slot]);
+};
+
+Ejax.fn.saveLastMacroTo = function(slot) {
+    this.slottedMacros[slot] = this.lastSavedMacro;
+    this.sendMessage("Saved macro in slot " + slot + ".");
 };
 
 Ejax.fn.bell = function() {
