@@ -574,6 +574,14 @@ Ejax.bindable({
     }
 })();
 
+Ejax.bindable({
+    name: "butterfly",
+    description: "Use butterflies to change bits.  The butterflies will flap their wings, causing a disturbance to ripple outward and change the flow of eddies in the upper atmosphere, which create momentary pockets of higher pressure air to form and act as a lense to focus cosmic rays to strike your drive platter and flip the desired bit.  Thanks to http://xkcd.com/378 for the inspiration.",
+    fn: function() {
+        this.sendMessage("Desired bit flipped!");
+    }
+});
+
 // Ideas for functions to implement
 // - helpBinding: do lookup on binding and get help for it
 // - deleteForward/BackwardWord: delete the word in front or back of the cursor
