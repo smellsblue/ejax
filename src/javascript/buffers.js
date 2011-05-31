@@ -439,6 +439,69 @@ Buffer.fn.moveBackward = function() {
     this.setCursor(x, y);
 };
 
+Buffer.fn.moveForwardWord = function() {
+    // TODO: Use a more efficient algorithm
+    var wordChar = /[a-zA-Z0-9]/;
+    var nonWordChar = /[^a-zA-Z0-9]/;
+
+    if (this.cursorY == this.content.lastLine() && this.cursorX == this.content.getLine(this.cursorY).length) {
+        this.screen.ejax.ringBell();
+        return;
+    }
+
+    while (nonWordChar.test(this.content.getLine(this.cursorY).charAt(this.cursorX))) {
+        if (this.cursorY == this.content.lastLine() && this.cursorX == this.content.getLine(this.cursorY).length) {
+            break;
+        }
+
+        this.moveForward();
+    }
+
+    while (wordChar.test(this.content.getLine(this.cursorY).charAt(this.cursorX))) {
+        if (this.cursorY == this.content.lastLine() && this.cursorX == this.content.getLine(this.cursorY).length) {
+            break;
+        }
+
+        this.moveForward();
+    }
+};
+
+Buffer.fn.moveBackwardWord = function() {
+    // TODO: Use a more efficient algorithm
+    var wordChar = /[a-zA-Z0-9]/;
+    var nonWordChar = /[^a-zA-Z0-9]/;
+
+    if (this.cursorY == 0 && this.cursorX == 0) {
+        this.screen.ejax.ringBell();
+        return;
+    }
+
+    this.moveBackward();
+
+    while (nonWordChar.test(this.content.getLine(this.cursorY).charAt(this.cursorX))) {
+        if (this.cursorY == 0 && this.cursorX == 0) {
+            break;
+        }
+
+        this.moveBackward();
+    }
+
+    var foundWordChar = false;
+
+    while (wordChar.test(this.content.getLine(this.cursorY).charAt(this.cursorX))) {
+        if (this.cursorY == 0 && this.cursorX == 0) {
+            break;
+        }
+
+        this.moveBackward();
+        foundWordChar = true;
+    }
+
+    if (foundWordChar && nonWordChar.test(this.content.getLine(this.cursorY).charAt(this.cursorX))) {
+        this.moveForward();
+    }
+};
+
 Buffer.fn.nextLine = function() {
     var x = this.cursorX;
     var y = this.cursorY;

@@ -111,6 +111,22 @@ Ejax.bindable({
 });
 
 Ejax.bindable({
+    name: "moveForwardWord",
+    description: "Move forward by one word.",
+    fn: function() {
+        this.screen.currentWindow.buffer.moveForwardWord();
+    }
+});
+
+Ejax.bindable({
+    name: "moveBackwardWord",
+    description: "Move backward by one word.",
+    fn: function() {
+        this.screen.currentWindow.buffer.moveBackwardWord();
+    }
+});
+
+Ejax.bindable({
     name: "nextLine",
     description: "Move down by one line.",
     fn: function() {
@@ -439,7 +455,8 @@ Ejax.bindable({
 });
 
 // Ideas for functions to implement
-// - forward/backwardWord: move by words
+// - deleteForward/BackwardWord: delete the word in front or back of the cursor
 // - jsRepl: create a javascript repl buffer, like a mix of shell-mode and irb
 // - startRecord/stopRecord/playMacro: record and play keyboard macros
 // - interactiveSearch: search interactively
+// - rectangle commands: rectangle kill, yank, insert

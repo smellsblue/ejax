@@ -33,15 +33,23 @@ var cursesKeyMapping = {};
 
     // LEFT
     cursesKeyMapping[260] = value(37);
+    cursesKeyMapping[537] = custom(37, false, true, false);
+    cursesKeyMapping[539] = custom(37, true, false, false);
     cursesKeyMapping["27-91-49-59-51-68"] = custom(37, false, true, false);
     // RIGHT
     cursesKeyMapping[261] = value(39);
+    cursesKeyMapping[552] = custom(39, false, true, false);
+    cursesKeyMapping[554] = custom(39, true, false, false);
     cursesKeyMapping["27-91-49-59-51-67"] = custom(39, false, true, false);
     // UP
     cursesKeyMapping[259] = value(38);
+    cursesKeyMapping[558] = custom(38, false, true, false);
+    cursesKeyMapping[560] = custom(38, true, false, false);
     cursesKeyMapping["27-91-49-59-51-65"] = custom(38, false, true, false);
     // DOWN
     cursesKeyMapping[258] = value(40);
+    cursesKeyMapping[517] = custom(40, false, true, false);
+    cursesKeyMapping[519] = custom(40, true, false, false);
     cursesKeyMapping["27-91-49-59-51-66"] = custom(40, false, true, false);
     // DELETE
     cursesKeyMapping[330] = value(46);

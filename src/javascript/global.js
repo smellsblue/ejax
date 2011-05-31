@@ -12,6 +12,8 @@ coreBindings.bind("C-xC-c", "exit");
 var editingBindings = new Bindings(coreBindings);
 editingBindings.bind(["C-f", "RIGHT"], "moveForward");
 editingBindings.bind(["C-b", "LEFT"], "moveBackward");
+editingBindings.bind(["M-f", "C-RIGHT", "M-RIGHT"], "moveForwardWord");
+editingBindings.bind(["M-b", "C-LEFT", "M-LEFT"], "moveBackwardWord");
 editingBindings.bind(["C-n", "DOWN"], "nextLine");
 editingBindings.bind(["C-p", "UP"], "previousLine");
 editingBindings.bind(["C-a", "HOME"], "lineStart");
