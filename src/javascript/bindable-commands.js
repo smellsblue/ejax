@@ -454,9 +454,46 @@ Ejax.bindable({
     }
 });
 
+Ejax.bindable({
+    name: "beginMacro",
+    description: "Begin a keyboard macro.  The macro can be cancelled by triggering a ringing of the bell or by C-g (quitCommand).  When cancelled, the macro cannot be executed.",
+    fn: function() {
+        this.startMacro();
+    }
+});
+
+Ejax.bindable({
+    name: "endMacro",
+    description: "End the currently recording keyboard macro.  This will save the macro so it can be later executed.",
+    fn: function() {
+        this.stopMacro();
+    }
+});
+
+Ejax.bindable({
+    name: "runMacro",
+    description: "Run the last saved keyboard macro.  If the bell is rung while executing the macro, the macro will be cancelled at that point.",
+    fn: function() {
+        this.executeMacro();
+    }
+});
+
+Ejax.bindable({
+    name: "endOrRunMacro",
+    description: "If a macro is being recorded, end it.  If not, run the last recorded macro.  If the bell is rung while executing the macro, the macro will be cancelled at that point.",
+    fn: function() {
+        if (this.recordingMacro) {
+            this.endMacro();
+        } else {
+            this.runMacro();
+        }
+    }
+});
+
 // Ideas for functions to implement
+// - C-1 - C-0: end and bind macro to C-1 - C-0... C-1 - C-0 when not recording executes it
+// - M-1 - M-0: store the last created macro to C-1 - C-0
 // - deleteForward/BackwardWord: delete the word in front or back of the cursor
 // - jsRepl: create a javascript repl buffer, like a mix of shell-mode and irb
-// - startRecord/stopRecord/playMacro: record and play keyboard macros
 // - interactiveSearch: search interactively
 // - rectangle commands: rectangle kill, yank, insert

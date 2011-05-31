@@ -40,6 +40,10 @@ fundamentalMode.bindings.bind("C-hf", "helpForFunction");
 fundamentalMode.bindings.bind("C-xC-e", "evalRegion");
 fundamentalMode.bindings.bind(["C-v", "PGDWN"], "pageDown");
 fundamentalMode.bindings.bind(["M-v", "PGUP"], "pageUp");
+fundamentalMode.bindings.bind(["C-x(", "F3"], "beginMacro");
+fundamentalMode.bindings.bind("C-x)", "endMacro");
+fundamentalMode.bindings.bind("C-xe", "runMacro");
+fundamentalMode.bindings.bind("F4", "endOrRunMacro");
 fundamentalMode.bindings.onFoundBinding = function(code) {
     logger.debug("Found function for key combo '" + code + "'");
     this.screen.minibuffer.setBufferContent("");

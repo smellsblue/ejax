@@ -44,39 +44,11 @@ MockEjax.fn.setCursor = function(x, y) {
 MockEjax.fn.file = function(filename) {
 };
 
-(function() {
-    var prepared = false;
-    var charToCode = {};
-    var charToShifted = {};
+MockEjax.fn.fireKeyDowns = function(keys) {
+    var tokens = parseBinding(keys);
 
-    function prepareCodes() {
-        if (prepared) {
-            return;
-        }
-
-        prepared = true;
-
-        for (var key in keyboard.standard.codeToKey) {
-            charToCode[keyboard.standard.codeToKey[key]] = key;
-        }
-
-        for (var key in keyboard.standard.codeToShiftedKey) {
-            charToCode[keyboard.standard.codeToShiftedKey[key]] = key;
-            charToShifted[keyboard.standard.codeToShiftedKey[key]] = true;
-        }
-
-        for (var key in keyboard.standard.codeToToken) {
-            charToCode[Token.specialKeys[keyboard.standard.codeToToken[key]]] = key;
-        }
+    for (var i = 0; i < tokens.length; i++) {
+        var token = tokens[i];
+        this.onKeyDown(keyboard.standard.tokenToEvent(token));
     }
-
-    MockEjax.fn.fireKeyDowns = function(keys) {
-        prepareCodes();
-        var tokens = parseBinding(keys);
-
-        for (var i = 0; i < tokens.length; i++) {
-            var token = tokens[i];
-            this.onKeyDown({ keyCode: charToCode[token.key], ctrl: token.control, alt: token.meta, shift: charToShifted[token.key] });
-        }
-    };
-})();
+};

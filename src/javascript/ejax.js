@@ -13,6 +13,163 @@ function Ejax(rows, columns, io) {
 
 Ejax.fn = Ejax.prototype;
 
+function Token() {
+    this.key = null;
+    this.specialKey = null;
+    this.control = false;
+    this.meta = false;
+};
+
+Token.specialKeys = {
+    SPACE: "SPC",
+    ESCAPE: "ESC",
+    DELETE: "DEL",
+    BACKSPACE: "BSP",
+    INSERT: "INS",
+    TAB: "TAB",
+    ENTER: "RET",
+    LEFT: "LEFT",
+    RIGHT: "RIGHT",
+    UP: "UP",
+    DOWN: "DOWN",
+    PAGE_UP: "PGUP",
+    PAGE_DOWN: "PGDWN",
+    HOME: "HOME",
+    END: "END",
+    CAPS_LOCK: "CAPS-LOCK",
+    F1: "F1",
+    F2: "F2",
+    F3: "F3",
+    F4: "F4",
+    F5: "F5",
+    F6: "F6",
+    F7: "F7",
+    F8: "F8",
+    F9: "F9",
+    F10: "F10",
+    F11: "F11",
+    F12: "F12",
+    NUM_0: "NUM-0",
+    NUM_1: "NUM-1",
+    NUM_2: "NUM-2",
+    NUM_3: "NUM-3",
+    NUM_4: "NUM-4",
+    NUM_5: "NUM-5",
+    NUM_6: "NUM-6",
+    NUM_7: "NUM-7",
+    NUM_8: "NUM-8",
+    NUM_9: "NUM-9",
+    NUM_LOCK: "NUM-LOCK",
+    NUM_MINUS: "NUM--",
+    NUM_PLUS: "NUM-+",
+    NUM_DOT: "NUM-.",
+    NUM_TIMES: "NUM-*",
+    NUM_DIVIDE: "NUM-/"
+};
+
+Token.specialKeysToChar = {
+    SPACE: " ",
+    TAB: "\t",
+    ENTER: "\n",
+    NUM_0: "0",
+    NUM_1: "1",
+    NUM_2: "2",
+    NUM_3: "3",
+    NUM_4: "4",
+    NUM_5: "5",
+    NUM_6: "6",
+    NUM_7: "7",
+    NUM_8: "8",
+    NUM_9: "9",
+    NUM_MINUS: "-",
+    NUM_PLUS: "+",
+    NUM_DOT: ".",
+    NUM_TIMES: "*",
+    NUM_DIVIDE: "/"
+};
+
+Token.invalidKeys = [" ", "\t", "\n", "\r"]
+
+Token.fn = Token.prototype;
+
+Token.fn.isPrintable = function() {
+    if (this.control || this.meta) {
+        return false;
+    }
+
+    if (this.specialKey) {
+        if (Token.specialKeysToChar[this.specialKey]) {
+            return true;
+        }
+
+        return false;
+    }
+
+    return true;
+};
+
+Token.fn.getPrintKey = function() {
+    if (this.specialKey) {
+        return Token.specialKeysToChar[this.specialKey] || "";
+    }
+
+    return this.key;
+};
+
+Token.fn.setKey = function(c) {
+    this.key = c;
+    return this;
+};
+
+Token.fn.setControl = function() {
+    if (this.control) {
+        throw new Error("Cannot have a token with 2 controls!");
+    }
+
+    this.control = true;
+    return this;
+};
+
+Token.fn.setMeta = function() {
+    if (this.meta) {
+        throw new Error("Cannot have a token with 2 controls!");
+    }
+
+    this.meta = true;
+    return this;
+};
+
+Token.fn.setSpecialKey = function(value) {
+    if (this.specialKey) {
+        throw new Error("Cannot have a token with 2 special key values!");
+    }
+
+    this.specialKey = value;
+    return this;
+};
+
+Token.fn.startedDefining = function() {
+    if (this.control || this.meta || this.key != null) {
+        return true;
+    }
+
+    return false;
+};
+
+Token.fn.toString = function() {
+    var str = "";
+
+    if (this.control) {
+        str += "C-";
+    }
+
+    if (this.meta) {
+        str += "M-";
+    }
+
+    return str + this.key;
+};
+
 var keyboard = {};
 keyboard.standard = {};
 
@@ -163,6 +320,26 @@ keyboard.standard.codeToShiftedKey = {
     191: "?"
 };
 
+keyboard.standard.charToCode = {};
+keyboard.standard.charToShifted = {};
+
+for (var key in keyboard.standard.codeToKey) {
+    keyboard.standard.charToCode[keyboard.standard.codeToKey[key]] = key;
+}
+
+for (var key in keyboard.standard.codeToShiftedKey) {
+    keyboard.standard.charToCode[keyboard.standard.codeToShiftedKey[key]] = key;
+    keyboard.standard.charToShifted[keyboard.standard.codeToShiftedKey[key]] = true;
+}
+
+for (var key in keyboard.standard.codeToToken) {
+    keyboard.standard.charToCode[Token.specialKeys[keyboard.standard.codeToToken[key]]] = key;
+}
+
+keyboard.standard.tokenToEvent = function(token) {
+    return { keyCode: keyboard.standard.charToCode[token.key], ctrl: token.control, alt: token.meta, shift: keyboard.standard.charToShifted[token.key] };
+};
+
 Ejax.keyboard = keyboard.standard;
 
 Ejax.fn.keyDown = function(event) {
@@ -238,16 +415,25 @@ Ejax.fn.processKeyDown = function(event) {
     var result = this.processBinding(this.keyCache);
 
     if (result && (result.isFunction() || result.isString())) {
+        var recording = this.recordingMacro;
         if (overrideBindings.onFoundBinding) {
             overrideBindings.onFoundBinding.call(this, this.keyCache);
         } else if (modeBindings.onFoundBinding) {
             modeBindings.onFoundBinding.call(this, this.keyCache);
         }
+        var codeRan = this.keyCache;
         this.keyCache = null;
-        if (result.isFunction()) {
-            result();
-        } else {
-            this[result]();
+        try {
+            if (result.isFunction()) {
+                result();
+            } else {
+                this[result]();
+            }
+        } finally {
+            // If recording... and STILL recording after calling function...
+            if (recording && this.recordingMacro) {
+                this.recordingMacroValue.push(codeRan);
+            }
         }
     } else if (!result) {
         if (overrideBindings.onMissedBinding) {
@@ -300,4 +486,26 @@ Ejax.fn.showHelpFor = function(fnName) {
 
 Ejax.fn.sendMessage = function(message) {
     this.screen.minibuffer.setBufferContent(message);
+};
+
+Ejax.fn.startMacro = function() {
+    this.recordingMacro = true;
+    this.recordingMacroValue = [];
+};
+
+Ejax.fn.stopMacro = function() {
+    this.lastSavedMacro = this.recordingMacroValue;
+    this.recordingMacro = false;
+    this.recordingMacroValue = null;
+};
+
+Ejax.fn.executeMacro = function() {
+    for (var i = 0; i < this.lastSavedMacro.length; i++) {
+        var tokens = parseBinding(this.lastSavedMacro[i]);
+
+        for (var j = 0; j < tokens.length; j++) {
+            var token = tokens[j];
+            this.keyDown(keyboard.standard.tokenToEvent(token));
+        }
+    }
 };
