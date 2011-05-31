@@ -525,10 +525,20 @@ Ejax.fn.executeMacroValue = function(value) {
         return;
     }
 
+    this.run(value);
+};
+
+Ejax.fn.run = function(codes) {
+    if (!codes) {
+        this.sendMessage("Nothing specified to run.");
+        this.ringBell();
+        return;
+    }
+
     this.suspendRedrawing = true;
 
-    for (var i = 0; i < value.length; i++) {
-        var tokens = parseBinding(value[i]);
+    for (var i = 0; i < codes.length; i++) {
+        var tokens = parseBinding(codes[i]);
 
         for (var j = 0; j < tokens.length; j++) {
             var token = tokens[j];

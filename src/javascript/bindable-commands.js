@@ -490,6 +490,14 @@ Ejax.bindable({
     }
 });
 
+Ejax.bindable({
+    name: "insertMacro",
+    description: "Insert the JavaScript macro definition for the last created macro.",
+    fn: function() {
+        this.screen.currentWindow.buffer.insertMacro(this.lastSavedMacro);
+    }
+});
+
 (function() {
     var createMacroBindable = function(num) {
         Ejax.bindable({
@@ -511,6 +519,14 @@ Ejax.bindable({
                 this.saveLastMacroTo(num);
             }
         });
+
+        Ejax.bindable({
+            name: "insertMacro" + num,
+            description: "Insert the JavaScript macro definition for the macro recorded in slot " + num + ".",
+            fn: function() {
+                this.screen.currentWindow.buffer.insertMacro(this.slottedMacros[num]);
+            }
+        });
     };
 
     for (var i = 0; i < 10; i++) {
@@ -519,7 +535,6 @@ Ejax.bindable({
 })();
 
 // Ideas for functions to implement
-// - outputMacro: output the last or a numbered macro
 // - helpBinding: do lookup on binding and get help for it
 // - deleteForward/BackwardWord: delete the word in front or back of the cursor
 // - jsRepl: create a javascript repl buffer, like a mix of shell-mode and irb

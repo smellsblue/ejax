@@ -661,6 +661,16 @@ Ejax.fn.insert = function(str) {
     this.screen.currentWindow.buffer.insert(str);
 };
 
+Buffer.fn.insertMacro = function(macro) {
+    var macroValues = [];
+
+    for (var i = 0; i < macro.length; i++) {
+        macroValues.push('"' + macro[i].jsEscape() + '"');
+    }
+
+    this.insert("ejax.run([" + macroValues.join(", ") + "]);");
+};
+
 Buffer.fn.deleteForward = function() {
     if (!this.content.canEdit(this.cursorX, this.cursorY)) {
         this.screen.ejax.ringBell();

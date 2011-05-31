@@ -77,3 +77,28 @@ function testSlottedMacros() {
     mockEjax.fireKeyDowns("F3xyzF4C-1C-2M-3C-M-e1C-M-e2C-M-e3");
     assertEquals("Screen row  0", "abc123abc123abc123xyzabc123abc123xyz                                            ", mockEjax.pixelRow(0));
 }
+
+function testInsertMacro() {
+    mockEjax.ejax.screen.hardRedraw();
+    mockEjax.fireKeyDowns("F3abcRETF4M-xinsertMacroRET");
+    assertEquals("Screen row  1", 'ejax.run(["a", "b", "c", "RET"]);                                               ', mockEjax.pixelRow(1));
+}
+
+function testInsertMacroWithEscapables() {
+    mockEjax.ejax.screen.hardRedraw();
+    mockEjax.fireKeyDowns("F3\"a\"RETF4M-xinsertMacroRET");
+    assertEquals("Screen row  1", 'ejax.run(["\\"", "a", "\\"", "RET"]);                                             ', mockEjax.pixelRow(1));
+}
+
+function testInsertSlottedMacro() {
+    mockEjax.ejax.screen.hardRedraw();
+    mockEjax.fireKeyDowns("F3abcC-1F3123C-M-e2RETM-xinsertMacro1RETRETM-xinsertMacro2RET");
+    assertEquals("Screen row  1", 'ejax.run(["a", "b", "c"]);                                                      ', mockEjax.pixelRow(1));
+    assertEquals("Screen row  2", 'ejax.run(["1", "2", "3"]);                                                      ', mockEjax.pixelRow(2));
+}
+
+function testInsertAndExecuteMacro() {
+    mockEjax.ejax.screen.hardRedraw();
+    mockEjax.fireKeyDowns("F3RETabcF4C-SPCM-xinsertMacroRETC-xC-e");
+    assertEquals("Screen row  2", "abc                                                                             ", mockEjax.pixelRow(2));
+}

@@ -6,6 +6,32 @@ Array.prototype.contains = function(value) {
     return this.indexOf(value) >= 0;
 };
 
+String.prototype.jsEscape = function() {
+    var result = "";
+
+    for (var i = 0; i < this.length; i++) {
+        var c = this.charAt(i);
+
+        if (c == "\n") {
+            result += "\\n";
+        } else if (c == "\r") {
+            result += "\\r";
+        } else if (c == "\t") {
+            result += "\\t";
+        } else if (c == "\"") {
+            result += "\\\"";
+        } else if (c == "\'") {
+            result += "\\\'";
+        } else if (c == "\\") {
+            result += "\\\\";
+        } else {
+            result += c;
+        }
+    }
+
+    return result;
+};
+
 String.prototype.inclusiveSplit = function(splitOn) {
     var result = [];
     var remaining = this;
