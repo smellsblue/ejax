@@ -45,7 +45,8 @@ fundamentalMode.bindings.bind("C-x)", "endMacro");
 fundamentalMode.bindings.bind("C-xe", "runMacro");
 fundamentalMode.bindings.bind("F4", "endOrRunMacro");
 for (var i = 0; i < 10; i++) {
-    fundamentalMode.bindings.bind("C-" + i, "endOrRunMacro" + i);
+    // TODO: Better shortcut than C-M-e0 - C-M-e9
+    fundamentalMode.bindings.bind(["C-" + i, "C-M-e" + i], "endOrRunMacro" + i);
     fundamentalMode.bindings.bind("M-" + i, "storeToMacro" + i);
 }
 fundamentalMode.bindings.onFoundBinding = function(code) {

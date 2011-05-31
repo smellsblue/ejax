@@ -70,10 +70,10 @@ function testBeginQuitCommandEndRunMacro() {
 
 function testSlottedMacros() {
     mockEjax.ejax.screen.hardRedraw();
-    mockEjax.fireKeyDowns("F3abcC-1F3123C-2");
+    mockEjax.fireKeyDowns("F3abcC-1F3123C-M-e2");
     assertEquals("Screen row  0", "abc123                                                                          ", mockEjax.pixelRow(0));
     mockEjax.fireKeyDowns("C-1C-2C-1C-2");
     assertEquals("Screen row  0", "abc123abc123abc123                                                              ", mockEjax.pixelRow(0));
-    mockEjax.fireKeyDowns("F3xyzF4C-1C-2M-3C-1C-2C-3");
+    mockEjax.fireKeyDowns("F3xyzF4C-1C-2M-3C-M-e1C-M-e2C-M-e3");
     assertEquals("Screen row  0", "abc123abc123abc123xyzabc123abc123xyz                                            ", mockEjax.pixelRow(0));
 }

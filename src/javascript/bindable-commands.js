@@ -520,6 +520,7 @@ Ejax.bindable({
 
 // Ideas for functions to implement
 // - outputMacro: output the last or a numbered macro
+// - helpBinding: do lookup on binding and get help for it
 // - deleteForward/BackwardWord: delete the word in front or back of the cursor
 // - jsRepl: create a javascript repl buffer, like a mix of shell-mode and irb
 // - interactiveSearch: search interactively
