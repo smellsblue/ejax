@@ -813,6 +813,11 @@ function testEvalRegion() {
     assertEquals("Screen row  1", "Result:                                                                         ", mockEjax.pixelRow(1));
     assertEquals("Screen row  2", "abc321                                                                          ", mockEjax.pixelRow(2));
     assertEquals("Screen row 22", " *Eval Results*<2>    L1 (Fundamental)------------------------------------------", mockEjax.pixelRow(22));
+    mockEjax.fireKeyDowns("C-SPCvarSPCabcSPC=SPC123;C-xC-eC-SPCabcC-xC-e");
+    assertEquals("Screen row  0", "Result type: number                                                             ", mockEjax.pixelRow(0));
+    assertEquals("Screen row  1", "Result:                                                                         ", mockEjax.pixelRow(1));
+    assertEquals("Screen row  2", "123                                                                             ", mockEjax.pixelRow(2));
+    assertEquals("Screen row 22", " *Eval Results*<3>    L1 (Fundamental)------------------------------------------", mockEjax.pixelRow(22));
 }
 
 function testQuitCommand() {

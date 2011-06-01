@@ -723,7 +723,7 @@ Buffer.fn.evalRegion = function() {
         return;
     }
 
-    var result = eval(toEval);
+    var result = eval.call(null, toEval);
 
     if (Object.isNullOrUndefined(result)) {
         return;
