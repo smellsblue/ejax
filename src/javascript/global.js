@@ -22,6 +22,7 @@ editingBindings.bind(["C-d", "DEL"], "deleteForward");
 editingBindings.bind("C-SPC", "mark");
 editingBindings.bind("M-w", "copyRegion");
 editingBindings.bind("C-w", "killRegion");
+editingBindings.bind("C-k", "killLine");
 editingBindings.bind("C-y", "yank");
 editingBindings.bind("BSP", "deleteBackward");
 editingBindings.bind("C-g", "quitCommand");

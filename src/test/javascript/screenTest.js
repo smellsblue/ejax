@@ -716,6 +716,58 @@ function testKillPaste() {
     assertEquals("Y cursor after second paste", 4, currentY);
 }
 
+function testKillLinePaste() {
+    var currentX, currentY;
+    mockEjax.setCursor = function(x, y) {
+        currentX = x;
+        currentY = y;
+    };
+    mockEjax.ejax.setBufferContent("abcdef\n123456\nxyz");
+    mockEjax.ejax.screen.hardRedraw();
+    mockEjax.fireKeyDowns("RIGHTRIGHTC-k");
+    assertEquals("Screen row  0", "ab                                                                              ", mockEjax.pixelRow(0));
+    assertEquals("Screen row  1", "123456                                                                          ", mockEjax.pixelRow(1));
+    assertEquals("Screen row  2", "xyz                                                                             ", mockEjax.pixelRow(2));
+    assertEquals("X cursor after first kill", 2, currentX);
+    assertEquals("Y cursor after first kill", 0, currentY);
+    mockEjax.fireKeyDowns("C-y");
+    assertEquals("Screen row  0", "abcdef                                                                          ", mockEjax.pixelRow(0));
+    assertEquals("Screen row  1", "123456                                                                          ", mockEjax.pixelRow(1));
+    assertEquals("Screen row  2", "xyz                                                                             ", mockEjax.pixelRow(2));
+    assertEquals("X cursor after first yank", 6, currentX);
+    assertEquals("Y cursor after first yank", 0, currentY);
+    mockEjax.fireKeyDowns("C-k");
+    assertEquals("Screen row  0", "abcdef123456                                                                    ", mockEjax.pixelRow(0));
+    assertEquals("Screen row  1", "xyz                                                                             ", mockEjax.pixelRow(1));
+    assertEquals("Screen row  2", "                                                                                ", mockEjax.pixelRow(2));
+    assertEquals("X cursor after second kill", 6, currentX);
+    assertEquals("Y cursor after second kill", 0, currentY);
+    mockEjax.fireKeyDowns("C-y");
+    assertEquals("Screen row  0", "abcdef                                                                          ", mockEjax.pixelRow(0));
+    assertEquals("Screen row  1", "123456                                                                          ", mockEjax.pixelRow(1));
+    assertEquals("Screen row  2", "xyz                                                                             ", mockEjax.pixelRow(2));
+    assertEquals("X cursor after second yank", 0, currentX);
+    assertEquals("Y cursor after second yank", 1, currentY);
+    mockEjax.fireKeyDowns("C-k");
+    assertEquals("Screen row  0", "abcdef                                                                          ", mockEjax.pixelRow(0));
+    assertEquals("Screen row  1", "                                                                                ", mockEjax.pixelRow(1));
+    assertEquals("Screen row  2", "xyz                                                                             ", mockEjax.pixelRow(2));
+    assertEquals("X cursor after third kill", 0, currentX);
+    assertEquals("Y cursor after third kill", 1, currentY);
+    mockEjax.fireKeyDowns("C-k");
+    assertEquals("Screen row  0", "abcdef                                                                          ", mockEjax.pixelRow(0));
+    assertEquals("Screen row  1", "xyz                                                                             ", mockEjax.pixelRow(1));
+    assertEquals("Screen row  2", "                                                                                ", mockEjax.pixelRow(2));
+    assertEquals("X cursor after fourth kill", 0, currentX);
+    assertEquals("Y cursor after fourth kill", 1, currentY);
+    mockEjax.fireKeyDowns("C-kC-kC-kC-k");
+    assertEquals("Screen row  0", "abcdef                                                                          ", mockEjax.pixelRow(0));
+    assertEquals("Screen row  1", "                                                                                ", mockEjax.pixelRow(1));
+    assertEquals("Screen row  2", "                                                                                ", mockEjax.pixelRow(2));
+    assertEquals("X cursor after several additional kills", 0, currentX);
+    assertEquals("Y cursor after several additional kills", 1, currentY);
+}
+
 function testKillBuffer() {
     var currentX, currentY;
     mockEjax.setCursor = function(x, y) {

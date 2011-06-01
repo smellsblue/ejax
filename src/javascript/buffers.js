@@ -763,6 +763,37 @@ Buffer.fn.killRegion = function() {
     this.screen.ejax.yanked = result;
 };
 
+Buffer.fn.killLine = function() {
+    var line = this.content.getLine(this.cursorY);
+    var length = line.length - 1;
+
+    if (this.cursorY == this.content.lastLine()) {
+        length = line.length;
+    }
+
+    if (this.cursorY == this.content.lastLine() && this.cursorX >= line.length) {
+        this.screen.ejax.ringBell();
+        return;
+    }
+
+    var toX = length;
+    var toY = this.cursorY;
+
+    if (this.cursorX == length) {
+        toX = 0;
+        toY++;
+    }
+
+    var result = this.content.copyRegion(this.cursorX, this.cursorY, toX, toY);
+
+    if (Object.isNullOrUndefined(result)) {
+        throw new Error("Unexpected null.");
+    }
+
+    this.content.remove(this.cursorX, this.cursorY, result.length);
+    this.screen.ejax.yanked = result;
+};
+
 Buffer.fn.yank = function() {
     if (Object.isNullOrUndefined(this.screen.ejax.yanked)) {
         this.screen.ejax.ringBell();

@@ -261,6 +261,16 @@ Ejax.bindable({
 });
 
 Ejax.bindable({
+    name: "killLine",
+    group: Ejax.groups.EDITING,
+    shortDescription: "Kill the line",
+    description: "Kill from the cursor to the end of the line.  If the cursor is at the end of the line, kill the newline character.  What was killed can later be 'yank'ed.",
+    fn: function() {
+        this.screen.currentWindow.buffer.killLine();
+    }
+});
+
+Ejax.bindable({
     name: "killRegion",
     group: Ejax.groups.EDITING,
     shortDescription: "Kill the region",
@@ -685,4 +695,3 @@ Ejax.bindable({
 // - jsRepl: create a javascript repl buffer, like a mix of shell-mode and irb
 // - interactiveSearch: search interactively
 // - rectangle commands: rectangle kill, yank, insert
-// - C-k equivalent: kill line, delete newline if end of line
