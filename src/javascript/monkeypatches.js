@@ -6,6 +6,10 @@ Array.prototype.contains = function(value) {
     return this.indexOf(value) >= 0;
 };
 
+String.prototype.contains = function(value) {
+    return this.indexOf(value) >= 0;
+};
+
 String.prototype.jsEscape = function() {
     var result = "";
 

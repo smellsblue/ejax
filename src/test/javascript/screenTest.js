@@ -1049,3 +1049,15 @@ function testMoveByWordsWithNonWordAtStart() {
     assertEquals("X cursor after third word backward", 0, currentX);
     assertEquals("Y cursor after third word backward", 0, currentY);
 }
+
+function testReferenceCard() {
+    mockEjax.ejax.screen.hardRedraw();
+    mockEjax.fireKeyDowns("M-xreferenceCardRET");
+    assertEquals("Screen row  0", "Ejax Reference Card                                                             ", mockEjax.pixelRow(0));
+    assertEquals("Screen row 22", " *Reference Card*    L1 (Fundamental)-------------------------------------------", mockEjax.pixelRow(22));
+    var content = mockEjax.ejax.getBufferContent();
+    var expected = "  Misc\n  ----\n"
+    assertEquals("Content contains " + expected, true, content.contains(expected));
+    expected = /Show reference card\s+M-x referenceCard/;
+    assertEquals("Content contains " + expected, true, expected.test(content));
+}

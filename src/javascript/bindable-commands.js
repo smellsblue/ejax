@@ -1,6 +1,17 @@
+Ejax.groups = {};
+Ejax.groups.BUFFERS = "Buffers";
+Ejax.groups.CUSTOM = "Custom User Defined";
+Ejax.groups.EDITING = "Editing";
+Ejax.groups.JAVASCRIPT = "JavaScript";
+Ejax.groups.MACROS = "Keyboard Macros"
+Ejax.groups.MISC = "Misc";
+Ejax.groups.NAVIGATION = "Navigation";
+
 Ejax.bindable = function(options) {
     options.fn.bindable = true;
+    options.fn.shortDescription = options.shortDescription || "";
     options.fn.description = options.description || "There is no help information for this function.";
+    options.fn.group = options.group || Ejax.groups.MISC;
     options.fn.description = Format.byWord(options.fn.description, { columns: 79 });
     Ejax.fn[options.name] = options.fn;
 };
@@ -15,6 +26,7 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "exit",
+    shortDescription: "Exit application",
     description: "Exit the application.",
     fn: function() {
         this.io.exit();
@@ -23,6 +35,7 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "executeCommand",
+    shortDescription: "Execute a command",
     description: "Execute any bindable command dynamically.  A parameter is read and that parameter is run if it is a bindable command.  The parameter can be tab completed.",
     fn: function() {
         var self = this;
@@ -55,6 +68,7 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "shell",
+    shortDescription: "Start shell buffer",
     description: "Create a new interactive shell buffer and switch to that buffer.",
     fn: function() {
         var io = this.io;
@@ -94,6 +108,8 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "moveForward",
+    group: Ejax.groups.NAVIGATION,
+    shortDescription: "Move forward by character",
     description: "Move forward by one character.",
     fn: function() {
         this.screen.currentWindow.buffer.moveForward();
@@ -102,6 +118,8 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "moveBackward",
+    group: Ejax.groups.NAVIGATION,
+    shortDescription: "Move backward by character",
     description: "Move backward by one character.",
     fn: function() {
         this.screen.currentWindow.buffer.moveBackward();
@@ -110,6 +128,8 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "moveForwardWord",
+    group: Ejax.groups.NAVIGATION,
+    shortDescription: "Move forward by word",
     description: "Move forward by one word.",
     fn: function() {
         this.screen.currentWindow.buffer.moveForwardWord();
@@ -118,6 +138,8 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "moveBackwardWord",
+    group: Ejax.groups.NAVIGATION,
+    shortDescription: "Move backward by word",
     description: "Move backward by one word.",
     fn: function() {
         this.screen.currentWindow.buffer.moveBackwardWord();
@@ -126,6 +148,8 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "nextLine",
+    group: Ejax.groups.NAVIGATION,
+    shortDescription: "Move down by line",
     description: "Move down by one line.",
     fn: function() {
         this.screen.currentWindow.buffer.nextLine();
@@ -134,6 +158,8 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "previousLine",
+    group: Ejax.groups.NAVIGATION,
+    shortDescription: "Move up by line",
     description: "Move up by one line.",
     fn: function() {
         this.screen.currentWindow.buffer.previousLine();
@@ -142,6 +168,8 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "pageDown",
+    group: Ejax.groups.NAVIGATION,
+    shortDescription: "Move down by page",
     description: "Scroll the window down by a visible page.",
     fn: function() {
         this.screen.currentWindow.pageDown();
@@ -150,6 +178,8 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "pageUp",
+    group: Ejax.groups.NAVIGATION,
+    shortDescription: "Move up by page",
     description: "Scroll the window up by a visible page.",
     fn: function() {
         this.screen.currentWindow.pageUp();
@@ -158,6 +188,8 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "gotoLine",
+    group: Ejax.groups.NAVIGATION,
+    shortDescription: "Go to specific line",
     description: "Go to a specific line, read as a parameter.  If the line is not currently visible, the buffer will be centered on that line.  If the line is less than the first line, it will be changed to the first line.  Likewise, if the line is greater than the last line, it will be changed to the last line.",
     fn: function() {
         var self = this;
@@ -180,6 +212,7 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "insertSelf",
+    group: Ejax.groups.EDITING,
     description: "Insert the last typed key to the current buffer (if it is a printable key).",
     fn: function() {
         if (!Object.isNullOrUndefined(this.lastKey)) {
@@ -190,6 +223,8 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "deleteForward",
+    group: Ejax.groups.EDITING,
+    shortDescription: "Delete forward by character",
     description: "Delete one character at the cursor.",
     fn: function() {
         this.screen.currentWindow.buffer.deleteForward();
@@ -198,6 +233,8 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "deleteBackward",
+    group: Ejax.groups.EDITING,
+    shortDescription: "Delete backward by character",
     description: "Delete one character behind the cursor.",
     fn: function() {
         this.screen.currentWindow.buffer.deleteBackward();
@@ -206,6 +243,7 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "mark",
+    shortDescription: "Mark cursor location",
     description: "Mark the current cursor location.  The mark can then be used in a lot of region based functions like copyRegion.",
     fn: function() {
         this.screen.currentWindow.buffer.mark();
@@ -214,6 +252,8 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "copyRegion",
+    group: Ejax.groups.EDITING,
+    shortDescription: "Copy the region",
     description: "Copy from the last marked position to the current cursor position.  The copied region can then be 'yank'ed, which will paste it to the buffer.",
     fn: function() {
         this.screen.currentWindow.buffer.copyRegion();
@@ -222,6 +262,8 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "killRegion",
+    group: Ejax.groups.EDITING,
+    shortDescription: "Kill the region",
     description: "Kill from the last marked position to the current cursor position.  This will remove the region from the buffer and copy it so it can later be 'yank'ed.",
     fn: function() {
         this.screen.currentWindow.buffer.killRegion();
@@ -230,6 +272,8 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "yank",
+    group: Ejax.groups.EDITING,
+    shortDescription: "Yank last killed or copied",
     description: "Yank what was last copied or killed into the current buffer.",
     fn: function() {
         this.screen.currentWindow.buffer.yank();
@@ -238,6 +282,8 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "lineStart",
+    group: Ejax.groups.NAVIGATION,
+    shortDescription: "Move to line beginning",
     description: "Move the cursor to the start of the current line.",
     fn: function() {
         this.screen.currentWindow.buffer.lineStart();
@@ -246,6 +292,8 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "lineEnd",
+    group: Ejax.groups.NAVIGATION,
+    shortDescription: "Move to line end",
     description: "Move the cursor to the end of the current line.",
     fn: function() {
         this.screen.currentWindow.buffer.lineEnd();
@@ -254,6 +302,8 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "bufferStart",
+    group: Ejax.groups.NAVIGATION,
+    shortDescription: "Move to buffer beginning",
     description: "Move the cursor to the beginning of the buffer.",
     fn: function() {
         this.screen.currentWindow.buffer.bufferStart();
@@ -262,6 +312,8 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "bufferEnd",
+    group: Ejax.groups.NAVIGATION,
+    shortDescription: "Move to buffer end",
     description: "Move the cursor to the end of the buffer.",
     fn: function() {
         this.screen.currentWindow.buffer.bufferEnd(this.screen.currentWindow.rows - 1);
@@ -270,6 +322,8 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "findFile",
+    group: Ejax.groups.BUFFERS,
+    shortDescription: "Load a file",
     description: "Find a file and open its contents into a new buffer, and show that buffer.  The filename is read as a parameter.  The filename can be tab completed.",
     fn: function() {
         var io = this.io;
@@ -318,6 +372,8 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "saveBuffer",
+    group: Ejax.groups.BUFFERS,
+    shortDescription: "Save the file",
     description: "Save the current buffer.  Presumably, this buffer is a loaded file and so any changes will be written out to disk.",
     fn: function() {
         this.screen.currentWindow.buffer.saveBuffer();
@@ -326,6 +382,8 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "changeBuffer",
+    group: Ejax.groups.BUFFERS,
+    shortDescription: "Change buffers",
     description: "Change which buffer is being shown in the current window.  The buffer name is read as a parameter and can be tab completed.",
     fn: function() {
         var screen = this.screen;
@@ -349,6 +407,8 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "killBuffer",
+    group: Ejax.groups.BUFFERS,
+    shortDescription: "Kill current or other buffer",
     description: "Kill the current buffer.  Any changes not saved will be lost.  The most recent buffer shown will be loaded into the current window in its place.",
     fn: function() {
         var screen = this.screen;
@@ -398,6 +458,7 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "quitCommand",
+    shortDescription: "Quit current command",
     description: "Cancel the current command being run.  This typically cancels retrieving a parameter for a currently running command.  It will also cancel the recording of a macro.",
     fn: function() {
         this.cancelMacro();
@@ -416,6 +477,7 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "helpForFunction",
+    shortDescription: "Get help on function",
     description: "Get help for a function.  The function name is read as a parameter and can be tab completed.",
     fn: function() {
         var self = this;
@@ -448,6 +510,8 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "evalRegion",
+    group: Ejax.groups.JAVASCRIPT,
+    shortDescription: "Evaluate the region as JavaScript",
     description: "Evaluate the code from the last marked position to the current cursor position.  If the results are not undefined or null, they will be presented in a new buffer.",
     fn: function() {
         this.screen.currentWindow.buffer.evalRegion();
@@ -456,6 +520,8 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "beginMacro",
+    group: Ejax.groups.MACROS,
+    shortDescription: "Start macro",
     description: "Begin a keyboard macro.  The macro can be cancelled by triggering a ringing of the bell or by C-g (quitCommand).  When cancelled, the macro cannot be executed.",
     fn: function() {
         this.startMacro();
@@ -464,6 +530,8 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "endMacro",
+    group: Ejax.groups.MACROS,
+    shortDescription: "Stop macro",
     description: "End the currently recording keyboard macro.  This will save the macro so it can be later executed.",
     fn: function() {
         this.stopMacro();
@@ -472,6 +540,8 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "runMacro",
+    group: Ejax.groups.MACROS,
+    shortDescription: "Run macro",
     description: "Run the last saved keyboard macro.  If the bell is rung while executing the macro, the macro will be cancelled at that point.",
     fn: function() {
         this.executeMacro();
@@ -480,6 +550,8 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "endOrRunMacro",
+    group: Ejax.groups.MACROS,
+    shortDescription: "Stop or run macro",
     description: "If a macro is being recorded, end it.  If not, run the last recorded macro.  If the bell is rung while executing the macro, the macro will be cancelled at that point.",
     fn: function() {
         if (this.recordingMacro) {
@@ -492,6 +564,8 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "insertMacro",
+    group: Ejax.groups.MACROS,
+    shortDescription: "Insert macro to buffer",
     description: "Insert the JavaScript macro definition for the last created macro.",
     fn: function() {
         this.screen.currentWindow.buffer.insertMacro(this.lastSavedMacro);
@@ -500,6 +574,8 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "nameMacro",
+    group: Ejax.groups.MACROS,
+    shortDescription: "Name last macro",
     description: "Name the last keyboard macro so it can be executed via executeCommand (which is bound to M-x).",
     fn: function() {
         var macro = this.lastSavedMacro;
@@ -508,6 +584,8 @@ Ejax.bindable({
             callback: function(fnName) {
                 Ejax.bindable({
                     name: fnName,
+                    group: Ejax.groups.CUSTOM,
+                    shortDescription: "A custom function",
                     description: "This is a macro bound to this name dynamically.  You should know this!",
                     fn: function() {
                         this.run(macro);
@@ -522,6 +600,8 @@ Ejax.bindable({
     var createMacroBindable = function(num) {
         Ejax.bindable({
             name: "endOrRunMacro" + num,
+            group: Ejax.groups.MACROS,
+            shortDescription: "Stop or run macro " + num,
             description: "If a macro is being recorded, end it and store it in slot " + num + ".  If not, run the last recorded macro in slot " + num + ".  If the bell is rung while executing the macro, the macro will be cancelled at that point.",
             fn: function() {
                 if (this.recordingMacro) {
@@ -534,6 +614,8 @@ Ejax.bindable({
 
         Ejax.bindable({
             name: "storeToMacro" + num,
+            group: Ejax.groups.MACROS,
+            shortDescription: "Store macro to " + num,
             description: "Save the last recorded macro in slot " + num + ".",
             fn: function() {
                 this.saveLastMacroTo(num);
@@ -542,6 +624,8 @@ Ejax.bindable({
 
         Ejax.bindable({
             name: "insertMacro" + num,
+            group: Ejax.groups.MACROS,
+            shortDescription: "Insert macro " + num + " to buffer",
             description: "Insert the JavaScript macro definition for the macro recorded in slot " + num + ".",
             fn: function() {
                 this.screen.currentWindow.buffer.insertMacro(this.slottedMacros[num]);
@@ -550,6 +634,8 @@ Ejax.bindable({
 
         Ejax.bindable({
             name: "nameMacro" + num,
+            group: Ejax.groups.MACROS,
+            shortDescription: "Name macro " + num,
             description: "Name the keyboard macro recorded in slot " + num + " so it can be executed via executeCommand (which is bound to M-x).",
             fn: function() {
                 var macro = this.slottedMacros[num];
@@ -558,6 +644,7 @@ Ejax.bindable({
                     callback: function(fnName) {
                         Ejax.bindable({
                             name: fnName,
+                            shortDescription: "A custom function",
                             description: "This is a macro bound to this name dynamically.  You should know this!",
                             fn: function() {
                                 this.run(macro);
@@ -575,7 +662,17 @@ Ejax.bindable({
 })();
 
 Ejax.bindable({
+    name: "referenceCard",
+    shortDescription: "Show reference card",
+    description: "Open a reference card.  The reference card will be opened in a new (or existing) *Reference Card* buffer.  If it is an existing buffer, the contents will be cleared and reconstructed (so be sure any changes have been saved).  The reference card is automatically generated from all functions that are executable via executeCommand (which is bound to M-x).",
+    fn: function() {
+        this.openReferenceCard();
+    }
+});
+
+Ejax.bindable({
     name: "butterfly",
+    shortDescription: "Let the butterflies loose",
     description: "Use butterflies to change bits.  The butterflies will flap their wings, causing a disturbance to ripple outward and change the flow of eddies in the upper atmosphere, which create momentary pockets of higher pressure air to form and act as a lense to focus cosmic rays to strike your drive platter and flip the desired bit.  Thanks to http://xkcd.com/378 for the inspiration.",
     fn: function() {
         this.sendMessage("Desired bit flipped!");

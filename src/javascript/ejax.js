@@ -568,3 +568,76 @@ Ejax.fn.bell = function() {
     this.cancelMacro();
     this.io.beep();
 };
+
+Ejax.fn.openReferenceCard = function() {
+    var self = this;
+    var groups = [];
+    var byGroup = {};
+
+    for (var key in Ejax.fn) {
+        var fn = this[key];
+
+        if (!fn || !fn.bindable || !fn.shortDescription || fn.shortDescription.length == 0) {
+            continue;
+        }
+
+        if (!byGroup[fn.group]) {
+            groups.push(fn.group);
+            byGroup[fn.group] = { maxLength: 0, names: [], namesHash: {} };
+        }
+
+        var group = byGroup[fn.group];
+
+        if (key.length > group.maxLength) {
+            group.maxLength = key.length;
+        }
+
+        group.names.push(key);
+        group.namesHash[key] = fn;
+    }
+
+    var contents = "";
+    contents += "Ejax Reference Card\n";
+    contents += "===================\n";
+    groups.sort();
+
+    for (var i = 0; i < groups.length; i++) {
+        var group = groups[i];
+        contents += "\n";
+        contents += "  " + group + "\n  ";
+
+        for (var j = 0; j < group.length; j++) {
+            contents += "-";
+        }
+
+        contents += "\n\n";
+        var groupDetails = byGroup[group];
+        var details = groupDetails.names.sort();
+
+        details = Util.map(details, function(name) {
+            var fn = groupDetails.namesHash[name];
+            var bindings = self.getBindingsForFn(name);
+
+            if (bindings.length == 0) {
+                bindings.push("M-x " + name);
+            } else {
+                bindings = bindings.sort();
+            }
+
+            var result = [fn.shortDescription];
+
+            for (var i = 0; i < bindings.length; i++) {
+                result.push(bindings[i]);
+            }
+
+            return result;
+        }).sort(function(a, b) { return a[0].localeCompare(b[0]); });
+
+        contents += Format.asTable(details, { prefix: "    ", columnSeparator: "  " }) + "\n";
+    }
+
+    var buffer = this.screen.getOrCreateBuffer("*Reference Card*");
+    this.screen.setAvailableWindowBuffer(buffer);
+    buffer.setBufferContent(contents);
+    buffer.setCursor(0, 0);
+};

@@ -19,3 +19,55 @@ Format.byWord = function(str, options) {
     result.push(str);
     return result.join("\n");
 };
+
+Format.asTable = function(arrayOfArrays, options) {
+    if (!options) {
+        options = "";
+    }
+
+    if (arrayOfArrays.length == 0) {
+        return "";
+    }
+
+    var maxLengths = [];
+
+    for (var i = 0; i < arrayOfArrays.length; i++) {
+        var row = arrayOfArrays[i];
+
+        for (var j = 0; j < row.length; j++) {
+            var length = (arrayOfArrays[i][j] || "").length;
+
+            if (j >= maxLengths.length) {
+                maxLengths.push(length);
+            }
+
+            if (length > maxLengths[j]) {
+                maxLengths[j] = length;
+            }
+        }
+    }
+
+    return rows = Util.map(arrayOfArrays, function(row) {
+        return Util.map(row, function(value, i) {
+            value = value || "";
+
+            if (i == row.length - 1) {
+                if (i == 0) {
+                    value = (options.prefix || "") + value;
+                }
+
+                return value;
+            }
+
+            while (value.length < maxLengths[i]) {
+                value += " ";
+            }
+
+            if (i == 0) {
+                value = (options.prefix || "") + value;
+            }
+
+            return value;
+        }).join(options.columnSeparator || " ");
+    }).join("\n");
+};
