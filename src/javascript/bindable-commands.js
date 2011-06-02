@@ -261,6 +261,26 @@ Ejax.bindable({
 });
 
 Ejax.bindable({
+    name: "killWordForward",
+    group: Ejax.groups.EDITING,
+    shortDescription: "Kill word forward",
+    description: "Kill from the cursor to the end of the next word.  If the cursor has no more words in front, the rest of the buffer is killed.  What was killed can later be 'yank'ed.",
+    fn: function() {
+        this.screen.currentWindow.buffer.killWordForward();
+    }
+});
+
+Ejax.bindable({
+    name: "killWordBackward",
+    group: Ejax.groups.EDITING,
+    shortDescription: "Kill word backward",
+    description: "Kill from the cursor to the beginning of the last word.  If the cursor has no more words behind it, the rest of the buffer is killed.  What was killed can later be 'yank'ed.",
+    fn: function() {
+        this.screen.currentWindow.buffer.killWordBackward();
+    }
+});
+
+Ejax.bindable({
     name: "killLine",
     group: Ejax.groups.EDITING,
     shortDescription: "Kill the line",
@@ -691,7 +711,7 @@ Ejax.bindable({
 
 // Ideas for functions to implement
 // - helpBinding: do lookup on binding and get help for it
-// - deleteForward/BackwardWord: delete the word in front or back of the cursor
 // - jsRepl: create a javascript repl buffer, like a mix of shell-mode and irb
 // - interactiveSearch: search interactively
 // - rectangle commands: rectangle kill, yank, insert
+// - undo: undo last command

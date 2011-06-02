@@ -439,10 +439,13 @@ Buffer.fn.moveBackward = function() {
     this.setCursor(x, y);
 };
 
+Buffer.WORD_CHAR_REGEX = /[a-zA-Z0-9]/;
+Buffer.NON_WORD_CHAR_REGEX = /[^a-zA-Z0-9]/;
+
 Buffer.fn.moveForwardWord = function() {
     // TODO: Use a more efficient algorithm
-    var wordChar = /[a-zA-Z0-9]/;
-    var nonWordChar = /[^a-zA-Z0-9]/;
+    var wordChar = Buffer.WORD_CHAR_REGEX;
+    var nonWordChar = Buffer.NON_WORD_CHAR_REGEX;
 
     if (this.cursorY == this.content.lastLine() && this.cursorX == this.content.getLine(this.cursorY).length) {
         this.screen.ejax.ringBell();
@@ -468,8 +471,8 @@ Buffer.fn.moveForwardWord = function() {
 
 Buffer.fn.moveBackwardWord = function() {
     // TODO: Use a more efficient algorithm
-    var wordChar = /[a-zA-Z0-9]/;
-    var nonWordChar = /[^a-zA-Z0-9]/;
+    var wordChar = Buffer.WORD_CHAR_REGEX;
+    var nonWordChar = Buffer.NON_WORD_CHAR_REGEX;
 
     if (this.cursorY == 0 && this.cursorX == 0) {
         this.screen.ejax.ringBell();
@@ -759,6 +762,39 @@ Buffer.fn.killRegion = function() {
         this.setCursor(this.markX, this.markY);
     }
 
+    this.content.remove(this.cursorX, this.cursorY, result.length);
+    this.screen.ejax.yanked = result;
+};
+
+Buffer.fn.killWordForward = function() {
+    if (this.cursorY == this.content.lastLine() && this.cursorX == this.content.getLine(this.cursorY).length) {
+        this.screen.ejax.ringBell();
+        return;
+    }
+
+    var startX = this.cursorX;
+    var startY = this.cursorY;
+    this.moveForwardWord();
+    var endX = this.cursorX;
+    var endY = this.cursorY;
+    var result = this.content.copyRegion(startX, startY, endX, endY);
+    this.setCursor(startX, startY);
+    this.content.remove(this.cursorX, this.cursorY, result.length);
+    this.screen.ejax.yanked = result;
+};
+
+Buffer.fn.killWordBackward = function() {
+    if (this.cursorY == 0 && this.cursorX == 0) {
+        this.screen.ejax.ringBell();
+        return;
+    }
+
+    var startX = this.cursorX;
+    var startY = this.cursorY;
+    this.moveBackwardWord();
+    var endX = this.cursorX;
+    var endY = this.cursorY;
+    var result = this.content.copyRegion(endX, endY, startX, startY);
     this.content.remove(this.cursorX, this.cursorY, result.length);
     this.screen.ejax.yanked = result;
 };

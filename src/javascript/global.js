@@ -19,12 +19,14 @@ editingBindings.bind(["C-p", "UP"], "previousLine");
 editingBindings.bind(["C-a", "HOME"], "lineStart");
 editingBindings.bind(["C-e", "END"], "lineEnd");
 editingBindings.bind(["C-d", "DEL"], "deleteForward");
+editingBindings.bind("BSP", "deleteBackward");
+editingBindings.bind(["M-d", "C-DEL"], "killWordForward");
+editingBindings.bind("C-BSP", "killWordBackward");
 editingBindings.bind("C-SPC", "mark");
 editingBindings.bind("M-w", "copyRegion");
 editingBindings.bind("C-w", "killRegion");
 editingBindings.bind("C-k", "killLine");
 editingBindings.bind("C-y", "yank");
-editingBindings.bind("BSP", "deleteBackward");
 editingBindings.bind("C-g", "quitCommand");
 editingBindings.type = "insertSelf";
 
