@@ -1,4 +1,5 @@
 function BufferContent(buffer, content, parameterMode) {
+    this.undoHistory = new UndoHistory(this);
     this.buffer = buffer;
     this.parameterMode = parameterMode;
     this.parameterX = 0;
@@ -7,6 +8,12 @@ function BufferContent(buffer, content, parameterMode) {
 }
 
 BufferContent.fn = BufferContent.prototype;
+
+BufferContent.fn.undo = function() {
+    if (this.undoHistory.undo() === false) {
+        return false;
+    }
+};
 
 BufferContent.fn.inRange = function(x, y) {
     if (x < 0 || y < 0 || y > this.lastLine()) {
@@ -18,6 +25,34 @@ BufferContent.fn.inRange = function(x, y) {
     }
 
     return x < this.lines[y].length;
+};
+
+BufferContent.fn.copyStr = function(x, y, length) {
+    if (y > this.lastLine()) {
+        return "";
+    }
+
+    if (y == this.lastLine() && x >= this.lines[this.lastLine()].length) {
+        return "";
+    }
+
+    var result = "";
+    result += this.lines[y].substring(x, x + length);
+    length -= result.length;
+    y++;
+
+    while (length > 0) {
+        if (y > this.lastLine()) {
+            break;
+        }
+
+        var str = this.lines[y].substring(0, length);
+        length -= str.length;
+        result += str;
+        y++;
+    }
+
+    return result;
 };
 
 BufferContent.fn.copyRegion = function(fromX, fromY, toX, toY) {
@@ -199,10 +234,12 @@ BufferContent.fn.insert = function(str, x, y) {
     toInsert.splice(0, 0, y + 1, 0);
     this.lines.splice.apply(this.lines, toInsert);
     this.cache.length += str.length;
+    this.undoHistory.add("remove", [x, y, str.length]);
     this.postRedraw();
 };
 
 BufferContent.fn.deleteAt = function(x, y) {
+    var str = this.copyStr(x, y, 1);
     this.lines[y] = this.lines[y].remove(x, 1);
 
     if (this.lines[y].lastIndexOf("\n") < 0 && this.lines.length > y + 1) {
@@ -210,6 +247,7 @@ BufferContent.fn.deleteAt = function(x, y) {
     }
 
     this.cache.length--;
+    this.undoHistory.add("insert", [str, x, y]);
     this.postRedraw();
 };
 
@@ -934,6 +972,14 @@ Buffer.fn.insertRectangle = function(value) {
 
     if (this.markX != rectangle.fromX) {
         this.markX = rectangle.fromX;
+    }
+};
+
+Buffer.fn.undo = function() {
+    if (this.content.undo() === false) {
+        this.screen.ejax.sendMessage("No further undo information");
+    } else {
+        this.screen.ejax.sendMessage("Undo!");
     }
 };
 

@@ -28,6 +28,7 @@ editingBindings.bind("C-w", "killRegion");
 editingBindings.bind("C-k", "killLine");
 editingBindings.bind("C-y", "yank");
 editingBindings.bind("C-g", "quitCommand");
+editingBindings.bind(["C-/", "C-_"], "undo");
 editingBindings.type = "insertSelf";
 
 var fundamentalMode = new Mode("fundamental", "Fundamental", editingBindings);

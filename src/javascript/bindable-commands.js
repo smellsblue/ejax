@@ -425,6 +425,16 @@ Ejax.bindable({
 });
 
 Ejax.bindable({
+    name: "undo",
+    group: Ejax.groups.EDITING,
+    shortDescription: "Undo",
+    description: "Undo the last edit on the buffer.  There is a limit to the amount of edits that can be undone.",
+    fn: function() {
+        this.screen.currentWindow.buffer.undo();
+    }
+});
+
+Ejax.bindable({
     name: "lineStart",
     group: Ejax.groups.NAVIGATION,
     shortDescription: "Move to line beginning",
@@ -825,5 +835,4 @@ Ejax.bindable({
 
 // Ideas for functions to implement
 // - helpBinding: do lookup on binding and get help for it
-// - interactiveSearch: search interactively
-// - undo: undo last command
+// - interactiveSearch: search interactively (and reverse search)

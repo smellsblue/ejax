@@ -3,6 +3,7 @@ Ejax.fn = Ejax.prototype;
 
 load("monkeypatches.js");
 load("buffers.js");
+load("undo.js");
 
 var mockBuffer = { redraw: function() { }, postRedraw: function() { } };
 
