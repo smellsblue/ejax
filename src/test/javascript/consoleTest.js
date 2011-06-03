@@ -18,8 +18,7 @@ function testInitialBufferContent() {
     assertEquals("Initial console content", "> ", mockEjax.ejax.getBufferContent());
 }
 
-// Why doesn't this work...?
-function ignore_testVariables() {
+function testVariables() {
     mockEjax.fireKeyDowns("varSPCabcSPC=SPC123;RETabcRET");
     assertEquals("Console content after variable", "> var abc = 123;\nundefined\n> abc\n123\n> ", mockEjax.ejax.getBufferContent());
 }
@@ -32,6 +31,11 @@ function testNullInspect() {
 function testUndefinedInspect() {
     mockEjax.fireKeyDowns("undefinedRET");
     assertEquals("Console content after undefined", "> undefined\nundefined\n> ", mockEjax.ejax.getBufferContent());
+}
+
+function testEmptyLine() {
+    mockEjax.fireKeyDowns("RET");
+    assertEquals("Console content after empty line", "> \nundefined\n> ", mockEjax.ejax.getBufferContent());
 }
 
 function testIntInspect() {

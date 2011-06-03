@@ -726,7 +726,7 @@ Buffer.fn.evalRegion = function() {
         return;
     }
 
-    var result = eval.call(null, toEval);
+    var result = Ejax.eval(toEval);
 
     if (Object.isNullOrUndefined(result)) {
         return;

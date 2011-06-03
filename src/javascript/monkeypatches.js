@@ -64,6 +64,10 @@ String.prototype.startsWith = function(value) {
 };
 
 String.prototype.endsWith = function(value) {
+    if (this.length == 0) {
+        return value.length == 0;
+    }
+
     return this.lastIndexOf(value) == this.length - value.length;
 };
 

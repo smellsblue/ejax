@@ -641,3 +641,7 @@ Ejax.fn.openReferenceCard = function() {
     buffer.setBufferContent(contents);
     buffer.setCursor(0, 0);
 };
+
+Ejax.eval = function(value) {
+    return eval.call(null, value);
+};

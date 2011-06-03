@@ -137,7 +137,7 @@ Ejax.bindable({
         }
 
         try {
-            var result = eval.call(null, parameter);
+            var result = Ejax.eval(parameter);
 
             if (!Object.isNullOrUndefined(result) && result.inspect && result.inspect.isFunction()) {
                 this.screen.currentWindow.buffer.append(result.inspect() + "\n");
