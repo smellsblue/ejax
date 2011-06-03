@@ -839,6 +839,63 @@ Buffer.fn.yank = function() {
     this.insert(this.screen.ejax.yanked);
 };
 
+Buffer.fn.normalizedRectangle = function() {
+    var fromX = this.markX;
+    var fromY = this.markY;
+    var toX = this.cursorX;
+    var toY = this.cursorY;
+
+    if (fromY > toY || (fromY == toY && fromX > toX)) {
+        var temp = fromX;
+        fromX = toX;
+        toX = temp;
+        temp = fromY;
+        fromY = toY;
+        toY = temp;
+    }
+
+    if (fromX > toX) {
+        var temp = fromX;
+        fromX = toX;
+        toX = temp;
+    }
+
+    return { fromX: fromX, fromY: fromY, toX: toX, toY: toY };
+};
+
+Buffer.fn.killRectangle = function() {
+    var rectangle = this.normalizedRectangle();
+    var width = rectangle.toX - rectangle.fromX;
+
+    for (var y = rectangle.fromY; y <= rectangle.toY; y++) {
+        var line = this.content.getLine(y);
+        var length = width;
+        var maxLength = line.length - 1;
+
+        if (this.content.lastLine() == y) {
+            maxLength++;
+        }
+
+        if (rectangle.fromX >= maxLength) {
+            continue;
+        }
+
+        if (rectangle.fromX + length > maxLength) {
+            length = maxLength - rectangle.fromX;
+        }
+
+        this.content.remove(rectangle.fromX, y, length);
+    }
+
+    if (this.cursorX != rectangle.fromX) {
+        this.setCursor(rectangle.fromX, this.cursorY);
+    }
+
+    if (this.markX != rectangle.fromX) {
+        this.markX = rectangle.fromX;
+    }
+};
+
 Buffer.fn.lineStart = function() {
     if (this.content.parameterMode && this.cursorY == this.content.getParameterY() && this.cursorX >= this.content.getParameterX()) {
         this.setCursor(this.content.getParameterX(), this.cursorY);

@@ -6,6 +6,7 @@ Ejax.groups.JAVASCRIPT = "JavaScript";
 Ejax.groups.MACROS = "Keyboard Macros"
 Ejax.groups.MISC = "Misc";
 Ejax.groups.NAVIGATION = "Navigation";
+Ejax.groups.RECTANGLE = "Rectangle";
 
 Ejax.bindable = function(options) {
     options.fn.bindable = true;
@@ -307,6 +308,16 @@ Ejax.bindable({
     description: "Yank what was last copied or killed into the current buffer.",
     fn: function() {
         this.screen.currentWindow.buffer.yank();
+    }
+});
+
+Ejax.bindable({
+    name: "killRectangle",
+    group: Ejax.groups.RECTANGLE,
+    shortDescription: "Kill the rectangle",
+    description: "Kill the rectangle from the mark to the cursor.",
+    fn: function() {
+        this.screen.currentWindow.buffer.killRectangle();
     }
 });
 

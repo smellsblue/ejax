@@ -43,6 +43,7 @@ fundamentalMode.bindings.bind("C-hf", "helpForFunction");
 fundamentalMode.bindings.bind("C-xC-e", "evalRegion");
 fundamentalMode.bindings.bind(["C-v", "PGDWN"], "pageDown");
 fundamentalMode.bindings.bind(["M-v", "PGUP"], "pageUp");
+fundamentalMode.bindings.bind("C-xrk", "killRectangle");
 fundamentalMode.bindings.bind(["C-x(", "F3"], "beginMacro");
 fundamentalMode.bindings.bind("C-x)", "endMacro");
 fundamentalMode.bindings.bind("C-xe", "runMacro");
