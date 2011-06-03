@@ -31,6 +31,9 @@ var cursesKeyMapping = {};
         cursesKeyMapping["27-" + key] = custom(different[key], false, true, false);
     }
 
+    // C-/ and C-_
+    cursesKeyMapping[31] = custom(191, true, false, false);
+
     // LEFT
     cursesKeyMapping[260] = value(37);
     cursesKeyMapping[537] = custom(37, false, true, false);

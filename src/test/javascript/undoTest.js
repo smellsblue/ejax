@@ -48,3 +48,6 @@ function ignore_testUndoKill() {
     mockEjax.fireKeyDowns("C-SPCabcRET123C-wC-/");
     assertEquals("Content after undo", "abc\n123", mockEjax.ejax.getBufferContent());
 }
+
+// TODO: Test that the cursor is set to where the undo happened, even if you moved
+// TODO: Test rectangle undo
