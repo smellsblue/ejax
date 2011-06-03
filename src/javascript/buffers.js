@@ -896,6 +896,47 @@ Buffer.fn.killRectangle = function() {
     }
 };
 
+Buffer.fn.insertRectangle = function(value) {
+    var rectangle = this.normalizedRectangle();
+    var width = rectangle.toX - rectangle.fromX;
+
+    for (var y = rectangle.fromY; y <= rectangle.toY; y++) {
+        var line = this.content.getLine(y);
+        var length = width;
+        var maxLength = line.length - 1;
+
+        if (this.content.lastLine() == y) {
+            maxLength++;
+        }
+
+        if (rectangle.fromX > maxLength) {
+            var spaces = "";
+            var amount = rectangle.fromX - maxLength;
+
+            for (var i = 0; i < amount; i++) {
+                spaces += " ";
+            }
+
+            this.content.insert(spaces, maxLength, y);
+        }
+
+        if (rectangle.fromX + length > maxLength) {
+            length = maxLength - rectangle.fromX;
+        }
+
+        this.content.remove(rectangle.fromX, y, length);
+        this.content.insert(value, rectangle.fromX, y);
+    }
+
+    if (this.cursorX != rectangle.fromX) {
+        this.setCursor(rectangle.fromX, this.cursorY);
+    }
+
+    if (this.markX != rectangle.fromX) {
+        this.markX = rectangle.fromX;
+    }
+};
+
 Buffer.fn.lineStart = function() {
     if (this.content.parameterMode && this.cursorY == this.content.getParameterY() && this.cursorX >= this.content.getParameterX()) {
         this.setCursor(this.content.getParameterX(), this.cursorY);

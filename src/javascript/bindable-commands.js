@@ -322,6 +322,34 @@ Ejax.bindable({
 });
 
 Ejax.bindable({
+    name: "insertRectangle",
+    group: Ejax.groups.RECTANGLE,
+    shortDescription: "Insert into the rectangle",
+    description: "Insert a string into the rectangle.  This will delete what is in the rectangle, and repeat the input parameter to each portion of the rectangle.",
+    fn: function() {
+        var screen = this.screen;
+        var defaultValue = "";
+
+        if (!Object.isNullOrUndefined(this.lastRectangleInsert)) {
+            defaultValue = this.lastRectangleInsert;
+        }
+
+        this.readParameter({
+            prompt: "String rectangle (default " + defaultValue + "): ",
+            value: this.getWorkingDirectory(),
+            callback: function(value) {
+                if (value == "") {
+                    value = defaultValue;
+                }
+
+                screen.currentWindow.buffer.insertRectangle(value);
+                screen.ejax.lastRectangleInsert = value;
+            }
+        });
+    }
+});
+
+Ejax.bindable({
     name: "lineStart",
     group: Ejax.groups.NAVIGATION,
     shortDescription: "Move to line beginning",
@@ -724,5 +752,4 @@ Ejax.bindable({
 // - helpBinding: do lookup on binding and get help for it
 // - jsRepl: create a javascript repl buffer, like a mix of shell-mode and irb
 // - interactiveSearch: search interactively
-// - rectangle commands: rectangle kill, yank, insert
 // - undo: undo last command
