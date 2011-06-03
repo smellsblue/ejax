@@ -74,3 +74,7 @@ minibufferMode.bindings.bind("RET", "parameterFinished");
 var shellMode = new Mode("shell", "Shell", fundamentalMode.bindings);
 shellMode.bindings.bind("TAB", "autoComplete");
 shellMode.bindings.bind("RET", "sendShellCommand");
+
+var consoleMode = new Mode("console", "Console", fundamentalMode.bindings);
+consoleMode.bindings.bind("TAB", "autoComplete");
+consoleMode.bindings.bind("RET", "sendConsoleCommand");

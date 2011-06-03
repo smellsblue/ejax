@@ -69,6 +69,7 @@ Ejax.bindable({
 
 Ejax.bindable({
     name: "shell",
+    group: Ejax.groups.MISC,
     shortDescription: "Start shell buffer",
     description: "Create a new interactive shell buffer and switch to that buffer.",
     fn: function() {
@@ -98,12 +99,86 @@ Ejax.bindable({
         var parameter = this.screen.currentWindow.buffer.content.getParameter();
 
         if (!parameter.endsWith("\n")) {
-                parameter += "\n";
+            parameter += "\n";
         }
 
         this.screen.currentWindow.buffer.content.setParameter("");
         this.screen.currentWindow.buffer.append(parameter);
         this.screen.currentWindow.buffer.shell.send(parameter);
+    }
+});
+
+Ejax.bindable({
+    name: "console",
+    group: Ejax.groups.MISC,
+    shortDescription: "Open console buffer",
+    description: "If there is already a buffer named *console*, open it.  Otherwise create a new interactive console buffer and switch to that buffer.",
+    fn: function() {
+        var screen = this.screen;
+        screen.changeBuffer(screen.getOrCreateBuffer("*console*", function() {
+            var buffer = new Buffer(screen, { name: "*console*", mode: consoleMode, parameterMode: true });
+            buffer.append("> ");
+            return buffer;
+        }));
+    }
+});
+
+Ejax.bindable({
+    name: "sendConsoleCommand",
+    description: "Send the current command that is entered to the current console buffer to the console.  The command is appended to the output and then removed from the prompt.",
+    fn: function() {
+        var parameter = this.screen.currentWindow.buffer.content.getParameter();
+        this.screen.currentWindow.buffer.content.setParameter("");
+
+        if (!parameter.endsWith("\n")) {
+            this.screen.currentWindow.buffer.append(parameter + "\n");
+        } else {
+            this.screen.currentWindow.buffer.append(parameter);
+        }
+
+        try {
+            var result = eval.call(null, parameter);
+
+            if (!Object.isNullOrUndefined(result) && result.inspect && result.inspect.isFunction()) {
+                this.screen.currentWindow.buffer.append(result.inspect() + "\n");
+            } else {
+                this.screen.currentWindow.buffer.append("" + result + "\n");
+            }
+        } catch (e) {
+            var contents = "";
+
+            if (e.name) {
+                contents += e.name;
+            } else {
+                contents += "Error";
+            }
+
+            contents += ": ";
+
+            if (e.message) {
+                contents += e.message;
+            }
+
+            if (e.fileName) {
+                var lineNumber = e.lineNumber;
+
+                if (Object.isNullOrUndefined(e.lineNumber)) {
+                    lineNumber = "unknown line";
+                } else {
+                    lineNumber = "line #" + lineNumber;
+                }
+
+                contents += "\n  From: " + e.fileName + " (" + lineNumber + ")";
+            }
+
+            if (e.stack) {
+                contents += "\n" + e.stack;
+            }
+
+            this.screen.currentWindow.buffer.append(contents + "\n");
+        }
+
+        this.screen.currentWindow.buffer.append("> ");
     }
 });
 
@@ -750,6 +825,5 @@ Ejax.bindable({
 
 // Ideas for functions to implement
 // - helpBinding: do lookup on binding and get help for it
-// - jsRepl: create a javascript repl buffer, like a mix of shell-mode and irb
 // - interactiveSearch: search interactively
 // - undo: undo last command

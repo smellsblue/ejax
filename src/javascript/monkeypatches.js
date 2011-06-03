@@ -6,6 +6,14 @@ Array.prototype.contains = function(value) {
     return this.indexOf(value) >= 0;
 };
 
+Array.prototype.inspect = function() {
+    return "[" + Util.map(this, function(x) { return Object.inspect(x); }).join(", ") + "]";
+};
+
+String.prototype.inspect = function() {
+    return '"' + this.jsEscape() + '"';
+};
+
 String.prototype.contains = function(value) {
     return this.indexOf(value) >= 0;
 };
@@ -88,10 +96,64 @@ String.prototype.remove = function(index, length) {
     return before + after;
 };
 
+Boolean.prototype.inspect = function() {
+    return "" + this;
+};
+
+Date.prototype.inspect = function() {
+    return "" + this;
+};
+
+Error.prototype.inspect = function() {
+    return "" + this;
+};
+
+Function.prototype.inspect = function() {
+    return "" + this;
+};
+
+Number.prototype.inspect = function() {
+    return "" + this;
+};
+
+RegExp.prototype.inspect = function() {
+    return "" + this;
+};
+
 Object.prototype.isFunction = function() {
     return typeof(this) == "function";
 };
 
 Object.prototype.isString = function() {
     return false;
+};
+
+Object.prototype.inspect = function() {
+    var properties = [];
+
+    for (var key in this) {
+        if (key == "inspect" || key == "isString" || key == "isFunction") {
+            continue;
+        }
+
+        properties.push("" + key + ": " + Object.inspect(this[key]));
+    }
+
+    return result = "{ " + properties.join(", ") + " }";
+};
+
+Object.inspect = function(obj) {
+    if (obj === undefined) {
+        return "undefined";
+    }
+
+    if (obj === null) {
+        return "null";
+    }
+
+    if (obj.inspect && obj.inspect.isFunction()) {
+        return obj.inspect();
+    }
+
+    return "" + obj;
 };

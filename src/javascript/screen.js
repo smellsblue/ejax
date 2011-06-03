@@ -105,12 +105,20 @@ Screen.fn.getBuffer = function(name) {
     return this.buffers[name];
 };
 
-Screen.fn.getOrCreateBuffer = function(name) {
+Screen.fn.getOrCreateBuffer = function(name, factory) {
     if (this.buffers[name]) {
         return this.buffers[name];
     }
 
-    this.addBuffer(new Buffer(this, { name: name }));
+    var buffer;
+
+    if (factory) {
+        buffer = factory();
+    } else {
+        buffer = new Buffer(this, { name: name });
+    }
+
+    this.addBuffer(buffer);
     return this.buffers[name];
 };
 

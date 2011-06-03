@@ -778,14 +778,14 @@ function testQuitCommand() {
     mockEjax.fireKeyDowns("C-xC-fC-g");
     assertEquals("Screen row  0", "                                                                                ", mockEjax.pixelRow(0));
     assertEquals("Screen row 23", "Quit                                                                            ", mockEjax.pixelRow(23));
-    assertEquals("X cursor after eval", 0, currentX);
-    assertEquals("Y cursor after eval", 0, currentY);
+    assertEquals("X cursor after quit", 0, currentX);
+    assertEquals("Y cursor after quit", 0, currentY);
     mockEjax.fireKeyDowns("UP");
     assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
     mockEjax.fireKeyDowns("M-xC-g");
     assertEquals("Screen row 23", "Quit                                                                            ", mockEjax.pixelRow(23));
-    assertEquals("X cursor after eval", 0, currentX);
-    assertEquals("Y cursor after eval", 0, currentY);
+    assertEquals("X cursor after quit", 0, currentX);
+    assertEquals("Y cursor after quit", 0, currentY);
     mockEjax.fireKeyDowns("UP");
     assertEquals("Screen row 23", "                                                                                ", mockEjax.pixelRow(23));
     mockEjax.fireKeyDowns("C-g");
