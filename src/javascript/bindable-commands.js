@@ -430,7 +430,7 @@ Ejax.bindable({
     shortDescription: "Undo",
     description: "Undo the last edit on the buffer.  There is a limit to the amount of edits that can be undone.",
     fn: function() {
-        this.screen.currentWindow.buffer.undo();
+        this.screen.currentWindow.buffer.undo(this.screen.currentWindow.rows - 1);
     }
 });
 

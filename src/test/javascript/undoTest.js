@@ -49,5 +49,28 @@ function ignore_testUndoKill() {
     assertEquals("Content after undo", "abc\n123", mockEjax.ejax.getBufferContent());
 }
 
-// TODO: Test that the cursor is set to where the undo happened, even if you moved
+function testCursorAfterUndoDelete() {
+    var currentX, currentY;
+    mockEjax.setCursor = function(x, y) {
+        currentX = x;
+        currentY = y;
+    };
+    mockEjax.ejax.setBufferContent("abc\n123\nxyz");
+    mockEjax.fireKeyDowns("M-<C-dM->C-/");
+    assertEquals("X cursor after undo", 0, currentX);
+    assertEquals("Y cursor after undo", 0, currentY);
+}
+
+function testCursorAfterUndoAdd() {
+    var currentX, currentY;
+    mockEjax.setCursor = function(x, y) {
+        currentX = x;
+        currentY = y;
+    };
+    mockEjax.ejax.setBufferContent("abc\n123\nxyz");
+    mockEjax.fireKeyDowns("M-<dM->C-/");
+    assertEquals("X cursor after undo", 0, currentX);
+    assertEquals("Y cursor after undo", 0, currentY);
+}
+
 // TODO: Test rectangle undo

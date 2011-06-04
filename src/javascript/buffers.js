@@ -10,9 +10,7 @@ function BufferContent(buffer, content, parameterMode) {
 BufferContent.fn = BufferContent.prototype;
 
 BufferContent.fn.undo = function() {
-    if (this.undoHistory.undo() === false) {
-        return false;
-    }
+    return this.undoHistory.undo();
 };
 
 BufferContent.fn.inRange = function(x, y) {
@@ -234,7 +232,7 @@ BufferContent.fn.insert = function(str, x, y) {
     toInsert.splice(0, 0, y + 1, 0);
     this.lines.splice.apply(this.lines, toInsert);
     this.cache.length += str.length;
-    this.undoHistory.add("remove", [x, y, str.length]);
+    this.undoHistory.add("remove", [x, y, str.length], [x, y]);
     this.postRedraw();
 };
 
@@ -247,7 +245,7 @@ BufferContent.fn.deleteAt = function(x, y) {
     }
 
     this.cache.length--;
-    this.undoHistory.add("insert", [str, x, y]);
+    this.undoHistory.add("insert", [str, x, y], [x, y]);
     this.postRedraw();
 };
 
@@ -975,11 +973,14 @@ Buffer.fn.insertRectangle = function(value) {
     }
 };
 
-Buffer.fn.undo = function() {
-    if (this.content.undo() === false) {
+Buffer.fn.undo = function(rows) {
+    var result = this.content.undo();
+    if (result === false) {
         this.screen.ejax.sendMessage("No further undo information");
     } else {
         this.screen.ejax.sendMessage("Undo!");
+        this.gotoLine(result[1], rows);
+        this.setCursor(result[0], result[1]);
     }
 };
 

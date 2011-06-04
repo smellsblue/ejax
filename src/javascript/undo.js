@@ -18,14 +18,15 @@ UndoHistory.fn.undo = function() {
     this.undoing = true;
     item.undo(this.context);
     this.undoing = false;
+    return item.returnValue;
 };
 
-UndoHistory.fn.add = function(method, args) {
+UndoHistory.fn.add = function(method, args, returnValue) {
     if (this.undoing) {
         return;
     }
 
-    var item = new UndoItem(method, args);
+    var item = new UndoItem(method, args, returnValue);
     this.history.push(item);
     this.size += item.length;
 
@@ -39,10 +40,11 @@ UndoHistory.fn.forget = function() {
     this.size -= item.length;
 };
 
-function UndoItem(method, args) {
+function UndoItem(method, args, returnValue) {
     this.method = method;
     this.args = args;
-    this.length = 0;
+    this.returnValue = returnValue;
+    this.length = returnValue.length;
 
     for (var i = 0; i < args.length; i++) {
         var arg = args[i];
