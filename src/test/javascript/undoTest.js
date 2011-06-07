@@ -39,14 +39,26 @@ function testUndoDelete() {
     assertEquals("Content after undo", "a", mockEjax.ejax.getBufferContent());
 }
 
-function ignore_testUndoWordDelete() {
+function testUndoWordDelete() {
     mockEjax.fireKeyDowns("abcC-BSPC-/");
     assertEquals("Content after undo", "abc", mockEjax.ejax.getBufferContent());
 }
 
-function ignore_testUndoKill() {
+function testUndoKill() {
     mockEjax.fireKeyDowns("C-SPCabcRET123C-wC-/");
     assertEquals("Content after undo", "abc\n123", mockEjax.ejax.getBufferContent());
+}
+
+function testUndoRectangleKill() {
+    mockEjax.ejax.setBufferContent("abc\n123\nxyz");
+    mockEjax.fireKeyDowns("C-SPCDOWNDOWNRIGHTC-xrkC-/");
+    assertEquals("Content after undo", "abc\n123\nxyz", mockEjax.ejax.getBufferContent());
+}
+
+function testUndoRectangleInsert() {
+    mockEjax.ejax.setBufferContent("abc\n123\nxyz");
+    mockEjax.fireKeyDowns("C-SPCDOWNDOWNRIGHTC-xrtdefRETC-/");
+    assertEquals("Content after undo", "abc\n123\nxyz", mockEjax.ejax.getBufferContent());
 }
 
 function testCursorAfterUndoDelete() {

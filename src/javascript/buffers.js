@@ -250,9 +250,14 @@ BufferContent.fn.deleteAt = function(x, y) {
 };
 
 BufferContent.fn.remove = function(x, y, length) {
-    // Naive for now
-    for (var i = 0; i < length; i++) {
-        this.deleteAt(x, y);
+    this.undoHistory.startAction();
+    try {
+        // Naive for now
+        for (var i = 0; i < length; i++) {
+            this.deleteAt(x, y);
+        }
+    } finally {
+        this.undoHistory.endAction();
     }
 };
 
@@ -900,76 +905,88 @@ Buffer.fn.normalizedRectangle = function() {
 };
 
 Buffer.fn.killRectangle = function() {
-    var rectangle = this.normalizedRectangle();
-    var width = rectangle.toX - rectangle.fromX;
+    this.content.undoHistory.startAction();
 
-    for (var y = rectangle.fromY; y <= rectangle.toY; y++) {
-        var line = this.content.getLine(y);
-        var length = width;
-        var maxLength = line.length - 1;
+    try {
+        var rectangle = this.normalizedRectangle();
+        var width = rectangle.toX - rectangle.fromX;
 
-        if (this.content.lastLine() == y) {
-            maxLength++;
+        for (var y = rectangle.fromY; y <= rectangle.toY; y++) {
+            var line = this.content.getLine(y);
+            var length = width;
+            var maxLength = line.length - 1;
+
+            if (this.content.lastLine() == y) {
+                maxLength++;
+            }
+
+            if (rectangle.fromX >= maxLength) {
+                continue;
+            }
+
+            if (rectangle.fromX + length > maxLength) {
+                length = maxLength - rectangle.fromX;
+            }
+
+            this.content.remove(rectangle.fromX, y, length);
         }
 
-        if (rectangle.fromX >= maxLength) {
-            continue;
+        if (this.cursorX != rectangle.fromX) {
+            this.setCursor(rectangle.fromX, this.cursorY);
         }
 
-        if (rectangle.fromX + length > maxLength) {
-            length = maxLength - rectangle.fromX;
+        if (this.markX != rectangle.fromX) {
+            this.markX = rectangle.fromX;
         }
-
-        this.content.remove(rectangle.fromX, y, length);
-    }
-
-    if (this.cursorX != rectangle.fromX) {
-        this.setCursor(rectangle.fromX, this.cursorY);
-    }
-
-    if (this.markX != rectangle.fromX) {
-        this.markX = rectangle.fromX;
+    } finally {
+        this.content.undoHistory.endAction();
     }
 };
 
 Buffer.fn.insertRectangle = function(value) {
-    var rectangle = this.normalizedRectangle();
-    var width = rectangle.toX - rectangle.fromX;
+    this.content.undoHistory.startAction();
 
-    for (var y = rectangle.fromY; y <= rectangle.toY; y++) {
-        var line = this.content.getLine(y);
-        var length = width;
-        var maxLength = line.length - 1;
+    try {
+        var rectangle = this.normalizedRectangle();
+        var width = rectangle.toX - rectangle.fromX;
 
-        if (this.content.lastLine() == y) {
-            maxLength++;
-        }
+        for (var y = rectangle.fromY; y <= rectangle.toY; y++) {
+            var line = this.content.getLine(y);
+            var length = width;
+            var maxLength = line.length - 1;
 
-        if (rectangle.fromX > maxLength) {
-            var spaces = "";
-            var amount = rectangle.fromX - maxLength;
-
-            for (var i = 0; i < amount; i++) {
-                spaces += " ";
+            if (this.content.lastLine() == y) {
+                maxLength++;
             }
 
-            this.content.insert(spaces, maxLength, y);
+            if (rectangle.fromX > maxLength) {
+                var spaces = "";
+                var amount = rectangle.fromX - maxLength;
+
+                for (var i = 0; i < amount; i++) {
+                    spaces += " ";
+                }
+
+                this.content.insert(spaces, maxLength, y);
+            }
+
+            if (rectangle.fromX + length > maxLength) {
+                length = maxLength - rectangle.fromX;
+            }
+
+            this.content.remove(rectangle.fromX, y, length);
+            this.content.insert(value, rectangle.fromX, y);
         }
 
-        if (rectangle.fromX + length > maxLength) {
-            length = maxLength - rectangle.fromX;
+        if (this.cursorX != rectangle.fromX) {
+            this.setCursor(rectangle.fromX, this.cursorY);
         }
 
-        this.content.remove(rectangle.fromX, y, length);
-        this.content.insert(value, rectangle.fromX, y);
-    }
-
-    if (this.cursorX != rectangle.fromX) {
-        this.setCursor(rectangle.fromX, this.cursorY);
-    }
-
-    if (this.markX != rectangle.fromX) {
-        this.markX = rectangle.fromX;
+        if (this.markX != rectangle.fromX) {
+            this.markX = rectangle.fromX;
+        }
+    } finally {
+        this.content.undoHistory.endAction();
     }
 };
 
